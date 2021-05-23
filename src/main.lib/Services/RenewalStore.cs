@@ -11,7 +11,7 @@ namespace PKISharp.WACS.Services
     /// Manage the collection of renewals. The actual 
     /// implementations handle persistance of the objects
     /// </summary>
-    internal abstract class RenewalStore : IRenewalStore
+    public abstract class RenewalStore : IRenewalStore
     {
         internal ISettingsService _settings;
         internal ILogService _log;

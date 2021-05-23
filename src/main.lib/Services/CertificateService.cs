@@ -19,7 +19,7 @@ using bc = Org.BouncyCastle;
 
 namespace PKISharp.WACS.Services
 {
-    internal class CertificateService : ICertificateService
+    public class CertificateService : ICertificateService
     {
         private const string CsrPostFix = "-csr.pem";
         private const string PfxPostFix = "-temp.pfx";

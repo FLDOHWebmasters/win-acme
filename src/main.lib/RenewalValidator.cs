@@ -17,7 +17,7 @@ namespace PKISharp.WACS
     /// <summary>
     /// This part of the code handles the actual creation/renewal of ACME certificates
     /// </summary>
-    internal class RenewalValidator
+    public class RenewalValidator
     {
         private readonly IAutofacBuilder _scopeBuilder;
         private readonly ILogService _log;

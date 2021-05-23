@@ -11,7 +11,7 @@ namespace PKISharp.WACS.Clients.Acme
     /// <summary>
     /// Manage the account used by the AcmeClient
     /// </summary>
-    class AccountManager
+    public class AccountManager
     {
         private const string SignerFileName = "Signer_v2";
         private const string RegistrationFileName = "Registration_v2";

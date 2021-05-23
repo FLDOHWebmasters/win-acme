@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Services
 {
-    internal interface ICertificateService
+    public interface ICertificateService
     {
         string CacheKey(Order order);
         CertificateInfo? CachedInfo(Order order);

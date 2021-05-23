@@ -10,7 +10,7 @@ using System.Web;
 
 namespace PKISharp.WACS.Services
 {
-    internal class NotificationService
+    public class NotificationService
     {
         private readonly ILogService _log;
         private readonly ICertificateService _certificateService;

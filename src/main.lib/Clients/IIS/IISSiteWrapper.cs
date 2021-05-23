@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Clients.IIS
     /// <summary>
     /// Standard real implementation for IIS-site. Other 
     /// </summary>
-    internal class IISSiteWrapper : IIISSite<IISBindingWrapper>
+    public class IISSiteWrapper : IIISSite<IISBindingWrapper>
     {
         internal Site Site { get; }
 
@@ -28,7 +28,7 @@ namespace PKISharp.WACS.Clients.IIS
         }
     }
 
-    internal class IISBindingWrapper : IIISBinding
+    public class IISBindingWrapper : IIISBinding
     {
         internal Binding Binding { get; }
 

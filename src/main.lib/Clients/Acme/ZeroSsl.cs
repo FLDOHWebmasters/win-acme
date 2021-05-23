@@ -10,7 +10,7 @@ namespace PKISharp.WACS.Clients.Acme
     /// <summary>
     /// Helper class to support the https://zerossl.com/ API
     /// </summary>
-    class ZeroSsl
+    public class ZeroSsl
     {
         private readonly HttpClient _httpClient;
         private readonly ILogService _log;

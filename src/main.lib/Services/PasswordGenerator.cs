@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace PKISharp.WACS.Services
 {
-    internal class PasswordGenerator
+    public class PasswordGenerator
     {
         public string Generate()
         {

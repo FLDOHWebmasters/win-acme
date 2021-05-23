@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace PKISharp.WACS.Clients.IIS
 {
-    internal class IISHelper
+    public class IISHelper
     {
         internal class IISBindingOption
         {

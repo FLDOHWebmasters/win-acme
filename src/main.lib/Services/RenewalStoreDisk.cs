@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace PKISharp.WACS.Services
 {
-    internal class RenewalStoreDisk : RenewalStore
+    public class RenewalStoreDisk : RenewalStore
     {
         public RenewalStoreDisk(
             ISettingsService settings, ILogService log,

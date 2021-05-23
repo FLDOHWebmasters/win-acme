@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\build\tool.ps1 = ..\build\tool.ps1
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentCommandLineParser", "fluent-command-line-parser\FluentCommandLineParser\FluentCommandLineParser.csproj", "{74CDFA61-81D8-40F2-B536-949BABA15D3E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.lib", "main.lib\wacs.lib.csproj", "{6D8A5D1A-F785-4596-B60A-9AD7250FB97D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.test", "main.test\wacs.test.csproj", "{091C269E-368C-4535-B40A-81C091FEFC8C}"
@@ -24,8 +22,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.validation.dns.azure", "plugin.validation.dns.azure\wacs.validation.dns.azure.csproj", "{A5D198AF-55FA-420A-A485-F73D52F79052}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.validation.dns.route53", "plugin.validation.dns.route53\wacs.validation.dns.route53.csproj", "{E8F83357-1E30-4D45-A681-2684C3082CFA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACMESharp", "ACMESharpCore\src\ACMESharp\ACMESharp.csproj", "{4D854441-05CB-4F09-B811-5A6BFC83F873}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1FD63DC6-B930-46AC-B472-23D3117E79F4}"
 	ProjectSection(SolutionItems) = preProject
@@ -48,7 +44,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.store.keyvault", "plug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.validation.dns.godaddy", "plugin.validation.dns.godaddy\wacs.validation.dns.godaddy.csproj", "{6AE9AD47-511D-4DE4-9E2F-B0990B9D1C75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wacs.validation.dns.googledns", "plugin.validation.dns.googledns\wacs.validation.dns.googledns.csproj", "{25DF1D2B-2E3E-4013-9A16-47625967A15E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.validation.dns.googledns", "plugin.validation.dns.googledns\wacs.validation.dns.googledns.csproj", "{25DF1D2B-2E3E-4013-9A16-47625967A15E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACMESharp", "..\..\ACMESharpCore\src\ACMESharp\ACMESharp.csproj", "{BE356A44-088A-4A6E-9222-ECA745B1D139}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentCommandLineParser", "..\..\fluent-command-line-parser\FluentCommandLineParser\FluentCommandLineParser.csproj", "{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,12 +57,6 @@ Global
 		ReleasePluggable|Any CPU = ReleasePluggable|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{74CDFA61-81D8-40F2-B536-949BABA15D3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74CDFA61-81D8-40F2-B536-949BABA15D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74CDFA61-81D8-40F2-B536-949BABA15D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74CDFA61-81D8-40F2-B536-949BABA15D3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74CDFA61-81D8-40F2-B536-949BABA15D3E}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
-		{74CDFA61-81D8-40F2-B536-949BABA15D3E}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
 		{6D8A5D1A-F785-4596-B60A-9AD7250FB97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6D8A5D1A-F785-4596-B60A-9AD7250FB97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D8A5D1A-F785-4596-B60A-9AD7250FB97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -99,12 +93,6 @@ Global
 		{E8F83357-1E30-4D45-A681-2684C3082CFA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E8F83357-1E30-4D45-A681-2684C3082CFA}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
 		{E8F83357-1E30-4D45-A681-2684C3082CFA}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
-		{4D854441-05CB-4F09-B811-5A6BFC83F873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D854441-05CB-4F09-B811-5A6BFC83F873}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D854441-05CB-4F09-B811-5A6BFC83F873}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D854441-05CB-4F09-B811-5A6BFC83F873}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D854441-05CB-4F09-B811-5A6BFC83F873}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
-		{4D854441-05CB-4F09-B811-5A6BFC83F873}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
 		{DB1D4461-5563-425E-8D5E-D57893015D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB1D4461-5563-425E-8D5E-D57893015D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB1D4461-5563-425E-8D5E-D57893015D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -153,6 +141,18 @@ Global
 		{25DF1D2B-2E3E-4013-9A16-47625967A15E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{25DF1D2B-2E3E-4013-9A16-47625967A15E}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
 		{25DF1D2B-2E3E-4013-9A16-47625967A15E}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
+		{BE356A44-088A-4A6E-9222-ECA745B1D139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE356A44-088A-4A6E-9222-ECA745B1D139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE356A44-088A-4A6E-9222-ECA745B1D139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE356A44-088A-4A6E-9222-ECA745B1D139}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE356A44-088A-4A6E-9222-ECA745B1D139}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
+		{BE356A44-088A-4A6E-9222-ECA745B1D139}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
+		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
+		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

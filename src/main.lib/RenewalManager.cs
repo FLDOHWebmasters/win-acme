@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS
 {
-    internal class RenewalManager
+    public class RenewalManager
     {
         private readonly IInputService _input;
         private readonly ILogService _log;

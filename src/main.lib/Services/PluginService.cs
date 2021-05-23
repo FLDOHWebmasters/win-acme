@@ -46,7 +46,7 @@ namespace PKISharp.WACS.Services
 
         public IEnumerable<Type> PluginOptionTypes<T>() where T : PluginOptions => GetResolvable<T>();
 
-        internal void Configure(ContainerBuilder builder)
+        public void Configure(ContainerBuilder builder)
         {
             _optionFactories.ForEach(t => builder.RegisterType(t).SingleInstance());
             _plugins.ForEach(ip => builder.RegisterType(ip));

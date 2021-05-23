@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace PKISharp.WACS.Services
 {
-    internal class TaskSchedulerService
+    public class TaskSchedulerService
     {
         private readonly MainArguments _arguments;
         private readonly ISettingsService _settings;

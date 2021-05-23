@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Services
     /// <summary>
     /// Handles exception logging and process exit code
     /// </summary>
-    internal class ExceptionHandler
+    public class ExceptionHandler
     {
         /// <summary>
         /// Logging

@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace PKISharp.WACS.Services
 {
-    internal class AutofacBuilder : IAutofacBuilder
+    public class AutofacBuilder : IAutofacBuilder
     {
         /// <summary>
         /// This is used to import renewals from 1.9.x

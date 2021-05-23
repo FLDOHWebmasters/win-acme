@@ -6,7 +6,7 @@ namespace PKISharp.WACS.Context
     /// <summary>
     /// Common objects used throughout the renewal process
     /// </summary>
-    internal class ExecutionContext
+    public class ExecutionContext
     {
         public ILifetimeScope Scope { get; private set; }
         public Order Order { get; private set; }

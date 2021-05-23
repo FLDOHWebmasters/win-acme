@@ -5,7 +5,7 @@ using System;
 
 namespace PKISharp.WACS.Services
 {
-    internal interface IAutofacBuilder
+    public interface IAutofacBuilder
     {
         /// <summary>
         /// This is used to import renewals from 1.9.x

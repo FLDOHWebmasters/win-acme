@@ -23,7 +23,7 @@ namespace PKISharp.WACS.Clients.Acme
     /// <summary>
     /// Main class that talks to the ACME server
     /// </summary>
-    internal class AcmeClient : IDisposable
+    public class AcmeClient : IDisposable
     {
         /// <summary>
         /// https://tools.ietf.org/html/rfc8555#section-7.1.6

@@ -4,7 +4,7 @@ using System.Security.Principal;
 
 namespace PKISharp.WACS.Services
 {
-    internal class UserRoleService : IUserRoleService
+    public class UserRoleService : IUserRoleService
     {
         private readonly IIISClient _iisClient;
 

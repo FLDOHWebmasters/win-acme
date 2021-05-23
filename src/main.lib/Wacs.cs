@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Host
 {
-    internal partial class Wacs
+    public class Wacs
     {
         private readonly ILogService _log;
         private readonly IInputService _input;

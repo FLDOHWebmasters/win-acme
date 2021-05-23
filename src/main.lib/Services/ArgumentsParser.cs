@@ -33,7 +33,7 @@ namespace PKISharp.WACS.Configuration
             _arguments = _providers.SelectMany(x => x.Configuration).ToList();
         }
 
-        internal bool Validate()
+        public bool Validate()
         {
             // Test if the arguments can be resolved by any of the known providers
             var extraOptions = _providers.First().GetExtraArguments(_args);

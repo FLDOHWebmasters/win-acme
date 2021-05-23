@@ -54,8 +54,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ACMESharpCore\src\ACMESharp\ACMESharp.csproj" />
-    <ProjectReference Include="..\fluent-command-line-parser\FluentCommandLineParser\FluentCommandLineParser.csproj" />
+	  <ProjectReference Include="..\..\..\ACMESharpCore\src\ACMESharp\ACMESharp.csproj" />
+	  <ProjectReference Include="..\..\..\fluent-command-line-parser\FluentCommandLineParser\FluentCommandLineParser.csproj" />
   </ItemGroup>
 
 </Project>

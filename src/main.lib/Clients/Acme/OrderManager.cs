@@ -15,7 +15,7 @@ namespace PKISharp.WACS.Clients.Acme
     /// <summary>
     /// The OrderManager makes sure that we don't hit rate limits
     /// </summary>
-    class OrderManager
+    public class OrderManager
     {
         private readonly ILogService _log;
         private readonly ISettingsService _settings;

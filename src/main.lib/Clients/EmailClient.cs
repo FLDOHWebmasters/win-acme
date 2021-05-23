@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Clients
 {
-    internal class EmailClient
+    public class EmailClient
     {
         private readonly ILogService _log;
 

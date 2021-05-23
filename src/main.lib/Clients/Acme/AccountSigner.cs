@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Clients.Acme
     /// This is "password" for the ACME account, it can be 
     /// an RSA or Elliptic curve private key
     /// </summary>
-    internal class AccountSigner
+    public class AccountSigner
     {
         private string? _keyType;
         private string? _keyExport;
