@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Services
         {
             _log = log;
             _arguments = arguments;
-            var settingsFileName = "settings.json";
+            var settingsFileName = "wacsettings.json";
             var settingsFileTemplateName = "settings_default.json";
             _log.Verbose("Looking for {settingsFileName} in {path}", settingsFileName, VersionService.SettingsPath);
             var settings = new FileInfo(Path.Combine(VersionService.SettingsPath, settingsFileName));
