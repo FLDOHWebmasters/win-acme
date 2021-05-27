@@ -147,7 +147,7 @@ namespace PKISharp.WACS.Configuration
         }
 
         /// <summary>
-        /// Construct an emtpy instance of T to able to use its properties
+        /// Construct an empty instance of T to able to use its properties
         /// </summary>
         private T DefaultInstance
         {

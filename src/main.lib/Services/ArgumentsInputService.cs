@@ -121,7 +121,7 @@ namespace PKISharp.WACS.Services
                 var censor = _arguments.SecretArguments.Contains(argumentName);
                 if (returnValue is string returnString && string.IsNullOrWhiteSpace(returnString)) 
                 {
-                    _log.Verbose("Parsed emtpy value for {optionName}", $"--{argumentName}");
+                    _log.Verbose("Parsed empty value for {optionName}", $"--{argumentName}");
                 } 
                 else if (returnValue is bool boolValue)
                 {
