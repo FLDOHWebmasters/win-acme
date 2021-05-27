@@ -294,14 +294,7 @@ namespace PKISharp.WACS.Services
 
             // Return null instead of empty string to save storage
             var ret = password.ToString();
-            if (string.IsNullOrEmpty(ret))
-            {
-                return null;
-            }
-            else
-            {
-                return ret;
-            }
+            return string.IsNullOrEmpty(ret) ? null : ret;
         }
 
         /// <summary>
