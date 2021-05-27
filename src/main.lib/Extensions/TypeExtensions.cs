@@ -17,14 +17,7 @@ namespace PKISharp.WACS.Extensions
         public static string? PluginId(this Type type)
         {
             var attr = type.GetCustomAttributes(true).OfType<PluginAttribute>();
-            if (attr.Any())
-            {
-                return attr.First().Id.ToString();
-            }
-            else
-            {
-                return null;
-            }
+            return attr.Any() ? attr.First().Id.ToString() : null;
         }
 
         /// <summary>
