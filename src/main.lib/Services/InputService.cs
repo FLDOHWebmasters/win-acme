@@ -292,7 +292,7 @@ namespace PKISharp.WACS.Services
                 _log.Error("Error reading Password: {@ex}", ex);
             }
 
-            // Return null instead of emtpy string to save storage
+            // Return null instead of empty string to save storage
             var ret = password.ToString();
             if (string.IsNullOrEmpty(ret))
             {

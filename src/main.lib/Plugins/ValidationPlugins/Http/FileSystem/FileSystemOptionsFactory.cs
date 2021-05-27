@@ -23,7 +23,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
         }
 
         public override bool PathIsValid(string path) => path.ValidPath(_log);
-        public override bool AllowEmtpy(Target target) => target.IIS;
+        public override bool AllowEmpty(Target target) => target.IIS;
         private ArgumentResult<long?> ValidationSite() => _arguments.GetLong<FileSystemArguments>(x => x.ValidationSiteId);
 
         public override async Task<FileSystemOptions?> Default(Target target)

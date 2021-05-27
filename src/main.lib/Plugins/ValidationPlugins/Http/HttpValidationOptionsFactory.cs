@@ -43,7 +43,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         /// </summary>
         public async Task<HttpValidationOptions<TPlugin>> BaseAquire(Target target, IInputService input)
         {
-            var allowEmpty = AllowEmtpy(target);
+            var allowEmpty = AllowEmpty(target);
             return new TOptions
             {
                 Path = await GetPath(allowEmpty).Interactive(input, WebrootHint(allowEmpty)[0], string.Join('\n', WebrootHint(allowEmpty)[1..])).GetValue(),
@@ -56,7 +56,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         /// </summary>
         public async Task<HttpValidationOptions<TPlugin>> BaseDefault(Target target)
         {
-            var allowEmpty = AllowEmtpy(target);
+            var allowEmpty = AllowEmpty(target);
             return new TOptions
             {
                 Path = await GetPath(allowEmpty).GetValue(),
@@ -65,12 +65,12 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         }
 
         /// <summary>
-        /// By default we don't allow emtpy paths, but FileSystem 
+        /// By default we don't allow empty paths, but FileSystem 
         /// makes an exception because it can read from IIS
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public virtual bool AllowEmtpy(Target target) => false;
+        public virtual bool AllowEmpty(Target target) => false;
 
         /// <summary>
         /// Check if the webroot makes sense
