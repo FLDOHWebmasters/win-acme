@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
                 webRoot.StartsWith("http://");
         }
 
-        public override string[] WebrootHint(bool allowEmtpy)
+        public override string[] WebrootHint(bool allowEmpty)
         {
             return new[] {
                 "Enter a webdav path that leads to the web root of the host for http authentication",
