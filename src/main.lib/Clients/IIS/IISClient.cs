@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using Microsoft.Web.Administration;
 using Microsoft.Win32;
-using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.InstallationPlugins;
 using PKISharp.WACS.Plugins.StorePlugins;
@@ -76,15 +75,13 @@ namespace PKISharp.WACS.Clients.IIS
                 {
                     _serverManager.CommitChanges();
                 }
-                catch
+                finally
                 {
                     // We will still set ServerManager to null
                     // so that at least a new one will be created
                     // for the next time
                     Refresh();
-                    throw;
                 }
-                Refresh();
             }
         }
 
