@@ -25,7 +25,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
         private ArgumentResult<string> IamRole => _arguments.
             GetString<Route53Arguments>(a => a.Route53IAMRole);
 
-        public override async Task<Route53Options> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<Route53Options> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             var options = new Route53Options
             {

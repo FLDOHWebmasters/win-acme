@@ -21,7 +21,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             GetProtectedString<DreamhostArguments>(a => a.ApiKey).
             Required();
 
-        public override async Task<DreamhostOptions> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<DreamhostOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             return new DreamhostOptions()
             {

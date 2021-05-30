@@ -21,7 +21,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             GetString<CloudDnsArguments>(a => a.ProjectId).
             Required();
 
-        public override async Task<CloudDnsOptions> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<CloudDnsOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             return new CloudDnsOptions
             {

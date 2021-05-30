@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             GetProtectedString<CloudflareArguments>(a => a.CloudflareApiToken).
             Required();
 
-        public override async Task<CloudflareOptions> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<CloudflareOptions> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             return new CloudflareOptions
             {

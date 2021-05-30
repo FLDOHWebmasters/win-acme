@@ -95,7 +95,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             {
                 var allBindings = _iisHelper.GetBindings();
                 var visibleBindings = allBindings.Where(x => !_args.HideHttps || x.Https == false).ToList();
-                var ret = await TryAquireSettings(input, allBindings, visibleBindings, allSites, visibleSites, runLevel);
+                var ret = await TryAcquireSettings(input, allBindings, visibleBindings, allSites, visibleSites, runLevel);
                 if (ret != null)
                 {
                     var filtered = _iisHelper.FilterBindings(allBindings, ret);
@@ -123,7 +123,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <param name="visibleSites"></param>
         /// <param name="runLevel"></param>
         /// <returns></returns>
-        private async Task<IISOptions?> TryAquireSettings(
+        private async Task<IISOptions?> TryAcquireSettings(
             IInputService input, 
             List<IISHelper.IISBindingOption> allBindings,
             List<IISHelper.IISBindingOption> visibleBindings,

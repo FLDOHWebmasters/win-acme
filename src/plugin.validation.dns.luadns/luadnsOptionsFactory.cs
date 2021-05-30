@@ -21,7 +21,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             GetString<LuaDnsArguments>(a => a.LuaDnsUsername).
             Required();
 
-        public override async Task<LuaDnsOptions> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<LuaDnsOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             return new LuaDnsOptions
             {

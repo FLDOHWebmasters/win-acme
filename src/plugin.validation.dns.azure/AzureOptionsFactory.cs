@@ -30,11 +30,11 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
         private ArgumentResult<string> HostedZone => _arguments.
              GetString<AzureArguments>(a => a.AzureHostedZone);
 
-        public override async Task<AzureOptions> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<AzureOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             var options = new AzureOptions();
             var common = new AzureOptionsFactoryCommon<AzureArguments>(_arguments, input);
-            await common.Aquire(options);
+            await common.Acquire(options);
             options.ResourceGroupName = await ResourceGroupName.Interactive(input).GetValue();
             options.SubscriptionId = await SubscriptionId.Interactive(input).GetValue();
             options.HostedZone = await HostedZone.Interactive(input).GetValue();

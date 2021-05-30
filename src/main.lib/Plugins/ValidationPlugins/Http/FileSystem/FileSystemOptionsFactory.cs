@@ -44,7 +44,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
         public override async Task<FileSystemOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             // Choose alternative site for validation
-            var ret = new FileSystemOptions(await BaseAquire(target, inputService));
+            var ret = new FileSystemOptions(await BaseAcquire(target, inputService));
             if (target.IIS && 
                 _iisClient.HasWebSites &&
                 string.IsNullOrEmpty(ret.Path) && 

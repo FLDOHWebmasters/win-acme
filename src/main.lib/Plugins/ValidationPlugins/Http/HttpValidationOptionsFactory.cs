@@ -41,7 +41,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         /// <summary>
         /// Get webroot path manually
         /// </summary>
-        public async Task<HttpValidationOptions<TPlugin>> BaseAquire(Target target, IInputService input)
+        public async Task<HttpValidationOptions<TPlugin>> BaseAcquire(Target target, IInputService input)
         {
             var allowEmpty = AllowEmpty(target);
             return new TOptions

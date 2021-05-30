@@ -48,7 +48,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
 
         public override async Task<FtpOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
-            return new FtpOptions(await BaseAquire(target, inputService))
+            return new FtpOptions(await BaseAcquire(target, inputService))
             {
                 Credential = await NetworkCredentialOptions.Create(_arguments, inputService, "FTP(S) server")
             };

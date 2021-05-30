@@ -38,7 +38,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
 
         public override async Task<WebDavOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
-            return new WebDavOptions(await BaseAquire(target, inputService))
+            return new WebDavOptions(await BaseAcquire(target, inputService))
             {
                 Credential = await NetworkCredentialOptions.Create(_arguments, inputService, "WebDav server")
             };

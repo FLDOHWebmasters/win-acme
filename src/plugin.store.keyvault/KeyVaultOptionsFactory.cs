@@ -22,11 +22,11 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             GetString<KeyVaultArguments>(a => a.CertificateName).
             Required();
 
-        public override async Task<KeyVaultOptions> Aquire(IInputService input, RunLevel runLevel)
+        public override async Task<KeyVaultOptions> Acquire(IInputService input, RunLevel runLevel)
         {
             var options = new KeyVaultOptions();
             var common = new AzureOptionsFactoryCommon<KeyVaultArguments>(_arguments, input);
-            await common.Aquire(options);
+            await common.Acquire(options);
             options.VaultName = await VaultName.Interactive(input).GetValue();
             options.CertificateName = await CertificateName.Interactive(input).GetValue();
             return options;
