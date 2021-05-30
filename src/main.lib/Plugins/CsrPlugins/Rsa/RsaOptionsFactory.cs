@@ -7,7 +7,7 @@ namespace PKISharp.WACS.Plugins.CsrPlugins
     internal class RsaOptionsFactory : CsrPluginOptionsFactory<Rsa, RsaOptions>
     {
         public RsaOptionsFactory(ArgumentsInputService arguments) : base(arguments) { }
-        public override Task<RsaOptions> Aquire(IInputService inputService, RunLevel runLevel) => Default();
+        public override Task<RsaOptions> Acquire(IInputService inputService, RunLevel runLevel) => Default();
 
         public override async Task<RsaOptions> Default()
         {

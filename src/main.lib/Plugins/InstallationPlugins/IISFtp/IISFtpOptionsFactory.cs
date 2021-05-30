@@ -26,7 +26,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override bool CanInstall(IEnumerable<Type> storeTypes) => storeTypes.Contains(typeof(CertificateStore));
 
-        public override async Task<IISFtpOptions> Aquire(Target renewal, IInputService inputService, RunLevel runLevel)
+        public override async Task<IISFtpOptions> Acquire(Target renewal, IInputService inputService, RunLevel runLevel)
         {
             var ret = new IISFtpOptions();
             var chosen = await inputService.ChooseRequired("Choose ftp site to bind the certificate to",

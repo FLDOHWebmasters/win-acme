@@ -16,7 +16,7 @@ namespace PKISharp.WACS.Plugins.Interfaces
         /// Check or get information needed for store (interactive)
         /// </summary>
         /// <param name="target"></param>
-        Task<ValidationPluginOptions?> Aquire(Target target, IInputService inputService, RunLevel runLevel);
+        Task<ValidationPluginOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel);
 
         /// <summary>
         /// Check information needed for store (unattended)

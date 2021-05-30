@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Plugins.OrderPlugins
     class SingleOptionsFactory : OrderPluginOptionsFactory<Single, SingleOptions>
     {
         public override bool CanProcess(Target target) => true;
-        public override Task<SingleOptions> Aquire(IInputService inputService, RunLevel runLevel) => Default();
+        public override Task<SingleOptions> Acquire(IInputService inputService, RunLevel runLevel) => Default();
         public override Task<SingleOptions> Default() => Task.FromResult(new SingleOptions());
     }
 }

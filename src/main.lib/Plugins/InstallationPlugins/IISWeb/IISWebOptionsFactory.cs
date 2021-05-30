@@ -52,7 +52,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             GetLong<IISWebArguments>(x => x.InstallationSiteId).
             Validate(x => Task.FromResult(_iisClient.GetWebSite(x!.Value) != null), "invalid site");
 
-        public override async Task<IISWebOptions> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<IISWebOptions> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             var ret = new IISWebOptions()
             {

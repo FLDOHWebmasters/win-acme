@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Plugins.OrderPlugins
     class HostOptionsFactory : OrderPluginOptionsFactory<Host, HostOptions>
     {
         public override bool CanProcess(Target target) => target.CsrBytes == null;
-        public override Task<HostOptions> Aquire(IInputService inputService, RunLevel runLevel) => Default();
+        public override Task<HostOptions> Acquire(IInputService inputService, RunLevel runLevel) => Default();
         public override Task<HostOptions> Default() => Task.FromResult(new HostOptions());
     }
 }

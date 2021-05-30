@@ -30,7 +30,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
             };
         }
 
-        public override async Task<SftpOptions?> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<SftpOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             return new SftpOptions(await BaseAquire(target, inputService))
             {

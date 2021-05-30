@@ -16,7 +16,7 @@ namespace PKISharp.WACS.Plugins.Interfaces
         /// Check or get information need for installation (interactive)
         /// </summary>
         /// <param name="target"></param>
-        Task<InstallationPluginOptions> Aquire(Target target, IInputService inputService, RunLevel runLevel);
+        Task<InstallationPluginOptions> Acquire(Target target, IInputService inputService, RunLevel runLevel);
 
         /// <summary>
         /// Check information need for installation (unattended)

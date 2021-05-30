@@ -15,7 +15,7 @@ namespace PKISharp.WACS.Plugins.Base.Factories.Null
         Type IPluginOptionsFactory.InstanceType => typeof(object);
         Type IPluginOptionsFactory.OptionsType => typeof(object);
         string IValidationPluginOptionsFactory.ChallengeType => string.Empty;
-        Task<ValidationPluginOptions?> IValidationPluginOptionsFactory.Aquire(Target target, IInputService inputService, RunLevel runLevel) => Task.FromResult<ValidationPluginOptions?>(default);
+        Task<ValidationPluginOptions?> IValidationPluginOptionsFactory.Acquire(Target target, IInputService inputService, RunLevel runLevel) => Task.FromResult<ValidationPluginOptions?>(default);
         Task<ValidationPluginOptions?> IValidationPluginOptionsFactory.Default(Target target) => Task.FromResult<ValidationPluginOptions?>(default);
         bool IPluginOptionsFactory.Match(string name) => false;
         string IPluginOptionsFactory.Name => "None";

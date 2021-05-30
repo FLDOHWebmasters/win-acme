@@ -27,7 +27,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             GetString<CsrArguments>(x => x.PkFile).
             Validate(x => Task.FromResult(x.ValidFile(_log)), "invalid file");
 
-        public override async Task<CsrOptions?> Aquire(IInputService inputService, RunLevel runLevel)
+        public override async Task<CsrOptions?> Acquire(IInputService inputService, RunLevel runLevel)
         {
             return new CsrOptions()
             {

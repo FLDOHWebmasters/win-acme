@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             Validate(x => Task.FromResult(x.ValidPath(_log)), "invalid path").
             DefaultAsNull();
 
-        public override async Task<PemFilesOptions?> Aquire(IInputService input, RunLevel runLevel)
+        public override async Task<PemFilesOptions?> Acquire(IInputService input, RunLevel runLevel)
         {
             var path = await Path.Interactive(input, "File path").GetValue();
             var password = await Password.Interactive(input).GetValue();

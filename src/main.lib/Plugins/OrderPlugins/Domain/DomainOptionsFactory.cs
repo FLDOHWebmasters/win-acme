@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Plugins.OrderPlugins
     class DomainOptionsFactory : OrderPluginOptionsFactory<Domain, DomainOptions>
     {
         public override bool CanProcess(Target target) => target.CsrBytes == null;
-        public override Task<DomainOptions> Aquire(IInputService inputService, RunLevel runLevel) => Default();
+        public override Task<DomainOptions> Acquire(IInputService inputService, RunLevel runLevel) => Default();
         public override Task<DomainOptions> Default() => Task.FromResult(new DomainOptions());
     }
 }

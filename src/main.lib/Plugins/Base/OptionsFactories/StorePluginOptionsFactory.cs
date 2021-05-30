@@ -15,9 +15,9 @@ namespace PKISharp.WACS.Plugins.Base.Factories
         where TPlugin : IStorePlugin
         where TOptions : StorePluginOptions, new()
     {
-        public abstract Task<TOptions?> Aquire(IInputService inputService, RunLevel runLevel);
+        public abstract Task<TOptions?> Acquire(IInputService inputService, RunLevel runLevel);
         public abstract Task<TOptions?> Default();
-        async Task<StorePluginOptions?> IPluginOptionsFactory<StorePluginOptions>.Aquire(IInputService inputService, RunLevel runLevel) => await Aquire(inputService, runLevel);
+        async Task<StorePluginOptions?> IPluginOptionsFactory<StorePluginOptions>.Acquire(IInputService inputService, RunLevel runLevel) => await Acquire(inputService, runLevel);
         async Task<StorePluginOptions?> IPluginOptionsFactory<StorePluginOptions>.Default() => await Default();
     }
 

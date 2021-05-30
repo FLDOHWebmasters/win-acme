@@ -58,7 +58,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <param name="input"></param>
         /// <param name="runLevel"></param>
         /// <returns></returns>
-        public override async Task<IISOptions?> Aquire(IInputService input, RunLevel runLevel)
+        public override async Task<IISOptions?> Acquire(IInputService input, RunLevel runLevel)
         {
             var allSites = _iisHelper.GetSites(true).Where(x => x.Hosts.Any()).ToList();
             if (!allSites.Any())

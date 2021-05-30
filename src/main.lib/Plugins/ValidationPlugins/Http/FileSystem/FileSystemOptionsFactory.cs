@@ -41,7 +41,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
             return ret;
         }
 
-        public override async Task<FileSystemOptions?> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<FileSystemOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             // Choose alternative site for validation
             var ret = new FileSystemOptions(await BaseAquire(target, inputService));

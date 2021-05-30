@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Plugins.OrderPlugins
     class SiteOptionsFactory : OrderPluginOptionsFactory<Site, SiteOptions>
     {
         public override bool CanProcess(Target target) => target.CsrBytes == null;
-        public override Task<SiteOptions> Aquire(IInputService inputService, RunLevel runLevel) => Default();
+        public override Task<SiteOptions> Acquire(IInputService inputService, RunLevel runLevel) => Default();
         public override Task<SiteOptions> Default() => Task.FromResult(new SiteOptions());
     }
 }

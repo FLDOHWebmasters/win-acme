@@ -16,7 +16,7 @@ namespace PKISharp.WACS.Plugins.Base.Factories.Null
         Type IPluginOptionsFactory.InstanceType => typeof(NullInstallation);
         Type IPluginOptionsFactory.OptionsType => typeof(NullInstallationOptions);
         Task<InstallationPluginOptions> Generate() => Task.FromResult<InstallationPluginOptions>(new NullInstallationOptions());
-        Task<InstallationPluginOptions> IInstallationPluginOptionsFactory.Aquire(Target target, IInputService inputService, RunLevel runLevel) => Generate();
+        Task<InstallationPluginOptions> IInstallationPluginOptionsFactory.Acquire(Target target, IInputService inputService, RunLevel runLevel) => Generate();
         Task<InstallationPluginOptions> IInstallationPluginOptionsFactory.Default(Target target) => Generate();
         bool IInstallationPluginOptionsFactory.CanInstall(IEnumerable<Type> storeTypes) => true;
         int IPluginOptionsFactory.Order => int.MaxValue;

@@ -50,7 +50,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             WithDefault(Script.DefaultDeleteArguments).
             DefaultAsNull();
 
-        public override async Task<ScriptOptions?> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<ScriptOptions?> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             var ret = new ScriptOptions();
             var createScript = await CreateScript.Interactive(input).GetValue();
