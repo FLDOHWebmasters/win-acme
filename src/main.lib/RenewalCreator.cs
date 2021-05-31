@@ -131,7 +131,7 @@ namespace PKISharp.WACS
             }
             var targetPluginOptions = runLevel.HasFlag(RunLevel.Unattended) ?
                 await targetPluginOptionsFactory.Default() :
-                await targetPluginOptionsFactory.Aquire(_input, runLevel);
+                await targetPluginOptionsFactory.Acquire(_input, runLevel);
             if (targetPluginOptions == null)
             {
                 _exceptionHandler.HandleException(message: $"Source plugin {targetPluginOptionsFactory.Name} aborted or failed");
@@ -182,7 +182,7 @@ namespace PKISharp.WACS
             {
                 var validationOptions = runLevel.HasFlag(RunLevel.Unattended)
                     ? await validationPluginOptionsFactory.Default(initialTarget)
-                    : await validationPluginOptionsFactory.Aquire(initialTarget, _input, runLevel);
+                    : await validationPluginOptionsFactory.Acquire(initialTarget, _input, runLevel);
                 if (validationOptions == null)
                 {
                     _exceptionHandler.HandleException(message: $"Validation plugin {validationPluginOptionsFactory.Name} was unable to generate options");
@@ -209,7 +209,7 @@ namespace PKISharp.WACS
             {
                 var orderOptions = runLevel.HasFlag(RunLevel.Unattended) ?
                     await orderPluginOptionsFactory.Default() :
-                    await orderPluginOptionsFactory.Aquire(_input, runLevel);
+                    await orderPluginOptionsFactory.Acquire(_input, runLevel);
                 if (orderOptions == null)
                 {
                     _exceptionHandler.HandleException(message: $"Order plugin {orderPluginOptionsFactory.Name} was unable to generate options");
@@ -238,7 +238,7 @@ namespace PKISharp.WACS
                 {
                     var csrOptions = runLevel.HasFlag(RunLevel.Unattended) ?
                         await csrPluginOptionsFactory.Default() :
-                        await csrPluginOptionsFactory.Aquire(_input, runLevel);
+                        await csrPluginOptionsFactory.Acquire(_input, runLevel);
                     if (csrOptions == null)
                     {
                         _exceptionHandler.HandleException(message: $"CSR plugin {csrPluginOptionsFactory.Name} was unable to generate options");
@@ -271,7 +271,7 @@ namespace PKISharp.WACS
                     {
                         storeOptions = runLevel.HasFlag(RunLevel.Unattended)
                             ? await storePluginOptionsFactory.Default()
-                            : await storePluginOptionsFactory.Aquire(_input, runLevel);
+                            : await storePluginOptionsFactory.Acquire(_input, runLevel);
                     }
                     catch (Exception ex)
                     {
@@ -321,7 +321,7 @@ namespace PKISharp.WACS
                     {
                         installOptions = runLevel.HasFlag(RunLevel.Unattended)
                             ? await installationPluginOptionsFactory.Default(initialTarget)
-                            : await installationPluginOptionsFactory.Aquire(initialTarget, _input, runLevel);
+                            : await installationPluginOptionsFactory.Acquire(initialTarget, _input, runLevel);
                     }
                     catch (Exception ex)
                     {

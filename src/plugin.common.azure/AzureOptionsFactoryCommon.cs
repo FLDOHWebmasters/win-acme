@@ -38,7 +38,7 @@ namespace PKISharp.WACS.Plugins.Azure.Common
             GetProtectedString<T>(a => a.AzureSecret).
             Required();
 
-        public async Task Aquire(IAzureOptionsCommon options)
+        public async Task Acquire(IAzureOptionsCommon options)
         {
             var defaultEnvironment = (await Environment.GetValue()) ?? AzureEnvironments.AzureCloud;
             var environments = new List<Choice<Func<Task>>>(

@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
                 webRoot.StartsWith("http://");
         }
 
-        public override string[] WebrootHint(bool allowEmtpy)
+        public override string[] WebrootHint(bool allowEmpty)
         {
             return new[] {
                 "Enter a webdav path that leads to the web root of the host for http authentication",
@@ -36,9 +36,9 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
             };
         }
 
-        public override async Task<WebDavOptions?> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<WebDavOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
-            return new WebDavOptions(await BaseAquire(target, inputService))
+            return new WebDavOptions(await BaseAcquire(target, inputService))
             {
                 Credential = await NetworkCredentialOptions.Create(_arguments, inputService, "WebDav server")
             };

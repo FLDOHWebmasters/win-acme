@@ -47,15 +47,18 @@ namespace PKISharp.WACS.Configuration
                 }
             }
 
-            // Run indivual result validations
+            // Run individual result validations
             var main = GetArguments<MainArguments>();
             if (main == null)
             {
                 return false;
             }
             var mainProvider = _providers.OfType<IArgumentsProvider<MainArguments>>().First();
-            if (mainProvider.Validate(main, main))
+            if (!mainProvider.Validate(main, main))
             {
+                return false;
+            }
+
                 // Validate the others
                 var others = _providers.Except(new[] { mainProvider });
                 foreach (var other in others)
@@ -70,11 +73,6 @@ namespace PKISharp.WACS.Configuration
                         return false;
                     }
                 }
-            }
-            else
-            {
-                return false;
-            }
             return true;
         }
 

@@ -1,8 +1,6 @@
 ﻿using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Configuration.Arguments;
-using PKISharp.WACS.Services;
-using System.Net;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
@@ -10,6 +8,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     {
         private const string SslPortParameterName = "sslport";
         private const string SslIpParameterName = "sslipaddress";
+        private const string IISHostParameterName = "iishost";
 
         public override string Name => "IIS Web plugin";
         public override string Group => "Installation";
@@ -17,6 +16,9 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         [CommandLine(Description = "Specify site to install new bindings to. Defaults to the source if that is an IIS site.")]
         public long? InstallationSiteId { get; set; }
+
+        [CommandLine(Name = IISHostParameterName, Description = "Host name or IP address of the machine hosting IIS. Defaults to local.")]
+        public string? IISHost { get; set; }
 
         [CommandLine(Name = SslPortParameterName, Description = "Port number to use for newly created HTTPS bindings. Defaults to " + IISClient.DefaultBindingPortFormat + ".")]
         public int? SSLPort { get; set; }

@@ -52,7 +52,7 @@ namespace PKISharp.WACS.Plugins.Interfaces
         /// Check or get configuration information needed (interactive)
         /// </summary>
         /// <param name="target"></param>
-        Task<T?> Aquire(IInputService inputService, RunLevel runLevel);
+        Task<T?> Acquire(IInputService inputService, RunLevel runLevel);
 
         /// <summary>
         /// Check information needed (unattended)

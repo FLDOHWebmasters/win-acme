@@ -25,7 +25,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             Disabled = CertificateStore.Disabled(userRoleService);
         }
 
-        public override async Task<CertificateStoreOptions?> Aquire(IInputService inputService, RunLevel runLevel)
+        public override async Task<CertificateStoreOptions?> Acquire(IInputService inputService, RunLevel runLevel)
         {
             var ret = await Default();
             if (ret != null &&

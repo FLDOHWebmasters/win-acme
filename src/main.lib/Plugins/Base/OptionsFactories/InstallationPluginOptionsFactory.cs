@@ -18,9 +18,9 @@ namespace PKISharp.WACS.Plugins.Base.Factories
         where TPlugin : IInstallationPlugin
         where TOptions : InstallationPluginOptions, new()
     {
-        async Task<InstallationPluginOptions> IInstallationPluginOptionsFactory.Aquire(Target target, IInputService inputService, RunLevel runLevel) => await Aquire(target, inputService, runLevel);
+        async Task<InstallationPluginOptions> IInstallationPluginOptionsFactory.Acquire(Target target, IInputService inputService, RunLevel runLevel) => await Acquire(target, inputService, runLevel);
         async Task<InstallationPluginOptions> IInstallationPluginOptionsFactory.Default(Target target) => await Default(target);
-        public abstract Task<TOptions> Aquire(Target target, IInputService inputService, RunLevel runLevel);
+        public abstract Task<TOptions> Acquire(Target target, IInputService inputService, RunLevel runLevel);
         public abstract Task<TOptions> Default(Target target);
         public virtual bool CanInstall(IEnumerable<Type> storeTypes) => true;
     }

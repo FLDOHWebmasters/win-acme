@@ -25,11 +25,11 @@ namespace PKISharp.WACS.Services
             _input = input;
             _secretService = secretService;
         }
-        public ArgumentResult<ProtectedString?> GetProtectedString<T>(Expression<Func<T, string?>> expression, bool allowEmtpy = false)
+        public ArgumentResult<ProtectedString?> GetProtectedString<T>(Expression<Func<T, string?>> expression, bool allowEmpty = false)
             where T : class, IArguments,
-            new() => new(GetArgument(expression).Protect(allowEmtpy), GetMetaData(expression),
-                async (args) => (await _secretService.GetSecret(args.Label, args.Default?.Value, allowEmtpy ? "" : null, args.Required, args.Multiline)).Protect(allowEmtpy),
-                _log, allowEmtpy);
+            new() => new(GetArgument(expression).Protect(allowEmpty), GetMetaData(expression),
+                async (args) => (await _secretService.GetSecret(args.Label, args.Default?.Value, allowEmpty ? "" : null, args.Required, args.Multiline)).Protect(allowEmpty),
+                _log, allowEmpty);
 
         public ArgumentResult<string?> GetString<T>(Expression<Func<T, string?>> expression)
             where T : class, IArguments, new() =>
@@ -121,7 +121,7 @@ namespace PKISharp.WACS.Services
                 var censor = _arguments.SecretArguments.Contains(argumentName);
                 if (returnValue is string returnString && string.IsNullOrWhiteSpace(returnString)) 
                 {
-                    _log.Verbose("Parsed emtpy value for {optionName}", $"--{argumentName}");
+                    _log.Verbose("Parsed empty value for {optionName}", $"--{argumentName}");
                 } 
                 else if (returnValue is bool boolValue)
                 {

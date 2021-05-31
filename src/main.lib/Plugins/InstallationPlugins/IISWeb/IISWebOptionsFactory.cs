@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
@@ -16,7 +17,8 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public override int Order => 5;
         private readonly IIISClient _iisClient;
         private readonly ArgumentsInputService _arguments;
-
+        private readonly Regex _hostRegex = new("a-z[a-z0-9\\.-]+");
+        
         public IISWebOptionsFactory(IIISClient iisClient, ArgumentsInputService arguments, IUserRoleService userRoleService)
         {
             _iisClient = iisClient;
@@ -27,6 +29,11 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public override bool CanInstall(IEnumerable<Type> storeTypes) => 
             storeTypes.Contains(typeof(CertificateStore)) || 
             storeTypes.Contains(typeof(CentralSsl));
+
+        private ArgumentResult<string?> Host => _arguments.
+            GetString<IISWebArguments>(x => x.IISHost).
+            DefaultAsNull().
+            Validate(x => Task.FromResult(IPAddress.Parse(x!) != null || _hostRegex.IsMatch(x!)), "invalid host address");
 
         private ArgumentResult<int?> NewBindingPort => _arguments.
             GetInt<IISWebArguments>(x => x.SSLPort).
@@ -45,10 +52,11 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             GetLong<IISWebArguments>(x => x.InstallationSiteId).
             Validate(x => Task.FromResult(_iisClient.GetWebSite(x!.Value) != null), "invalid site");
 
-        public override async Task<IISWebOptions> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<IISWebOptions> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             var ret = new IISWebOptions()
             {
+                Host = await Host.GetValue(),
                 NewBindingPort = await NewBindingPort.GetValue(),
                 NewBindingIp = await NewBindingIp.GetValue()
             };
@@ -72,6 +80,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         {
             var ret = new IISWebOptions()
             {
+                Host = await Host.GetValue(),
                 NewBindingPort = await NewBindingPort.GetValue(),
                 NewBindingIp = await NewBindingIp.GetValue(),
                 SiteId = await InstallationSite.Required(!target.IIS).GetValue()

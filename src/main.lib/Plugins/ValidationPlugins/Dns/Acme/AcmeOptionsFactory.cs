@@ -36,7 +36,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             Validate(x => Task.FromResult(new Uri(x!).ToString() != ""), "invalid uri").
             Required();
 
-        public override async Task<AcmeOptions?> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<AcmeOptions?> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             var ret = new AcmeOptions()
             {

@@ -15,15 +15,15 @@ namespace PKISharp.WACS.Plugins.StorePlugins
         private readonly string _path;
         private readonly string? _password;
 
-        public static string? DefaultPath(ISettingsService settings) => 
+        public static string? DefaultPath(ISettingsService settings) =>
             settings.Store.PfxFile?.DefaultPath;
 
         public static string? DefaultPassword(ISettingsService settings)
             => settings.Store.PfxFile?.DefaultPassword;
 
         public PfxFile(
-            ILogService log, 
-            ISettingsService settings, 
+            ILogService log,
+            ISettingsService settings,
             PfxFileOptions options,
             SecretServiceManager secretServiceManager)
         {
@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
                 settings.Store.PfxFile?.DefaultPassword;
             _password = secretServiceManager.EvaluateSecret(passwordRaw);
 
-            var path = !string.IsNullOrWhiteSpace(options.Path) ? 
+            var path = !string.IsNullOrWhiteSpace(options.Path) ?
                 options.Path :
                 settings.Store.PfxFile?.DefaultPath;
 
@@ -49,7 +49,11 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             }
         }
 
-        private string PathForIdentifier(string identifier) => Path.Combine(_path, $"{identifier.Replace("*", "_")}.pfx");
+        private string PathForIdentifier(string identifier) => Path.Combine(_path, Filename(identifier));
+
+        internal static string Filename(string identifier) => Filename(identifier, ".pfx");
+
+        internal static string Filename(string identifier, string extension) => $"{identifier.Replace("*", "_")}{extension}";
 
         public async Task Save(CertificateInfo input)
         {

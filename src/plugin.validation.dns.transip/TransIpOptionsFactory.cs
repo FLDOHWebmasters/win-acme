@@ -37,7 +37,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             Validate(x => Task.FromResult(CheckKey(x.Value)), "invalid private key").
             Required();
 
-        public override async Task<TransIpOptions> Aquire(Target target, IInputService input, RunLevel runLevel)
+        public override async Task<TransIpOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
         {
             return new TransIpOptions()
             {

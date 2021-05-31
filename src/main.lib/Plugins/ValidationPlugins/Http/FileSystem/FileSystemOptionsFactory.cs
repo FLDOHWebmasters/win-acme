@@ -23,7 +23,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
         }
 
         public override bool PathIsValid(string path) => path.ValidPath(_log);
-        public override bool AllowEmtpy(Target target) => target.IIS;
+        public override bool AllowEmpty(Target target) => target.IIS;
         private ArgumentResult<long?> ValidationSite() => _arguments.GetLong<FileSystemArguments>(x => x.ValidationSiteId);
 
         public override async Task<FileSystemOptions?> Default(Target target)
@@ -41,10 +41,10 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Http
             return ret;
         }
 
-        public override async Task<FileSystemOptions?> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<FileSystemOptions?> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             // Choose alternative site for validation
-            var ret = new FileSystemOptions(await BaseAquire(target, inputService));
+            var ret = new FileSystemOptions(await BaseAcquire(target, inputService));
             if (target.IIS && 
                 _iisClient.HasWebSites &&
                 string.IsNullOrEmpty(ret.Path) && 

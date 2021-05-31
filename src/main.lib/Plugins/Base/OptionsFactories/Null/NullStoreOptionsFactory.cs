@@ -15,7 +15,7 @@ namespace PKISharp.WACS.Plugins.Base.Factories.Null
         Type IPluginOptionsFactory.InstanceType => typeof(NullStore);
         Type IPluginOptionsFactory.OptionsType => typeof(NullStoreOptions);
         Task<StorePluginOptions?> Generate() => Task.FromResult<StorePluginOptions?>(new NullStoreOptions());
-        Task<StorePluginOptions?> IPluginOptionsFactory<StorePluginOptions>.Aquire(IInputService inputService, RunLevel runLevel) => Generate();
+        Task<StorePluginOptions?> IPluginOptionsFactory<StorePluginOptions>.Acquire(IInputService inputService, RunLevel runLevel) => Generate();
         Task<StorePluginOptions?> IPluginOptionsFactory<StorePluginOptions>.Default() => Generate();
         (bool, string?) IPluginOptionsFactory.Disabled => (false, null);
         string IPluginOptionsFactory.Name => NullStoreOptions.PluginName;

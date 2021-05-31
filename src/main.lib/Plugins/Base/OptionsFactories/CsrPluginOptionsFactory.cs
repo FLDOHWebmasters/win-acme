@@ -28,9 +28,9 @@ namespace PKISharp.WACS.Plugins.Base.Factories
             WithDefault(false).
             DefaultAsNull();
 
-        public abstract Task<TOptions> Aquire(IInputService inputService, RunLevel runLevel);
+        public abstract Task<TOptions> Acquire(IInputService inputService, RunLevel runLevel);
         public abstract Task<TOptions> Default();
-        async Task<CsrPluginOptions?> IPluginOptionsFactory<CsrPluginOptions>.Aquire(IInputService inputService, RunLevel runLevel) => await Aquire(inputService, runLevel);
+        async Task<CsrPluginOptions?> IPluginOptionsFactory<CsrPluginOptions>.Acquire(IInputService inputService, RunLevel runLevel) => await Acquire(inputService, runLevel);
         async Task<CsrPluginOptions?> IPluginOptionsFactory<CsrPluginOptions>.Default() => await Default();
     }
 }

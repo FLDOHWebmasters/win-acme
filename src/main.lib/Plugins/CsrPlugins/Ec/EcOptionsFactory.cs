@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Plugins.CsrPlugins
     {
         public EcOptionsFactory(ArgumentsInputService arguments) : base(arguments) { }
 
-        public override Task<EcOptions> Aquire(IInputService inputService, RunLevel runLevel) => Default();
+        public override Task<EcOptions> Acquire(IInputService inputService, RunLevel runLevel) => Default();
 
         public override async Task<EcOptions> Default()
         {

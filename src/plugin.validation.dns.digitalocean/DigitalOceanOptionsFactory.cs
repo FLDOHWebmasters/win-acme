@@ -20,7 +20,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             GetProtectedString<DigitalOceanArguments>(a => a.ApiToken).
             Required();
 
-        public override async Task<DigitalOceanOptions> Aquire(Target target, IInputService inputService, RunLevel runLevel)
+        public override async Task<DigitalOceanOptions> Acquire(Target target, IInputService inputService, RunLevel runLevel)
         {
             return new DigitalOceanOptions
             {

@@ -124,12 +124,12 @@ namespace PKISharp.WACS.Services
             CommandLineAttribute metaData, 
             Func<ArgumentResultInputArguments<TResult>, Task<TResult?>> input, 
             ILogService log,
-            bool allowEmtpy = false)
+            bool allowEmpty = false)
         {
             _argumentValue = baseValue;
             _metaData = metaData;
             _inputFunction = input;
-            _allowEmpty = allowEmtpy;
+            _allowEmpty = allowEmpty;
             _log = log;
         }
 

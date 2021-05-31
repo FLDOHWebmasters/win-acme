@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         private ArgumentResult<string?> Common => _arguments.
             GetString<ManualArguments>(x => x.CommonName);
 
-        public override async Task<ManualOptions?> Aquire(IInputService inputService, RunLevel runLevel) => 
+        public override async Task<ManualOptions?> Acquire(IInputService inputService, RunLevel runLevel) => 
             Create(await Host.Interactive(inputService).GetValue());
 
         public override async Task<ManualOptions?> Default()

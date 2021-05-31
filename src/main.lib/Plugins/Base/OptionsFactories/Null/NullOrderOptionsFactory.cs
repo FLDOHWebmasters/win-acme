@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Plugins.Base.Factories.Null
         int IPluginOptionsFactory.Order => int.MaxValue;
         (bool, string?) IPluginOptionsFactory.Disabled => (false, null);
         bool IPluginOptionsFactory.Match(string name) => false;
-        Task<OrderPluginOptions?> IPluginOptionsFactory<OrderPluginOptions>.Aquire(IInputService inputService, RunLevel runLevel) => Task.FromResult<OrderPluginOptions?>(null);
+        Task<OrderPluginOptions?> IPluginOptionsFactory<OrderPluginOptions>.Acquire(IInputService inputService, RunLevel runLevel) => Task.FromResult<OrderPluginOptions?>(null);
         Task<OrderPluginOptions?> IPluginOptionsFactory<OrderPluginOptions>.Default() => Task.FromResult<OrderPluginOptions?>(null);
         bool IOrderPluginOptionsFactory.CanProcess(Target target) => false;
     }

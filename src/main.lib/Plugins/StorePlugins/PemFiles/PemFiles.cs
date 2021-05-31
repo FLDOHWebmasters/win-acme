@@ -13,6 +13,12 @@ namespace PKISharp.WACS.Plugins.StorePlugins
 {
     internal class PemFiles : IStorePlugin
     {
+        public const string CertFilenameSuffix = "-crt";
+        public const string ChainFilenameSuffix = "-chain";
+        public const string ChainOnlyFilenameSuffix = "-chain-only";
+        public const string KeyFilenameSuffix = "-key";
+        public const string FilenameExtension = ".pem";
+
         private readonly ILogService _log;
         private readonly PemService _pemService;
         private readonly string _path;
@@ -30,6 +36,8 @@ namespace PKISharp.WACS.Plugins.StorePlugins
 
         public static string? DefaultPassword(ISettingsService settings) 
             => settings.Store.PemFiles?.DefaultPassword;
+
+        public static string Filename(CertificateInfo input) => PfxFile.Filename(input.CommonName.Value, "");
 
         public PemFiles(
             ILogService log, ISettingsService settings,
@@ -62,18 +70,17 @@ namespace PKISharp.WACS.Plugins.StorePlugins
 
         public async Task Save(CertificateInfo input)
         {
-            
             _log.Information("Exporting .pem files to {folder}", _path);
             try
             {
                 // Determine name
-                var name = input.CommonName.Value.Replace("*", "_");
+                var name = Filename(input);
 
                 // Base certificate
                 var certificateExport = input.Certificate.Export(X509ContentType.Cert);
                 var certString = _pemService.GetPem("CERTIFICATE", certificateExport);
                 var chainString = "";
-                await File.WriteAllTextAsync(Path.Combine(_path, $"{name}-crt.pem"), certString);
+                await File.WriteAllTextAsync(Path.Combine(_path, $"{name}{CertFilenameSuffix}{FilenameExtension}"), certString);
 
                 // Rest of the chain
                 foreach (var chainCertificate in input.Chain)
@@ -88,8 +95,8 @@ namespace PKISharp.WACS.Plugins.StorePlugins
                 }
 
                 // Save complete chain
-                await File.WriteAllTextAsync(Path.Combine(_path, $"{name}-chain.pem"), certString + chainString);
-                await File.WriteAllTextAsync(Path.Combine(_path, $"{name}-chain-only.pem"), chainString);
+                await File.WriteAllTextAsync(Path.Combine(_path, $"{name}{ChainFilenameSuffix}{FilenameExtension}"), certString + chainString);
+                await File.WriteAllTextAsync(Path.Combine(_path, $"{name}{ChainOnlyFilenameSuffix}{FilenameExtension}"), chainString);
                 input.StoreInfo.TryAdd(
                     GetType(),
                     new StoreInfo()
@@ -117,7 +124,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
                     }
                     if (!string.IsNullOrEmpty(pkPem))
                     {
-                        await File.WriteAllTextAsync(Path.Combine(_path, $"{name}-key.pem"), pkPem);
+                        await File.WriteAllTextAsync(Path.Combine(_path, $"{name}{KeyFilenameSuffix}{FilenameExtension}"), pkPem);
                     }
                     else
                     {

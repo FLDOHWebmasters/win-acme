@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             Validate(x => Task.FromResult(x.ValidPath(_log)), "invalid path").
             DefaultAsNull();
 
-        public override async Task<CentralSslOptions?> Aquire(IInputService input, RunLevel runLevel)
+        public override async Task<CentralSslOptions?> Acquire(IInputService input, RunLevel runLevel)
         {
             var path = await Path.Interactive(input, "Store path").GetValue();
             var password = await PfxPassword.Interactive(input, "Password for the .pfx file").GetValue();
