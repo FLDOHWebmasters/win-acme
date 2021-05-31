@@ -12,21 +12,21 @@ using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Services;
 
-namespace PKISharp.WACS.Clients.CitrixADC
+namespace PKISharp.WACS.Clients
 {
-    internal class CitrixADCClient
+    public class CitrixAdcClient
     {
         public const string DefaultNitroHost = "172.21.22.240";
         public const string DefaultNitroUsername = "cert_tester";
-        public const string DefaultNitroPasswordProtected = "nitro_v1_pass";
+        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAXj6+Bt7VKkOOLLDdbNefigQAAAACAAAAAAADZgAAwAAAABAAAADTdIwROnrlL5seQGfwpV7UAAAAAASAAACgAAAAEAAAAM9YL/V2MA7e4rmN4wg68h8YAAAAALe+yH4Ge1zX1xy6VG+81FES3a1AOTqeFAAAAGUwzmQkitkeceD+yzq98ttLVQL1";
         public const string DefaultPemFilesPath = @"D:\CertificateManagement\store";
-        public const string DefaultPemFilesPassword = "p@S5w0rD";
+        public const string DefaultPemFilesPassword = "fo0b@rB42";
 
         private readonly ILogService _log;
         private readonly string _pemFilesPath;
         private readonly string _pemFilesPassword;
 
-        public CitrixADCClient(ILogService log, ISettingsService settings, PemFilesOptions pemOptions)
+        public CitrixAdcClient(ILogService log, ISettingsService settings, PemFilesOptions pemOptions)
         {
             _log = log;
             var pemFilesPath = pemOptions?.Path;
