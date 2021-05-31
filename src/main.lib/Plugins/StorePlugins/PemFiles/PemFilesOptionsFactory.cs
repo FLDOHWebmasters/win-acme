@@ -57,5 +57,4 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             };
         }
     }
-
 }

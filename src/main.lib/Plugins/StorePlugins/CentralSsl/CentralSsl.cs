@@ -64,7 +64,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             }
         }
 
-        private string PathForIdentifier(Identifier identifier) => Path.Combine(_path, $"{identifier.Value.Replace("*", "_")}.pfx");
+        private string PathForIdentifier(Identifier identifier) => Path.Combine(_path, PfxFile.Filename(identifier.Value));
 
         public async Task Save(CertificateInfo input)
         {
