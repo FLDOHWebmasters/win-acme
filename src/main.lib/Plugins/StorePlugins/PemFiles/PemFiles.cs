@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.StorePlugins
 {
-    internal class PemFiles : IStorePlugin
+    public class PemFiles : IStorePlugin
     {
         public const string CertFilenameSuffix = "-crt";
         public const string ChainFilenameSuffix = "-chain";

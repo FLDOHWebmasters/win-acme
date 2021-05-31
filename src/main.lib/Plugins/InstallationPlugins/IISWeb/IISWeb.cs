@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    internal class IISWeb : IInstallationPlugin
+    public class IISWeb : IInstallationPlugin
     {
         private readonly ILogService _log;
         private readonly IIISClient _iisClient;
