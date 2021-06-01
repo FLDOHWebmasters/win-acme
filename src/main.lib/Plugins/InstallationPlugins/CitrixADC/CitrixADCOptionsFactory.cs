@@ -9,9 +9,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
     public class CitrixADCOptionsFactory : InstallationPluginFactory<CitrixADC, CitrixADCOptions>
     {
-        private static string ClearPrefix => ProtectedString.ClearPrefix;
-        private static string EncryptedPrefix => ProtectedString.EncryptedPrefix;
-
         public override int Order => 6;
         private readonly CitrixAdcClient _adcClient;
         private readonly ArgumentsInputService _arguments;
@@ -29,8 +26,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         private ArgumentResult<string?> NitroUser => _arguments.GetString<CitrixADCArguments>(x => x.NitroUsername)
             .WithDefault(CitrixAdcClient.DefaultNitroUsername).DefaultAsNull();
 
-        private ArgumentResult<string?> NitroPass => _arguments
-            .GetString<CitrixADCArguments>(x => (x.NitroPassword != null && x.NitroPassword.StartsWith(EncryptedPrefix) ? "" : ClearPrefix) + x.NitroPassword)
+        private ArgumentResult<string?> NitroPass => _arguments.GetString<CitrixADCArguments>(x => x.NitroPassword)
             .WithDefault(CitrixAdcClient.DefaultNitroPasswordProtected).DefaultAsNull();
 
         public override async Task<CitrixADCOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
@@ -39,7 +35,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             {
                 NitroHost = await NitroHost.Interactive(input).GetValue(),
                 NitroUser = await NitroUser.Interactive(input).GetValue(),
-                NitroPass = await NitroPass.Interactive(input).GetValue(),
+                NitroPass = ProtectedString.ClearPrefix + await NitroPass.Interactive(input).GetValue(),
             };
         }
 
