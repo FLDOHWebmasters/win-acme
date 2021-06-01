@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Microsoft.Web.Administration;
 using Microsoft.Win32;
+using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.InstallationPlugins;
 using PKISharp.WACS.Plugins.StorePlugins;
@@ -21,15 +22,15 @@ namespace PKISharp.WACS.Clients.IIS
         public Version Version { get; set; }
         [SuppressMessage("Code Quality", "IDE0069:Disposable fields should be disposed", Justification = "Actually is disposed")]
         private readonly ILogService _log;
-        private readonly IISWebOptions? _options;
+        private readonly string _iisHost;
         private ServerManager? _serverManager;
         private List<IISSiteWrapper>? _webSites = null;
         private List<IISSiteWrapper>? _ftpSites = null;
 
-        public IISClient(ILogService log, IISWebOptions options)
+        public IISClient(ILogService log, ArgumentsParser arguments)
         {
             _log = log;
-            _options = options;
+            _iisHost = arguments.GetArguments<IISWebArguments>()?.IISHost ?? "";
             Version = GetIISVersion();
         }
 
@@ -46,8 +47,8 @@ namespace PKISharp.WACS.Clients.IIS
                     {
                         try
                         {
-                            var local = string.IsNullOrWhiteSpace(_options?.Host);
-                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(_options!.Host!);
+                            var local = string.IsNullOrWhiteSpace(_iisHost);
+                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(_iisHost);
                         } 
                         catch
                         {
