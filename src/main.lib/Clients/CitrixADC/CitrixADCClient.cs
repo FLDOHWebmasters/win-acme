@@ -12,6 +12,7 @@ using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Services;
+using PKISharp.WACS.Services.Serialization;
 
 namespace PKISharp.WACS.Clients.CitrixADC
 {
@@ -47,6 +48,7 @@ namespace PKISharp.WACS.Clients.CitrixADC
             host ??= DefaultNitroHost;
             username ??= DefaultNitroUsername;
             password ??= DefaultNitroPasswordProtected;
+            string clearPassword = new ProtectedString(password, _log).Value!;
             var apiUrl = $"https://{host}/nitro/v1/config";
 
             // read the private key and cert chain files
@@ -56,7 +58,7 @@ namespace PKISharp.WACS.Clients.CitrixADC
             // initialize the HTTP client
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("X-NITRO-USER", username);
-            httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", password);
+            httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", clearPassword);
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // send the private key and cert chain files

@@ -10,7 +10,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public string? NitroUser { get; set; }
         public string? NitroPass { get; set; }
 
-        public override string Name => "Citrix ADC";
-        public override string Description => "Update a certificate via the Nitro v1 API";
+        public override string Name => "ADC";
+        public override string Description => "Update a certificate via the Citrix ADC Nitro v1 API";
     }
 }

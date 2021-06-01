@@ -3,6 +3,7 @@ using PKISharp.WACS.Clients.CitrixADC;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.Base.Factories;
 using PKISharp.WACS.Services;
+using PKISharp.WACS.Services.Serialization;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
@@ -34,7 +35,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             {
                 NitroHost = await NitroHost.Interactive(input).GetValue(),
                 NitroUser = await NitroUser.Interactive(input).GetValue(),
-                NitroPass = await NitroPass.Interactive(input).GetValue(),
+                NitroPass = ProtectedString.ClearPrefix + await NitroPass.Interactive(input).GetValue(),
             };
         }
 
