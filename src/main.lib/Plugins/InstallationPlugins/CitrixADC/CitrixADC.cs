@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using PKISharp.WACS.Clients;
 using PKISharp.WACS.DomainObjects;
@@ -10,7 +9,7 @@ using PKISharp.WACS.Services.Serialization;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    internal class CitrixADC : IInstallationPlugin
+    public class CitrixADC : IInstallationPlugin
     {
         private readonly ILogService _log;
         private readonly CitrixADCOptions _options;

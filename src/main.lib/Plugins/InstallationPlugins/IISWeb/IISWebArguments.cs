@@ -4,11 +4,11 @@ using PKISharp.WACS.Configuration.Arguments;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    internal class IISWebArguments : BaseArguments
+    public class IISWebArguments : BaseArguments
     {
-        private const string SslPortParameterName = "sslport";
-        private const string SslIpParameterName = "sslipaddress";
-        private const string IISHostParameterName = "iishost";
+        public const string SslPortParameterName = "sslport";
+        public const string SslIpParameterName = "sslipaddress";
+        public const string IISHostParameterName = "iishost";
 
         public override string Name => "IIS Web plugin";
         public override string Group => "Installation";

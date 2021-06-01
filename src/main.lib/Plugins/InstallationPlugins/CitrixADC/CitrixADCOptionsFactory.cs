@@ -7,7 +7,7 @@ using PKISharp.WACS.Services.Serialization;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    internal class CitrixADCOptionsFactory : InstallationPluginFactory<CitrixADC, CitrixADCOptions>
+    public class CitrixADCOptionsFactory : InstallationPluginFactory<CitrixADC, CitrixADCOptions>
     {
         private static string ClearPrefix => ProtectedString.ClearPrefix;
         private static string EncryptedPrefix => ProtectedString.EncryptedPrefix;

@@ -5,11 +5,11 @@ using PKISharp.WACS.Configuration.Arguments;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    internal class CitrixADCArguments : BaseArguments
+    public class CitrixADCArguments : BaseArguments
     {
-        private const string NitroIpAddressParameterName = "nitroipaddress";
-        private const string NitroUsernameParameterName = "nitrousername";
-        private const string NitroPasswordParameterName = "nitropassword";
+        public const string NitroIpAddressParameterName = "nitroipaddress";
+        public const string NitroUsernameParameterName = "nitrousername";
+        public const string NitroPasswordParameterName = "nitropassword";
 
         public override string Name => "Citrix ADC plugin";
         public override string Group => "Installation";
