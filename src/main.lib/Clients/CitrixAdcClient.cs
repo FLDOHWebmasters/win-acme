@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Services;
@@ -26,10 +27,10 @@ namespace PKISharp.WACS.Clients
         private readonly string _pemFilesPath;
         private readonly string _pemFilesPassword;
 
-        public CitrixAdcClient(ILogService log, ISettingsService settings, PemFilesOptions pemOptions)
+        public CitrixAdcClient(ILogService log, ISettingsService settings, ArgumentsParser arguments)
         {
             _log = log;
-            var pemFilesPath = pemOptions?.Path;
+            var pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
             if (string.IsNullOrWhiteSpace(pemFilesPath))
             {
                 pemFilesPath = PemFiles.DefaultPath(settings);

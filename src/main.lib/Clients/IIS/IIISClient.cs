@@ -17,6 +17,7 @@ namespace PKISharp.WACS.Clients.IIS
 
         IIISSite GetFtpSite(long id);
         IIISSite GetWebSite(long id);
+        IIISSite GetWebSite(string name);
         void UpdateFtpSite(long siteId, CertificateInfo newCertificate, CertificateInfo? oldCertificate);
     }
 
@@ -30,7 +31,7 @@ namespace PKISharp.WACS.Clients.IIS
         new IEnumerable<TSite> WebSites { get; }
         new TSite GetFtpSite(long id);
         new TSite GetWebSite(long id);
-
+        new TSite GetWebSite(string name);
     }
 
     public interface IIISSite

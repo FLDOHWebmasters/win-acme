@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Microsoft.Web.Administration;
 using Microsoft.Win32;
+using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.InstallationPlugins;
 using PKISharp.WACS.Plugins.StorePlugins;
@@ -21,15 +22,15 @@ namespace PKISharp.WACS.Clients.IIS
         public Version Version { get; set; }
         [SuppressMessage("Code Quality", "IDE0069:Disposable fields should be disposed", Justification = "Actually is disposed")]
         private readonly ILogService _log;
-        private readonly IISWebOptions? _options;
+        private readonly ArgumentsParser _arguments;
         private ServerManager? _serverManager;
         private List<IISSiteWrapper>? _webSites = null;
         private List<IISSiteWrapper>? _ftpSites = null;
 
-        public IISClient(ILogService log, IISWebOptions options)
+        public IISClient(ILogService log, ArgumentsParser arguments)
         {
             _log = log;
-            _options = options;
+            _arguments = arguments;
             Version = GetIISVersion();
         }
 
@@ -46,8 +47,9 @@ namespace PKISharp.WACS.Clients.IIS
                     {
                         try
                         {
-                            var local = string.IsNullOrWhiteSpace(_options?.Host);
-                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(_options!.Host!);
+                            var iisWebArgs = _arguments.GetArguments<IISWebArguments>();
+                            var local = string.IsNullOrWhiteSpace(iisWebArgs?.IISHost);
+                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(iisWebArgs!.IISHost!);
                         } 
                         catch
                         {
@@ -103,6 +105,7 @@ namespace PKISharp.WACS.Clients.IIS
         IEnumerable<IIISSite> IIISClient.FtpSites => FtpSites;
 
         IIISSite IIISClient.GetWebSite(long id) => GetWebSite(id);
+        IIISSite IIISClient.GetWebSite(string name) => GetWebSite(name);
 
         IIISSite IIISClient.GetFtpSite(long id) => GetFtpSite(id);
 
@@ -175,6 +178,18 @@ namespace PKISharp.WACS.Clients.IIS
                 }
             }
             throw new Exception($"Unable to find IIS SiteId #{id}");
+        }
+
+        public IISSiteWrapper GetWebSite(string name)
+        {
+            foreach (var site in WebSites)
+            {
+                if (site.Site.Name == name)
+                {
+                    return site;
+                }
+            }
+            throw new Exception($"Unable to find IIS Site Name {name}");
         }
 
         public IISSiteWrapper GetFtpSite(long id)
