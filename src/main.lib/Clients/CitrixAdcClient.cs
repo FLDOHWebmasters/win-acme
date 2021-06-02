@@ -5,10 +5,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PKISharp.WACS.Configuration;
+using PKISharp.WACS.Context;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Services;
@@ -26,8 +29,9 @@ namespace PKISharp.WACS.Clients
         private readonly ILogService _log;
         private readonly string _pemFilesPath;
         private readonly string _pemFilesPassword;
+        private readonly bool _isDevelopmentEnvironment;
 
-        public CitrixAdcClient(ILogService log, ISettingsService settings, ArgumentsParser arguments)
+        public CitrixAdcClient(ILogService log, IEnvironment env, ISettingsService settings, ArgumentsParser arguments)
         {
             _log = log;
             var pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
@@ -37,6 +41,7 @@ namespace PKISharp.WACS.Clients
             }
             _pemFilesPath = pemFilesPath ?? DefaultPemFilesPath;
             _pemFilesPassword = settings.Store.PemFiles?.DefaultPassword ?? DefaultPemFilesPassword;
+            _isDevelopmentEnvironment = env.IsDevelopment;
         }
 
         public async Task UpdateCertificate(CertificateInfo input, string? site, string? host, string? username, string? password)
@@ -53,8 +58,15 @@ namespace PKISharp.WACS.Clients
             var keyPem = await FileBytes($"{pemFilesName}{PemFiles.KeyFilenameSuffix}{PemFiles.FilenameExtension}");
             var chainPem = await FileBytes($"{pemFilesName}{PemFiles.ChainFilenameSuffix}{PemFiles.FilenameExtension}");
 
+            // in development, allow all certificates (self-signed, expired, etc.)
+            using var handler = new HttpClientHandler();
+            if (_isDevelopmentEnvironment)
+            {
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            }
+
             // initialize the HTTP client
-            using var httpClient = new HttpClient();
+            using var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("X-NITRO-USER", username);
             httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", password);
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
