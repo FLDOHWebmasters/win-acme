@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PKISharp.WACS.Configuration
 {
-    public class ArgumentsParser
+    public class ArgumentsParser : IArgumentsParser
     {
         private readonly ILogService _log;
         private readonly string[] _args;
@@ -96,12 +96,12 @@ namespace PKISharp.WACS.Configuration
             return false;
         }
 
-        internal IEnumerable<string> SecretArguments => _arguments.Where(x => x.Secret).Select(x => x.ArgumentName);
+        public IEnumerable<string> SecretArguments => _arguments.Where(x => x.Secret).Select(x => x.ArgumentName);
 
         /// <summary>
         /// Show current command line
         /// </summary>
-        internal void ShowCommandLine()
+        public void ShowCommandLine()
         {
             try
             {
@@ -133,7 +133,7 @@ namespace PKISharp.WACS.Configuration
         /// <summary>
         /// Show command line arguments for the help function
         /// </summary>
-        internal void ShowArguments()
+        public void ShowArguments()
         {
             Console.WriteLine();
             foreach (var providerGroup in _providers.GroupBy(p => p.Group).OrderBy(g => g.Key))

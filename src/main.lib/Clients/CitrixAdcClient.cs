@@ -31,7 +31,7 @@ namespace PKISharp.WACS.Clients
         private readonly string _pemFilesPassword;
         private readonly bool _isDevelopmentEnvironment;
 
-        public CitrixAdcClient(ILogService log, IEnvironment env, ISettingsService settings, ArgumentsParser arguments)
+        public CitrixAdcClient(ILogService log, IEnvironment env, ISettingsService settings, IArgumentsParser arguments)
         {
             _log = log;
             var pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;

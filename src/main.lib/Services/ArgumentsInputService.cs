@@ -10,13 +10,13 @@ namespace PKISharp.WACS.Services
     public partial class ArgumentsInputService
     {
         private readonly ILogService _log;
-        private readonly ArgumentsParser _arguments;
+        private readonly IArgumentsParser _arguments;
         private readonly IInputService _input;
         private readonly SecretServiceManager _secretService;
 
         public ArgumentsInputService(
             ILogService log,
-            ArgumentsParser arguments,
+            IArgumentsParser arguments,
             IInputService input,
             SecretServiceManager secretService)
         {

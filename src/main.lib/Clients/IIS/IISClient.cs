@@ -22,12 +22,12 @@ namespace PKISharp.WACS.Clients.IIS
         public Version Version { get; set; }
         [SuppressMessage("Code Quality", "IDE0069:Disposable fields should be disposed", Justification = "Actually is disposed")]
         private readonly ILogService _log;
-        private readonly ArgumentsParser _arguments;
+        private readonly IArgumentsParser _arguments;
         private ServerManager? _serverManager;
         private List<IISSiteWrapper>? _webSites = null;
         private List<IISSiteWrapper>? _ftpSites = null;
 
-        public IISClient(ILogService log, ArgumentsParser arguments)
+        public IISClient(ILogService log, IArgumentsParser arguments)
         {
             _log = log;
             _arguments = arguments;

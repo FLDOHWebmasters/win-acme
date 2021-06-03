@@ -44,7 +44,7 @@ namespace PKISharp.WACS.Clients.Acme
         private readonly ILogService _log;
         private readonly IInputService _input;
         private readonly ISettingsService _settings;
-        private readonly ArgumentsParser _arguments;
+        private readonly IArgumentsParser _arguments;
         private readonly IProxyService _proxyService;
         private readonly ZeroSsl _zeroSsl;
         private readonly AccountArguments _accountArguments;
@@ -55,7 +55,7 @@ namespace PKISharp.WACS.Clients.Acme
 
         public AcmeClient(
             IInputService inputService,
-            ArgumentsParser arguments,
+            IArgumentsParser arguments,
             ILogService log,
             ISettingsService settings,
             AccountManager accountManager,

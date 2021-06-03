@@ -19,10 +19,10 @@ namespace PKISharp.WACS.Host
     {
         private readonly ILogService _log;
         private readonly IInputService _input;
-        private readonly ArgumentsParser _arguments;
+        private readonly IArgumentsParser _arguments;
         private readonly IRenewalStore _renewalStore;
         private readonly ISettingsService _settings;
-        private readonly ILifetimeScope _container;
+        private readonly IComponentContext _container;
         private readonly MainArguments _args;
         private readonly RenewalManager _renewalManager;
         private readonly RenewalCreator _renewalCreator;
@@ -33,7 +33,7 @@ namespace PKISharp.WACS.Host
         private readonly SecretServiceManager _secretServiceManager;
 
         public Wacs(
-            IContainer container, 
+            IComponentContext container, 
             IAutofacBuilder scopeBuilder,
             ExceptionHandler exceptionHandler,
             ILogService logService,
@@ -64,7 +64,7 @@ namespace PKISharp.WACS.Host
                 }
             }
 
-            _arguments = _container.Resolve<ArgumentsParser>();
+            _arguments = _container.Resolve<IArgumentsParser>();
             _arguments.ShowCommandLine();
             _args = _arguments.GetArguments<MainArguments>()!;
             _input = _container.Resolve<IInputService>();
@@ -115,12 +115,7 @@ namespace PKISharp.WACS.Host
             {
                 try
                 {
-                    if (_args.Import)
-                    {
-                        await Import(RunLevel.Unattended);
-                        await CloseDefault();
-                    }
-                    else if (_args.List)
+                    if (_args.List)
                     {
                         await _renewalManager.ShowRenewalsUnattended();
                         await CloseDefault();
@@ -299,11 +294,6 @@ namespace PKISharp.WACS.Host
                     () => UpdateAccount(RunLevel.Interactive), 
                     "ACME account details", "A"),
                 Choice.Create<Func<Task>>(
-                    () => Import(RunLevel.Interactive | RunLevel.Advanced), 
-                    "Import scheduled renewals from WACS/LEWS 1.9.x", "I", 
-                    disabled: (!_userRoleService.IsAdmin,
-                    "Run as an administrator to allow search for legacy renewals.")),
-                Choice.Create<Func<Task>>(
                     () => Encrypt(RunLevel.Interactive), 
                     "Encrypt/decrypt configuration", "M"),
                 Choice.Create<Func<Task>>(
@@ -316,30 +306,6 @@ namespace PKISharp.WACS.Host
             };
             var chosen = await _input.ChooseFromMenu("Please choose from the menu", options);
             await chosen.Invoke();
-        }
-
-        /// <summary>
-        /// Load renewals from 1.9.x
-        /// </summary>
-        private async Task Import(RunLevel runLevel)
-        {
-            var importUri = !string.IsNullOrEmpty(_args.ImportBaseUri) ? 
-                new Uri(_args.ImportBaseUri) : 
-                _settings.Acme.DefaultBaseUriImport;
-            if (runLevel.HasFlag(RunLevel.Interactive))
-            {
-                var alt = await _input.RequestString($"Importing renewals for {importUri}, enter to accept or type an alternative");
-                if (!string.IsNullOrEmpty(alt))
-                {
-                    importUri = new Uri(alt);
-                }
-            }
-            if (importUri != null)
-            {
-                using var scope = _scopeBuilder.Legacy(_container, importUri, _settings.BaseUri);
-                var importer = scope.Resolve<Importer>();
-                await importer.Import(runLevel);
-            }
         }
 
         /// <summary>
