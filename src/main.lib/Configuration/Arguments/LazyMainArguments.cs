@@ -3,69 +3,75 @@ using System.Linq;
 
 namespace PKISharp.WACS.Configuration.Arguments
 {
-    public class LazyMainArguments : MainArguments
+    public class LazyMainArguments : IMainArguments
     {
         private readonly IArgumentsParser _parser;
-        bool validated;
+        private MainArguments? _args;
 
         public LazyMainArguments(IArgumentsParser parser) => _parser = parser;
 
-        private T? LazyInitialize<T>(Func<T> get)
+        private void IfInitialized(Action<MainArguments> set)
+        {
+            if (_args != null)
+            {
+                set(_args);
+            }
+        }
+
+        private T? LazyInitialize<T>(Func<MainArguments, T> get)
         {
             lock (_parser)
             {
-                if (!validated)
+                if (_args == null)
                 {
                     if (!_parser.Validate())
                     {
                         return default;
                     }
-                    var args = _parser.GetArguments<MainArguments>();
-                    foreach (var prop in typeof(MainArguments).GetProperties().Where(x => x.CanWrite))
-                    {
-                        prop.SetValue(this, prop.GetValue(args, null), null);
-                    }
-                    validated = true;
+                    _args = _parser.GetArguments<MainArguments>()!;
                 }
             }
-            return get();
+            return get(_args!);
         }
 
-        public override string BaseUri { get => LazyInitialize(() => base.BaseUri)!; set => base.BaseUri = value; }
-        public override bool Import { get => LazyInitialize(() => base.Import); set => base.Import = value; }
-        public override string? ImportBaseUri { get => LazyInitialize(() => base.ImportBaseUri); set => base.ImportBaseUri = value; }
-        public override bool Test { get => LazyInitialize(() => base.Test); set => base.Test = value; }
-        public override bool Verbose { get => LazyInitialize(() => base.Verbose); set => base.Verbose = value; }
-        public override bool Help { get => LazyInitialize(() => base.Help); set => base.Help = value; }
-        public override bool Version { get => LazyInitialize(() => base.Version); set => base.Version = value; }
+        public bool HasFilter => LazyInitialize(args => args.HasFilter);
+
+        // Basic options
+        public string BaseUri { get => LazyInitialize(args => args.BaseUri)!; set => IfInitialized(args => args.BaseUri = value); }
+        public bool Import { get => LazyInitialize(args => args.Import); set => IfInitialized(args => args.Import = value); }
+        public string? ImportBaseUri { get => LazyInitialize(args => args.ImportBaseUri); set => IfInitialized(args => args.ImportBaseUri = value); }
+        public bool Test { get => LazyInitialize(args => args.Test); set => IfInitialized(args => args.Test = value); }
+        public bool Verbose { get => LazyInitialize(args => args.Verbose); set => IfInitialized(args => args.Verbose = value); }
+        public bool Help { get => LazyInitialize(args => args.Help); set => IfInitialized(args => args.Help = value); }
+        public bool Version { get => LazyInitialize(args => args.Version); set => IfInitialized(args => args.Version = value); }
 
         // Renewal
-        public override bool Renew { get => LazyInitialize(() => base.Renew); set => base.Renew = value; }
-        public override bool Force { get => LazyInitialize(() => base.Force); set => base.Force = value; }
+        public bool Renew { get => LazyInitialize(args => args.Renew); set => IfInitialized(args => args.Renew = value); }
+        public bool Force { get => LazyInitialize(args => args.Force); set => IfInitialized(args => args.Force = value); }
 
         // Commands
-        public override bool Cancel { get => LazyInitialize(() => base.Cancel); set => base.Cancel = value; }
-        public override bool Revoke { get => LazyInitialize(() => base.Revoke); set => base.Revoke = value; }
-        public override bool List { get => LazyInitialize(() => base.List); set => base.List = value; }
-        public override bool Encrypt { get => LazyInitialize(() => base.Encrypt); set => base.Encrypt = value; }
+        public bool Cancel { get => LazyInitialize(args => args.Cancel); set => IfInitialized(args => args.Cancel = value); }
+        public bool Revoke { get => LazyInitialize(args => args.Revoke); set => IfInitialized(args => args.Revoke = value); }
+        public bool List { get => LazyInitialize(args => args.List); set => IfInitialized(args => args.List = value); }
+        public bool Encrypt { get => LazyInitialize(args => args.Encrypt); set => IfInitialized(args => args.Encrypt = value); }
 
         // Targeting
-        public override string? Id { get => LazyInitialize(() => base.Id); set => base.Id = value; }
-        public override string? FriendlyName { get => LazyInitialize(() => base.FriendlyName); set => base.FriendlyName = value; }
-        public override string? Target { get => LazyInitialize(() => base.Target); set => base.Target = value; }
-        public override string? Source { get => LazyInitialize(() => base.Source); set => base.Source = value; }
-        public override string? Validation { get => LazyInitialize(() => base.Validation); set => base.Validation = value; }
-        public override string? ValidationMode { get => LazyInitialize(() => base.ValidationMode); set => base.ValidationMode = value; }
-        public override string? Order { get => LazyInitialize(() => base.Order); set => base.Order = value; }
-        public override string? Csr { get => LazyInitialize(() => base.Csr); set => base.Csr = value; }
-        public override string? Store { get => LazyInitialize(() => base.Store); set => base.Store = value; }
-        public override string? Installation { get => LazyInitialize(() => base.Installation); set => base.Installation = value; }
+        public string? Id { get => LazyInitialize(args => args.Id); set => IfInitialized(args => args.Id = value); }
+        public string? FriendlyName { get => LazyInitialize(args => args.FriendlyName); set => IfInitialized(args => args.FriendlyName = value); }
+        public string? Target { get => LazyInitialize(args => args.Target); set => IfInitialized(args => args.Target = value); }
+        public string? Source { get => LazyInitialize(args => args.Source); set => IfInitialized(args => args.Source = value); }
+        public string? Validation { get => LazyInitialize(args => args.Validation); set => IfInitialized(args => args.Validation = value); }
+        public string? ValidationMode { get => LazyInitialize(args => args.ValidationMode); set => IfInitialized(args => args.ValidationMode = value); }
+        public string? Order { get => LazyInitialize(args => args.Order); set => IfInitialized(args => args.Order = value); }
+        public string? Csr { get => LazyInitialize(args => args.Csr); set => IfInitialized(args => args.Csr = value); }
+        public string? Store { get => LazyInitialize(args => args.Store); set => IfInitialized(args => args.Store = value); }
+        public string? Installation { get => LazyInitialize(args => args.Installation); set => IfInitialized(args => args.Installation = value); }
 
         // Misc
-        public override bool CloseOnFinish { get => LazyInitialize(() => base.CloseOnFinish); set => base.CloseOnFinish = value; }
-        public override bool HideHttps { get => LazyInitialize(() => base.HideHttps); set => base.HideHttps = value; }
-        public override bool NoTaskScheduler { get => LazyInitialize(() => base.NoTaskScheduler); set => base.NoTaskScheduler = value; }
-        public override bool UseDefaultTaskUser { get => LazyInitialize(() => base.UseDefaultTaskUser); set => base.UseDefaultTaskUser = value; }
-        public override bool SetupTaskScheduler { get => LazyInitialize(() => base.SetupTaskScheduler); set => base.SetupTaskScheduler = value; }
+        public bool CloseOnFinish { get => LazyInitialize(args => args.CloseOnFinish); set => IfInitialized(args => args.CloseOnFinish = value); }
+        public bool HideHttps { get => LazyInitialize(args => args.HideHttps); set => IfInitialized(args => args.HideHttps = value); }
+        public bool NoTaskScheduler { get => LazyInitialize(args => args.NoTaskScheduler); set => IfInitialized(args => args.NoTaskScheduler = value); }
+        public bool UseDefaultTaskUser { get => LazyInitialize(args => args.UseDefaultTaskUser); set => IfInitialized(args => args.UseDefaultTaskUser = value); }
+        public bool SetupTaskScheduler { get => LazyInitialize(args => args.SetupTaskScheduler); set => IfInitialized(args => args.SetupTaskScheduler = value); }
     }
 }

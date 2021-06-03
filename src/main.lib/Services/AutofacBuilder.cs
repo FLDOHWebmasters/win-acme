@@ -31,12 +31,12 @@ namespace PKISharp.WACS.Services
             return main.BeginLifetimeScope(builder =>
             {
                 var realSettings = main.Resolve<ISettingsService>();
-                var realArguments = main.Resolve<MainArguments>();
+                var realArguments = main.Resolve<IMainArguments>();
    
                 builder.Register(c => new MainArguments { 
                         BaseUri = fromUri.ToString()
                     }).
-                    As<MainArguments>().
+                    As<IMainArguments>().
                     SingleInstance();
 
                 builder.RegisterType<LegacySettingsService>().
@@ -46,7 +46,7 @@ namespace PKISharp.WACS.Services
                 builder.RegisterType<LegacyTaskSchedulerService>();
 
                 builder.RegisterType<TaskSchedulerService>().
-                    WithParameter(new TypedParameter(typeof(MainArguments), realArguments)).
+                    WithParameter(new TypedParameter(typeof(IMainArguments), realArguments)).
                     WithParameter(new TypedParameter(typeof(ISettingsService), realSettings)).
                     SingleInstance();
 

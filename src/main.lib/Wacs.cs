@@ -23,7 +23,7 @@ namespace PKISharp.WACS.Host
         private readonly IRenewalStore _renewalStore;
         private readonly ISettingsService _settings;
         private readonly IComponentContext _container;
-        private readonly MainArguments _args;
+        private readonly IMainArguments _args;
         private readonly RenewalManager _renewalManager;
         private readonly RenewalCreator _renewalCreator;
         private readonly IAutofacBuilder _scopeBuilder;

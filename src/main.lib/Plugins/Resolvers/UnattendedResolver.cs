@@ -20,11 +20,11 @@ namespace PKISharp.WACS.Plugins.Resolvers
     public class UnattendedResolver : IResolver
     {
         private readonly IPluginService _plugins;
-        protected readonly MainArguments _arguments;
+        protected readonly IMainArguments _arguments;
         protected readonly ISettingsService _settings;
         private readonly ILogService _log;
 
-        public UnattendedResolver(ILogService log, ISettingsService settings, MainArguments arguments, IPluginService pluginService)
+        public UnattendedResolver(ILogService log, ISettingsService settings, IMainArguments arguments, IPluginService pluginService)
         {
             _log = log;
             _plugins = pluginService;

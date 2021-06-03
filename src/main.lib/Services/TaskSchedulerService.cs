@@ -10,14 +10,14 @@ namespace PKISharp.WACS.Services
 {
     public class TaskSchedulerService
     {
-        private readonly MainArguments _arguments;
+        private readonly IMainArguments _arguments;
         private readonly ISettingsService _settings;
         private readonly IInputService _input;
         private readonly ILogService _log;
 
         public TaskSchedulerService(
             ISettingsService settings,
-            MainArguments arguments,
+            IMainArguments arguments,
             IInputService input,
             ILogService log)
         {

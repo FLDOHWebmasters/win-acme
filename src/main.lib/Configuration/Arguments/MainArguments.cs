@@ -2,7 +2,7 @@
 
 namespace PKISharp.WACS.Configuration.Arguments
 {
-    public class MainArguments : BaseArguments
+    public class MainArguments : BaseArguments, IMainArguments
     {
         public override string Name => "Main";
         public override bool Active()

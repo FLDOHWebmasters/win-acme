@@ -65,7 +65,7 @@ namespace PKISharp.WACS.Services
         /// <param name="current"></param>
         /// <param name="main"></param>
         /// <returns></returns>
-        bool Validate(object current, MainArguments main);
+        bool Validate(object current, IMainArguments main);
 
         /// <summary>
         /// Are the arguments provided?
@@ -88,6 +88,6 @@ namespace PKISharp.WACS.Services
         /// <param name="current"></param>
         /// <param name="main"></param>
         /// <returns></returns>
-        bool Validate(T current, MainArguments main);
+        bool Validate(T current, IMainArguments main);
     }
 }

@@ -28,7 +28,7 @@ namespace PKISharp.WACS.Plugins.Resolvers
             ILogService log,
             IInputService inputService,
             ISettingsService settings,
-            MainArguments arguments,
+            IMainArguments arguments,
             IPluginService pluginService,
             RunLevel runLevel)
             : base(log, settings, arguments, pluginService)
