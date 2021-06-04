@@ -20,7 +20,7 @@ namespace PKISharp.WACS
         private readonly IRenewalStore _renewalStore;
         private readonly IArgumentsParser _arguments;
         private readonly IMainArguments _args;
-        private readonly IContainer _container;
+        private readonly ILifetimeScope _container;
         private readonly IAutofacBuilder _scopeBuilder;
         private readonly ExceptionHandler _exceptionHandler;
         private readonly RenewalExecutor _renewalExecutor;
@@ -29,7 +29,7 @@ namespace PKISharp.WACS
 
         public RenewalManager(
             IArgumentsParser arguments, IMainArguments args,
-            IRenewalStore renewalStore, IContainer container,
+            IRenewalStore renewalStore, ILifetimeScope container,
             IInputService input, ILogService log,
             ISettingsService settings,
             IAutofacBuilder autofacBuilder, ExceptionHandler exceptionHandler,

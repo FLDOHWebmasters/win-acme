@@ -21,7 +21,7 @@ namespace PKISharp.WACS
         private readonly IMainArguments _args;
         private readonly PasswordGenerator _passwordGenerator;
         private readonly ISettingsService _settings;
-        private readonly IContainer _container;
+        private readonly ILifetimeScope _container;
         private readonly IAutofacBuilder _scopeBuilder;
         private readonly ExceptionHandler _exceptionHandler;
         private readonly RenewalExecutor _renewalExecution;
@@ -29,7 +29,7 @@ namespace PKISharp.WACS
 
         public RenewalCreator(
             PasswordGenerator passwordGenerator, IMainArguments args,
-            IRenewalStore renewalStore, IContainer container,
+            IRenewalStore renewalStore, ILifetimeScope container,
             IInputService input, ILogService log, 
             ISettingsService settings, IAutofacBuilder autofacBuilder,
             NotificationService notification,
