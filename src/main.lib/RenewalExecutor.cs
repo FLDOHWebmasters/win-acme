@@ -32,7 +32,7 @@ namespace PKISharp.WACS
             IMainArguments args, IAutofacBuilder scopeBuilder,
             ILogService log, IInputService input,
             RenewalValidator validator,
-            ExceptionHandler exceptionHandler, IContainer container)
+            ExceptionHandler exceptionHandler, ILifetimeScope container)
         {
             _validator = validator;
             _args = args;
