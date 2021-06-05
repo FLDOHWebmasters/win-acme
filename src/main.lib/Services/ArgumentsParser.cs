@@ -35,6 +35,10 @@ namespace PKISharp.WACS.Configuration
 
         public bool Validate()
         {
+            if (_args == null)
+            {
+                return false;
+            }
             // Test if the arguments can be resolved by any of the known providers
             var extraOptions = _providers.First().GetExtraArguments(_args);
             foreach (var extraOption in extraOptions)
