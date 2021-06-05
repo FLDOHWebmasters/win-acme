@@ -137,7 +137,8 @@ namespace PKISharp.WACS.Clients.IIS
                                 // Prevent COMExceptions such as misconfigured
                                 // application pools from crashing the whole 
                                 _log.Warning("Unable to determine state for Site {id}", s.Id);
-                               return false;
+                               // nonetheless treat it as started since we know no better
+                               return true;
                            }
                        }).
                        OrderBy(s => s.Name).
@@ -182,14 +183,17 @@ namespace PKISharp.WACS.Clients.IIS
 
         public IISSiteWrapper GetWebSite(string name)
         {
+            _log.Verbose($"Looking for IIS Site name {name}.");
             foreach (var site in WebSites)
             {
-                if (site.Site.Name == name)
+                var siteName = site.Site.Name;
+                _log.Verbose($"Considering IIS Site name {siteName}.");
+                if (siteName == name)
                 {
                     return site;
                 }
             }
-            throw new Exception($"Unable to find IIS Site Name {name}");
+            throw new Exception($"Unable to find IIS Site name {name}");
         }
 
         public IISSiteWrapper GetFtpSite(long id)
