@@ -17,7 +17,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public override int Order => 5;
         private readonly IIISClient _iisClient;
         private readonly ArgumentsInputService _arguments;
-        private readonly Regex _hostRegex = new("a-z[a-z0-9\\.-]+");
+        private readonly Regex _hostRegex = new(@"^[a-z][a-z0-9\.-]+$");
         
         public IISWebOptionsFactory(IIISClient iisClient, ArgumentsInputService arguments, IUserRoleService userRoleService)
         {
