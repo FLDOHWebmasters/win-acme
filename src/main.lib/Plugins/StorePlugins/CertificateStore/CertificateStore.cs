@@ -1,4 +1,5 @@
 ﻿using PKISharp.WACS.Clients.IIS;
+using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.Interfaces;
 using PKISharp.WACS.Services;
@@ -28,7 +29,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
         private readonly FindPrivateKey _keyFinder;
 
         public CertificateStore(
-            ILogService log, IIISClient iisClient,
+            ILogService log, IIISClient iisClient, IArgumentsParser arguments,
             ISettingsService settings, IUserRoleService userRoleService,
             FindPrivateKey keyFinder, CertificateStoreOptions options)
         {
@@ -45,6 +46,11 @@ namespace PKISharp.WACS.Plugins.StorePlugins
                 // Users trying to use the "My" store might have set "Personal" in their 
                 // config files, because that's what the store is called in mmc
                 _storeName = nameof(StoreName.My);
+            }
+            var iisWebArgs = arguments.GetArguments<InstallationPlugins.IISWebArguments>();
+            if (!string.IsNullOrEmpty(iisWebArgs?.IISHost))
+            {
+                _storeName = $"\\\\{iisWebArgs.IISHost}\\{_storeName}";
             }
             _log.Debug("Certificate store: {_certificateStore}", _storeName);
             _store = new X509Store(_storeName!, StoreLocation.LocalMachine);

@@ -22,7 +22,7 @@ namespace PKISharp.WACS.Clients.IIS
         public Version Version { get; set; }
         [SuppressMessage("Code Quality", "IDE0069:Disposable fields should be disposed", Justification = "Actually is disposed")]
         private readonly ILogService _log;
-        private readonly IArgumentsParser _arguments;
+        private readonly string _iisHost;
         private ServerManager? _serverManager;
         private List<IISSiteWrapper>? _webSites = null;
         private List<IISSiteWrapper>? _ftpSites = null;
@@ -31,6 +31,7 @@ namespace PKISharp.WACS.Clients.IIS
         {
             _log = log;
             _arguments = arguments;
+            _iisHost = arguments.GetArguments<IISWebArguments>()?.IISHost ?? "";
             Version = GetIISVersion();
         }
 
@@ -47,9 +48,8 @@ namespace PKISharp.WACS.Clients.IIS
                     {
                         try
                         {
-                            var iisWebArgs = _arguments.GetArguments<IISWebArguments>();
-                            var local = string.IsNullOrWhiteSpace(iisWebArgs?.IISHost);
-                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(iisWebArgs!.IISHost!);
+                            var local = string.IsNullOrWhiteSpace(_iisHost);
+                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(_iisHost);
                         } 
                         catch
                         {
