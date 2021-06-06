@@ -30,7 +30,6 @@ namespace PKISharp.WACS.Clients.IIS
         public IISClient(ILogService log, IArgumentsParser arguments)
         {
             _log = log;
-            _arguments = arguments;
             _iisHost = arguments.GetArguments<IISWebArguments>()?.IISHost ?? "";
             Version = GetIISVersion();
         }
