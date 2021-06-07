@@ -165,6 +165,8 @@ namespace PKISharp.WACS.Clients.IIS
                 throw new InvalidOperationException("bindingOptions.Host is null");
             }
 
+            _log.Verbose($"AddOrUpdateBindings {allBindings} bindings for host {bindingOptions.Host} on site {site.Name}");
+
             // Require IIS manager to commit
             var commit = 0;
 
@@ -175,12 +177,16 @@ namespace PKISharp.WACS.Clients.IIS
                 OrderByDescending(x => x.fit).
                 ToList();
 
+            _log.Verbose($"Found {matchingBindings.Count} matching bindings");
+
             // If there are any bindings
             if (matchingBindings.Any())
             {
                 var bestMatch = matchingBindings.First();
+                _log.Verbose($"Best match binding host {bestMatch.binding.Host}");
                 var bestMatches = matchingBindings.Where(x => x.binding.Host == bestMatch.binding.Host);
-                if (bestMatch.fit == 100 || !bindingOptions.Flags.HasFlag(SSLFlags.CentralSsl))
+                _log.Verbose($"Found {bestMatches.Count()} best matches");
+                if (bestMatch.fit > 50 || !bindingOptions.Flags.HasFlag(SSLFlags.CentralSsl))
                 {
                     // All existing https bindings
                     var existing = bestMatches.
@@ -190,7 +196,8 @@ namespace PKISharp.WACS.Clients.IIS
 
                     foreach (var match in bestMatches)
                     {
-                        var isHttps = match.binding.Protocol == "https";
+                        _log.Verbose($"Match binding protocol is {match.binding.Protocol}");
+                        bool isHttps = match.binding.Protocol == "https";
                         if (isHttps)
                         {
                             if (UpdateExistingBindingFlags(bindingOptions.Flags, match.binding, allBindings, out var updateFlags))
@@ -201,7 +208,7 @@ namespace PKISharp.WACS.Clients.IIS
                                     commit++;
                                 }
                             }
-                        } 
+                        }
                         else
                         {
                             var addOptions = bindingOptions.WithHost(match.binding.Host);
@@ -461,14 +468,11 @@ namespace PKISharp.WACS.Clients.IIS
                     // If there is a binding for *.a.b.c.com (5) and one for *.c.com (3)
                     // then the hostname test.a.b.c.com (5) is a better (more specific)
                     // for the former than for the latter, so we prefer to use that.
-                    var hostLevel = certificate.Value.Split('.').Count();
-                    var bindingLevel = iis.Host.Split('.').Count();
+                    var hostLevel = certificate.Value.Split('.').Length;
+                    var bindingLevel = iis.Host.Split('.').Length;
                     return 50 - (hostLevel - bindingLevel);
                 }
-                else
-                {
-                    return 0;
-                }
+                return 0;
             }
 
             // Match *.example.com (certificate) with sub.example.com (IIS)
@@ -484,10 +488,7 @@ namespace PKISharp.WACS.Clients.IIS
                         return 90;
                     }
                 }
-                else
-                {
-                    return 0;
-                }
+                return 0;
             }
 
             // Full match

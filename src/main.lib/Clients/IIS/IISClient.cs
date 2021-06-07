@@ -376,17 +376,29 @@ namespace PKISharp.WACS.Clients.IIS
         {
             try
             {
-                using var componentsKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\InetStp", false);
-                if (componentsKey != null)
+                if (string.IsNullOrEmpty(_iisHost))
                 {
+                    return getVersion(Registry.LocalMachine);
+                }
+                else
+                {
+                    using var remoteHive = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, _iisHost);
+                    return getVersion(remoteHive);
+                }
+                Version getVersion(RegistryKey hive) {
+                    using var componentsKey = hive.OpenSubKey(@"Software\Microsoft\InetStp", false);
+                if (componentsKey != null)
+                    {
                     _ = int.TryParse(componentsKey.GetValue("MajorVersion", "-1")?.ToString() ?? "-1", out var majorVersion);
                     _ = int.TryParse(componentsKey.GetValue("MinorVersion", "-1")?.ToString() ?? "-1", out var minorVersion);
                     if (majorVersion != -1 && minorVersion != -1)
                     {
                         return new Version(majorVersion, minorVersion);
                     }
+                    }
+                    return new Version(0, 0);
                 }
-            } 
+            }
             catch
             {
                 // Assume nu IIS if we're not able to open the registry key

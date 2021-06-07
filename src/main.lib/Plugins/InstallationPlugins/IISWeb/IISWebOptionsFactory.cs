@@ -33,7 +33,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         private ArgumentResult<string?> Host => _arguments.
             GetString<IISWebArguments>(x => x.IISHost).
             DefaultAsNull().
-            Validate(x => Task.FromResult(IPAddress.Parse(x!) != null || _hostRegex.IsMatch(x!)), "invalid host address");
+            Validate(x => Task.FromResult(IPAddress.TryParse(x!, out var y) || _hostRegex.IsMatch(x!)), x => $"invalid host address {x}");
 
         private ArgumentResult<int?> NewBindingPort => _arguments.
             GetInt<IISWebArguments>(x => x.SSLPort).

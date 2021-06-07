@@ -67,7 +67,7 @@ namespace PKISharp.WACS.Services
         /// <summary>
         /// Validator to run
         /// </summary>
-        private readonly List<Tuple<Func<TResult, Task<bool>>, string>> _validators = new();
+        private readonly List<(Func<TResult, Task<bool>> Validate, Func<TResult, string> Failed)> _validators = new();
 
         /// <summary>
         /// Do not emit default value
@@ -168,9 +168,10 @@ namespace PKISharp.WACS.Services
         /// <param name="validator"></param>
         /// <param name="errorReason"></param>
         /// <returns></returns>
-        public ArgumentResult<TResult> Validate(Func<TResult, Task<bool>> validator, string errorReason)
+        public ArgumentResult<TResult> Validate(Func<TResult, Task<bool>> validator, string errorReason) => Validate(validator, x => errorReason);
+        public ArgumentResult<TResult> Validate(Func<TResult, Task<bool>> validator, Func<TResult, string> failed)
         {
-            _validators.Add(new Tuple<Func<TResult, Task<bool>>, string>(validator, errorReason));
+            _validators.Add(new(validator, failed));
             return this;
         }
 
@@ -253,21 +254,24 @@ namespace PKISharp.WACS.Services
                     var validationResult = false;
                     try
                     {
-                        validationResult = await validator.Item1(returnValue!);
-                    } 
-                    catch 
+                        validationResult = await validator.Validate(returnValue!);
+                    }
+                    catch (Exception ex)
                     {
-                        return (false, $"failed --{_metaData.ArgumentName}: {validator.Item2}");
+                        _log.Debug(ex.ToString());
+                        var errorReason = validator.Failed(returnValue!);
+                        return (false, $"failed --{_metaData.ArgumentName}: {errorReason}");
                     }
                     if (!validationResult)
                     {
+                        var errorReason = validator.Failed(returnValue!);
                         if (!string.IsNullOrWhiteSpace(_inputLabel))
                         {
-                            return (false, $"Invalid input: {validator.Item2}");
+                            return (false, $"Invalid input: {errorReason}");
                         }
                         else
                         {
-                            return (false, $"invalid --{_metaData.ArgumentName}: {validator.Item2}");
+                            return (false, $"invalid --{_metaData.ArgumentName}: {errorReason}");
                         }
                     }
                 }
