@@ -5,8 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -23,7 +21,7 @@ namespace PKISharp.WACS.Clients
     {
         public const string DefaultNitroHost = "172.21.22.240";
         public const string DefaultNitroUsername = "cert_tester";
-        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAXj6+Bt7VKkOOLLDdbNefigQAAAACAAAAAAADZgAAwAAAABAAAADTdIwROnrlL5seQGfwpV7UAAAAAASAAACgAAAAEAAAAM9YL/V2MA7e4rmN4wg68h8YAAAAALe+yH4Ge1zX1xy6VG+81FES3a1AOTqeFAAAAGUwzmQkitkeceD+yzq98ttLVQL1";
+        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAOstSmXydG0ymQXhTxf75vwQAAAACAAAAAAADZgAAwAAAABAAAACTqBoejv5xq9kb6z6Jq6jnAAAAAASAAACgAAAAEAAAANxtrybhVhhnhsDqUh8KkrUYAAAAJz/kwzNQ14BrgrECO94jb/DXEX7x2yCKFAAAAP/elU7n1e3MLUtO71bCajVCjw+6";
         public const string DefaultPemFilesPath = @"D:\CertificateManagement\store";
         public const string DefaultPemFilesPassword = "fo0b@rB42";
 
@@ -52,13 +50,9 @@ namespace PKISharp.WACS.Clients
             site ??= pemFilesName;
             host ??= DefaultNitroHost;
             username ??= DefaultNitroUsername;
-            password ??= DefaultNitroPasswordProtected;
-            string clearPassword = new ProtectedString(password, _log).Value!;
+            password ??= new ProtectedString(DefaultNitroPasswordProtected, _log).Value ?? "";
+            _log.Verbose($"CitrixAdcClient UpdateCertificate site {site} host {host} creds {username}/{password}");
             var apiUrl = $"https://{host}/nitro/v1/config";
-
-            // read the private key and cert chain files
-            var keyPem = await FileBytes($"{pemFilesName}{PemFiles.KeyFilenameSuffix}{PemFiles.FilenameExtension}");
-            var chainPem = await FileBytes($"{pemFilesName}{PemFiles.ChainFilenameSuffix}{PemFiles.FilenameExtension}");
 
             // in development, allow all certificates (self-signed, expired, etc.)
             using var handler = new HttpClientHandler();
@@ -70,13 +64,15 @@ namespace PKISharp.WACS.Clients
             // initialize the HTTP client
             using var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("X-NITRO-USER", username);
-            httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", clearPassword);
+            httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", password);
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // send the private key and cert chain files
-            var keyFilename = await PostSystemFile(httpClient, apiUrl, location, site, keyPem, key: true);
+            var keyFilename = $"{pemFilesName}{PemFiles.KeyFilenameSuffix}{PemFiles.FilenameExtension}";
+            keyFilename = await PostSystemFile(httpClient, apiUrl, location, site, keyFilename, key: true);
             if (keyFilename == null) { throw new Exception($"Failed to post {site} key pem."); }
-            var chainFilename = await PostSystemFile(httpClient, apiUrl, location, site, chainPem, key: false);
+            var chainFilename = $"{pemFilesName}{PemFiles.ChainFilenameSuffix}{PemFiles.FilenameExtension}";
+            chainFilename = await PostSystemFile(httpClient, apiUrl, location, site, chainFilename, key: false);
             if (chainFilename == null) { throw new Exception($"Failed to post {site} chain pem."); }
 
             // update the cert
@@ -94,66 +90,67 @@ namespace PKISharp.WACS.Clients
             if (!deletedCert) { _log.Warning("Failed to delete {chainFilename}.", chainFilename); }
         }
 
-        private async Task<byte[]> FileBytes(string pemFilename)
-        {
-            var filePath = Path.Combine(_pemFilesPath, pemFilename);
-            return await File.ReadAllBytesAsync(filePath);
-        }
-
         private static async Task<bool> DeleteSystemFile(HttpClient client, string apiUrl, string location, string filename)
         {
-            string escapedLocation = System.Web.HttpUtility.UrlEncode(location);
+            var escapedLocation = System.Web.HttpUtility.UrlEncode(location);
             using var response = await client.DeleteAsync($"{apiUrl}/systemfile/{filename}?args=filelocation:{escapedLocation}");
             var apiResponse = await response.Content.ReadAsStringAsync();
             var nitroResponse = JsonConvert.DeserializeObject<NitroResponse>(apiResponse);
             return response.StatusCode == HttpStatusCode.OK && nitroResponse.ErrorCode == 0;
         }
 
-        private static async Task<string?> PostSystemFile(HttpClient client, string apiUrl, string location, string site, byte[] pem, bool key)
+        private async Task<string?> PostSystemFile(HttpClient client, string apiUrl, string filelocation, string site, string pemFilename, bool key)
         {
             HttpRequestMessage request = new(HttpMethod.Post, $"{apiUrl}/systemfile");
-            const string encoding = "BASE64";
-            if (!location.EndsWith("/")) { location += "/"; }
-            var base64pem = Convert.ToBase64String(pem);
-            var today = DateTime.Now.ToString("yyyyMMdd");
+            const string fileencoding = "BASE64";
+            if (!filelocation.EndsWith("/")) { filelocation += "/"; }
+            var filePath = Path.Combine(_pemFilesPath, pemFilename);
+            var pem = await File.ReadAllBytesAsync(filePath);
+            var filecontent = Convert.ToBase64String(pem);
+            var timestamp = DateTime.Now.ToString("yyMMddHHmmss");
             var extension = key ? "key" : "cer";
-            var filename = $"{site}.{today}.{extension}";
+            var filename = $"{site}.{timestamp}.{extension}";
             // alternative to below: req.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var payload = new { systemfile = new { filename = filename, filelocation = location, filecontent = base64pem, fileencoding = encoding } };
+            var payload = new { systemfile = new { filename, filelocation, filecontent, fileencoding } };
             var jsonPayload = JsonConvert.SerializeObject(payload);
             request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
             using var response = await client.SendAsync(request);
-            return response.StatusCode == HttpStatusCode.Created ? filename : null;
+            var success = response.StatusCode == HttpStatusCode.Created;
+            if (!success) { _log.Error($"CitrixAdcClient PostSystemFile {(int)response.StatusCode} {response.ReasonPhrase} {jsonPayload}"); }
+            return success ? filename : null;
             // status code 201 Created, no JSON response
             // status code 409 confict (if the file already exists)
             // { "errorcode": 1642, "message": "Cannot create output file. File already exists", "severity": "ERROR" }
         }
 
-        private static async Task<bool> PostSSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename, string passPlain)
+        private async Task<bool> PostSSLCertKey(HttpClient client, string apiUrl, string certkey, string cert, string key, string passplain)
         {
-            HttpRequestMessage request = new(HttpMethod.Post, $"{apiUrl}/sslcertkey");
-            var payload = new { sslcertkey = new { certkey = site, cert = certFilename, key = keyFilename, passplain = passPlain } };
+            HttpRequestMessage request = new(HttpMethod.Post, $"{apiUrl}/sslcertkey?action=update");
+            var payload = new { sslcertkey = new { certkey, cert, key, passplain } };
             var jsonPayload = JsonConvert.SerializeObject(payload);
             request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
             using var response = await client.SendAsync(request);
-            return response.StatusCode == HttpStatusCode.OK;
+            var success = response.StatusCode == HttpStatusCode.OK;
+            if (!success) { _log.Error($"CitrixAdcClient PostSSLCertKey {(int)response.StatusCode} {response.ReasonPhrase} {jsonPayload}"); }
+            return success;
             // status code 200 OK, no JSON response
             // status code 599 Netscaler specific error
             // { "errorcode": 1614, "message": "Invalid password", "severity": "ERROR" }
             // { "errorcode": 1647, "message": "Input file(s) not present or not accessible in current partition", "severity": "ERROR" }
         }
 
-        private static async Task<bool> VerifySSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename)
+        private async Task<bool> VerifySSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename)
         {
             using var response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
             var apiResponse = await response.Content.ReadAsStringAsync();
-            var sslCertKeyResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
-            return response.StatusCode == HttpStatusCode.OK
-                && sslCertKeyResponse?.SSLCertKey != null
-                && sslCertKeyResponse.SSLCertKey.Any()
-                && sslCertKeyResponse.SSLCertKey.First().CertKey == site
-                && sslCertKeyResponse.SSLCertKey.First().Cert == certFilename
-                && sslCertKeyResponse.SSLCertKey.First().Key == keyFilename;
+            var jsonResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
+            var certKeys = jsonResponse.SSLCertKey;
+            var success = response.StatusCode == HttpStatusCode.OK && certKeys != null && certKeys.Any();
+            if (!success) { _log.Error($"CitrixAdcClient VerifySSLCertKey {certKeys?.Count()} {(int)response.StatusCode} {response.ReasonPhrase}"); }
+            var certKey = certKeys!.First();
+            success &= certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
+            if (!success) { _log.Information($"CitrixAdcClient VerifySSLCertKey {certKey.CertKey} {certKey.Cert} {certKey.Key}"); }
+            return success;
         }
 
         public class NitroResponse

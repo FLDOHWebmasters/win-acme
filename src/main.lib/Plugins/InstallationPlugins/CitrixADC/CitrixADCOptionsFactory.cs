@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using PKISharp.WACS.Clients;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.Base.Factories;
@@ -10,7 +11,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     public class CitrixADCOptionsFactory : InstallationPluginFactory<CitrixADC, CitrixADCOptions>
     {
         public override int Order => 6;
-        private readonly CitrixAdcClient _adcClient;
+        private readonly CitrixAdcClient _adcClient; // TODO validate host exists
         private readonly ArgumentsInputService _arguments;
 
         public CitrixADCOptionsFactory(CitrixAdcClient adcClient, ArgumentsInputService arguments)
@@ -20,14 +21,16 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         }
 
         private ArgumentResult<string?> NitroHost => _arguments.GetString<CitrixADCArguments>(x => x.NitroIpAddress)
-            .WithDefault(CitrixAdcClient.DefaultNitroHost).DefaultAsNull();
-            //.Validate(x => Task.FromResult(x >= 1), "invalid port");
+            .WithDefault(CitrixAdcClient.DefaultNitroHost)
+            .Validate(x => Task.FromResult(IPAddress.TryParse(x!, out var y)), x => $"invalid host address {x}");
 
         private ArgumentResult<string?> NitroUser => _arguments.GetString<CitrixADCArguments>(x => x.NitroUsername)
-            .WithDefault(CitrixAdcClient.DefaultNitroUsername).DefaultAsNull();
+            .WithDefault(CitrixAdcClient.DefaultNitroUsername)
+            .Validate(x => Task.FromResult(true), "invalid username");
 
         private ArgumentResult<string?> NitroPass => _arguments.GetString<CitrixADCArguments>(x => x.NitroPassword)
-            .WithDefault(CitrixAdcClient.DefaultNitroPasswordProtected).DefaultAsNull();
+            .WithDefault(CitrixAdcClient.DefaultNitroPasswordProtected)
+            .Validate(x => Task.FromResult(true), "invalid password");
 
         public override async Task<CitrixADCOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
         {

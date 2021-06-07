@@ -15,7 +15,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         private readonly CitrixADCOptions _options;
         private readonly CitrixAdcClient _client;
 
-        public CitrixADC (ILogService log, CitrixADCOptions options, CitrixAdcClient adcClient)
+        public CitrixADC (CitrixADCOptions options, CitrixAdcClient adcClient, ILogService log)
         {
             _log = log;
             _options = options;
