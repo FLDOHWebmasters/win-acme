@@ -38,12 +38,12 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
                     args = _options.CreateScriptArguments;
                 }
                 return await _scriptClient.RunScript(
-                    script, 
+                    script,
                     ProcessArguments(
-                        record.Context.Identifier, 
-                        record.Authority.Domain, 
+                        record.Context.Identifier,
+                        record.Authority.Domain,
                         record.Value,
-                        args, 
+                        args,
                         script.EndsWith(".ps1")));
             }
             else
