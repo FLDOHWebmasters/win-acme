@@ -301,7 +301,15 @@ namespace PKISharp.WACS.Clients.IIS
         private bool UpdateExistingBindingFlags(SSLFlags start, TBinding match, TBinding[] allBindings, out SSLFlags modified)
         {
             modified = start;
-            if (_client.Version.Major >= 8 && !match.SSLFlags.HasFlag(SSLFlags.SNI))
+            if (_client.Version.Major < 8)
+            {
+                _log.Warning("Not updating binding on IIS version before 8");
+            }
+            else if (match.SSLFlags.HasFlag(SSLFlags.SNI))
+            {
+                _log.Information("Binding is already SNI, no update necessary");
+            }
+            else
             {
                 if (allBindings
                     .Except(new[] { match })
