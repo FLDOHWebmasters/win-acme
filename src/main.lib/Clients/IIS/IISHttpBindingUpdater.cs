@@ -183,7 +183,7 @@ namespace PKISharp.WACS.Clients.IIS
             if (matchingBindings.Any())
             {
                 var bestMatch = matchingBindings.First();
-                _log.Verbose($"Best match binding host {bestMatch.binding.Host}");
+                _log.Verbose($"Best match fit {bestMatch.fit}% for binding host {bestMatch.binding.Host}");
                 var bestMatches = matchingBindings.Where(x => x.binding.Host == bestMatch.binding.Host);
                 _log.Verbose($"Found {bestMatches.Count()} best matches");
                 if (bestMatch.fit > 50 || !bindingOptions.Flags.HasFlag(SSLFlags.CentralSsl))
@@ -481,11 +481,18 @@ namespace PKISharp.WACS.Clients.IIS
                 if (iis.Host.ToLower().EndsWith(certificate.Value.ToLower().Replace("*.", ".")))
                 {
                     // But it should not match with another.sub.example.com.
-                    var hostLevel = certificate.Value.Split('.').Count();
-                    var bindingLevel = iis.Host.Split('.').Count();
+                    var hostLevel = certificate.Value.Split('.').Length;
+                    var bindingLevel = iis.Host.Split('.').Length;
                     if (hostLevel == bindingLevel)
                     {
                         return 90;
+                    }
+                }
+                else if (iis.Host.ToLower().Equals(certificate.Value.ToLower().Replace("*.", "")))
+                {
+                    if (iis.Host.Split('.').Length == 2)
+                    {
+                        return 89;
                     }
                 }
                 return 0;
