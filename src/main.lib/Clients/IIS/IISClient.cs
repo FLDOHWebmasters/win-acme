@@ -123,7 +123,7 @@ namespace PKISharp.WACS.Clients.IIS
                 if (_webSites == null)
                 {
                    _webSites = ServerManager.Sites.AsEnumerable().
-                       Where(s => s.Bindings.Any(sb => sb.Protocol == "http" || sb.Protocol == "https")).
+                       Where(s => s.Bindings.Any(sb => sb.Protocol is "http" or "https")).
                        Where(s =>
                        {
 
