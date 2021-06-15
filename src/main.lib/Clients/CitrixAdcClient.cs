@@ -43,6 +43,32 @@ namespace PKISharp.WACS.Clients
             _isDevelopmentEnvironment = env.IsDevelopment;
         }
 
+        private static string GetApiUrl(string host) => $"https://{host}/nitro/v1/config";
+
+        public async Task<string?> GetSummary(string host)
+        {
+            string? apiResponse = null;
+            try
+            {
+                using var client = new HttpClient();
+                var apiUrl = GetApiUrl(host) + "/lbvserver?view=summary";
+                using var response = await client.GetAsync(apiUrl);
+                apiResponse = await response.Content.ReadAsStringAsync();
+            } catch (Exception x)
+            {
+                _log.Debug(x.ToString());
+            }
+            return string.IsNullOrWhiteSpace(apiResponse) ? null : apiResponse;
+        }
+
+        public async Task<SSLCertKey?> GetSSLCertKey(string host, string site)
+        {
+            using var client = new HttpClient();
+            var apiUrl = GetApiUrl(host);
+            var certKey = await GetSSLCertKey(client, apiUrl, site);
+            return certKey;
+        }
+
         public async Task UpdateCertificate(CertificateInfo input, string? site, string? host, string? username, string? password)
         {
             const string location = "/nsconfig/ssl";
@@ -52,7 +78,7 @@ namespace PKISharp.WACS.Clients
             username ??= DefaultNitroUsername;
             password ??= new ProtectedString(DefaultNitroPasswordProtected, _log).Value ?? "";
             _log.Verbose($"CitrixAdcClient UpdateCertificate site {site} host {host} creds {username}/{password}");
-            var apiUrl = $"https://{host}/nitro/v1/config";
+            var apiUrl = GetApiUrl(host);
 
             // in development, allow all certificates (self-signed, expired, etc.)
             using var handler = new HttpClientHandler();
@@ -139,7 +165,7 @@ namespace PKISharp.WACS.Clients
             // { "errorcode": 1647, "message": "Input file(s) not present or not accessible in current partition", "severity": "ERROR" }
         }
 
-        private async Task<bool> VerifySSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename)
+        private async Task<SSLCertKey?> GetSSLCertKey(HttpClient client, string apiUrl, string site)
         {
             using var response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
             var apiResponse = await response.Content.ReadAsStringAsync();
@@ -147,8 +173,14 @@ namespace PKISharp.WACS.Clients
             var certKeys = jsonResponse.SSLCertKey;
             var success = response.StatusCode == HttpStatusCode.OK && certKeys != null && certKeys.Any();
             if (!success) { _log.Error($"CitrixAdcClient VerifySSLCertKey {certKeys?.Count()} {(int)response.StatusCode} {response.ReasonPhrase}"); }
-            var certKey = certKeys!.First();
-            success &= certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
+            return success ? certKeys!.First() : null;
+        }
+
+        private async Task<bool> VerifySSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename)
+        {
+            var certKey = await GetSSLCertKey(client, apiUrl, site);
+            if (certKey == null) { return false; }
+            var success = certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
             if (!success) { _log.Information($"CitrixAdcClient VerifySSLCertKey {certKey.CertKey} {certKey.Cert} {certKey.Key}"); }
             return success;
         }
