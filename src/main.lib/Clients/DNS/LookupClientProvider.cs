@@ -148,9 +148,8 @@ namespace PKISharp.WACS.Clients.DNS
                 // 1. sub
                 // 2. _acme-challenge
                 var remainingParts = domainName.Substring(0, domainName.LastIndexOf(rootDomain))
-                    .Trim('.').Split('.')
-                    .Where(x => !string.IsNullOrEmpty(x));
-                remainingParts = remainingParts.Reverse();
+                    .Trim('.').Split('.').Where(x => !string.IsNullOrEmpty(x))
+                    .Reverse().ToArray();
 
                 var digDeeper = true;
                 IEnumerable<IPAddress>? ipSet = null;
@@ -187,8 +186,8 @@ namespace PKISharp.WACS.Clients.DNS
        
                     if (remainingParts.Any())
                     {
-                        testZone = $"{remainingParts.First()}.{testZone}";
-                        remainingParts = remainingParts.Skip(1).ToArray();
+                        testZone = $"{remainingParts[0]}.{testZone}";
+                        remainingParts = remainingParts[1..];
                     }
                     else
                     {
