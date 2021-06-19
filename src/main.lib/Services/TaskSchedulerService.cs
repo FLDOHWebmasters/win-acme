@@ -72,8 +72,9 @@ namespace PKISharp.WACS.Services
             if (action == null)
             {
                 healthy = false;
+                _log.Debug($"Currently running as {VersionService.ExePath}");
                 _log.Warning("Scheduled task points to different location for .exe and/or working directory");
-            } 
+            }
             else
             {
                 var filtered = action.Arguments.Replace("--verbose", "").Trim();

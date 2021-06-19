@@ -32,7 +32,7 @@ namespace PKISharp.WACS.Services
             {
                 var realSettings = main.Resolve<ISettingsService>();
                 var realArguments = main.Resolve<IMainArguments>();
-   
+
                 builder.Register(c => new MainArguments { 
                         BaseUri = fromUri.ToString()
                     }).
