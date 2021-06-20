@@ -33,7 +33,7 @@ namespace PKISharp.WACS.Configuration
             }
             lock (this)
             {
-                return then.Invoke(_parser);
+                return then(_parser);
             }
         }
 
