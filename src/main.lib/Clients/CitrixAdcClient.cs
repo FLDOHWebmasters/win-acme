@@ -25,6 +25,9 @@ namespace PKISharp.WACS.Clients
         public const string DefaultPemFilesPath = @"D:\CertificateManagement\store";
         public const string DefaultPemFilesPassword = "fo0b@rB42";
 
+        const string HeaderNitroUsername = "X-NITRO-USER";
+        const string HeaderNitroPassword = "X-NITRO-PASS";
+
         private readonly ILogService _log;
         private readonly string _pemFilesPath;
         private readonly string _pemFilesPassword;
@@ -55,30 +58,43 @@ namespace PKISharp.WACS.Clients
                 var apiUrl = GetApiUrl(host) + "/lbvserver?view=summary";
                 using var response = await client.GetAsync(apiUrl);
                 apiResponse = await response.Content.ReadAsStringAsync();
-            } catch (Exception x)
+            }
+            catch (Exception x)
             {
                 _log.Debug(x.ToString());
             }
             return string.IsNullOrWhiteSpace(apiResponse) ? null : apiResponse;
         }
 
-        public async Task<SSLCertKey?> GetSSLCertKey(string host, string site)
+        public async Task<SSLCertKey?> GetSSLCertKey(string host, string site, string username, string password)
         {
             using var handler = new HttpClientHandler();
-            using var client = NewHttpClient(handler);
+            using var client = NewHttpClient(handler, username, password);
             var apiUrl = GetApiUrl(host);
             var certKey = await GetSSLCertKey(client, apiUrl, site);
             return certKey;
         }
 
-        private HttpClient NewHttpClient(HttpClientHandler handler)
+        private HttpClient NewHttpClient(HttpClientHandler handler, string? username = null, string? password = null)
         {
             // in development, allow all certificates (self-signed, expired, etc.)
             if (_isDevelopmentEnvironment)
             {
                 handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
-            return new HttpClient(handler);
+            var client = new HttpClient(handler);
+            try
+            {
+                if (username != null) { client.DefaultRequestHeaders.Add(HeaderNitroUsername, username); }
+                if (password != null) { client.DefaultRequestHeaders.Add(HeaderNitroPassword, password); }
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                return client;
+            }
+            catch
+            {
+                client.Dispose();
+                throw;
+            }
         }
 
         public async Task UpdateCertificate(CertificateInfo input, string? site, string? host, string? username, string? password)
@@ -94,10 +110,7 @@ namespace PKISharp.WACS.Clients
 
             // initialize the HTTP client
             using var handler = new HttpClientHandler();
-            using var httpClient = NewHttpClient(handler);
-            httpClient.DefaultRequestHeaders.Add("X-NITRO-USER", username);
-            httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", password);
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            using var httpClient = NewHttpClient(handler, username, password);
 
             // send the private key and cert chain files
             var keyFilename = $"{pemFilesName}{PemFiles.KeyFilenameSuffix}{PemFiles.FilenameExtension}";
@@ -173,6 +186,7 @@ namespace PKISharp.WACS.Clients
 
         private async Task<SSLCertKey?> GetSSLCertKey(HttpClient client, string apiUrl, string site)
         {
+            Debug(client, apiUrl, site);
             using var response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
             var apiResponse = await response.Content.ReadAsStringAsync();
             var jsonResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
@@ -189,6 +203,15 @@ namespace PKISharp.WACS.Clients
             var success = certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
             if (!success) { _log.Information($"CitrixAdcClient VerifySSLCertKey {certKey.CertKey} {certKey.Cert} {certKey.Key}"); }
             return success;
+        }
+
+        private void Debug(HttpClient client, string apiUrl, string site)
+        {
+            _log.Debug($"GetSSLCertKey apiUrl {apiUrl}");
+            _log.Debug($"GetSSLCertKey site {site}");
+            _log.Debug($"GetSSLCertKey content-type {client.DefaultRequestHeaders.Accept.FirstOrDefault()}");
+            _log.Debug($"GetSSLCertKey username {client.DefaultRequestHeaders.GetValues(HeaderNitroUsername).FirstOrDefault()}");
+            _log.Debug($"GetSSLCertKey password {new string('*', client.DefaultRequestHeaders.GetValues(HeaderNitroPassword).FirstOrDefault()?.Length ?? 1)}");
         }
 
         public class NitroResponse
