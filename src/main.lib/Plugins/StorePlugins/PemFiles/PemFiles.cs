@@ -59,7 +59,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             try
             {
                 // Determine name
-                var name = Filename(input);
+                var name = PfxFile.Filename(input.CommonName.Value);
 
                 // Base certificate
                 var certificateExport = input.Certificate.Export(X509ContentType.Cert);
