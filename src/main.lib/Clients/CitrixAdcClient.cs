@@ -50,7 +50,8 @@ namespace PKISharp.WACS.Clients
             string? apiResponse = null;
             try
             {
-                using var client = NewHttpClient();
+                using var handler = new HttpClientHandler();
+                using var client = NewHttpClient(handler);
                 var apiUrl = GetApiUrl(host) + "/lbvserver?view=summary";
                 using var response = await client.GetAsync(apiUrl);
                 apiResponse = await response.Content.ReadAsStringAsync();
@@ -63,16 +64,16 @@ namespace PKISharp.WACS.Clients
 
         public async Task<SSLCertKey?> GetSSLCertKey(string host, string site)
         {
-            using var client = NewHttpClient();
+            using var handler = new HttpClientHandler();
+            using var client = NewHttpClient(handler);
             var apiUrl = GetApiUrl(host);
             var certKey = await GetSSLCertKey(client, apiUrl, site);
             return certKey;
         }
 
-        private HttpClient NewHttpClient()
+        private HttpClient NewHttpClient(HttpClientHandler handler)
         {
             // in development, allow all certificates (self-signed, expired, etc.)
-            using var handler = new HttpClientHandler();
             if (_isDevelopmentEnvironment)
             {
                 handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
@@ -92,7 +93,8 @@ namespace PKISharp.WACS.Clients
             var apiUrl = GetApiUrl(host);
 
             // initialize the HTTP client
-            using var httpClient = NewHttpClient();
+            using var handler = new HttpClientHandler();
+            using var httpClient = NewHttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("X-NITRO-USER", username);
             httpClient.DefaultRequestHeaders.Add("X-NITRO-PASS", password);
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
