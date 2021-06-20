@@ -4,6 +4,7 @@ using Google.Apis.Dns.v1.Data;
 using Google.Apis.Http;
 using Google.Apis.Services;
 using PKISharp.WACS.Clients.DNS;
+using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Services;
 using System;
 using System.IO;
@@ -39,16 +40,20 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
         {
             private readonly IProxyService _proxy;
             public ProxyFactory(IProxyService proxy) => _proxy = proxy;
-            protected override HttpClientHandler CreateClientHandler()
+            protected override HttpMessageHandler CreateHandler(CreateHttpClientArgs args)
             {
-                return _proxy.GetHttpClientHandler();
+                return _proxy.GetHttpMessageHandler();
             }
         }
 
         private CloudDnsService CreateDnsService()
         {
             GoogleCredential credential;
-            using (var stream = new FileStream(_options.ServiceAccountKeyPath, FileMode.Open, FileAccess.Read))
+            if (!_options.ServiceAccountKeyPath.ValidFile(_log))
+            {
+                throw new Exception("Configuration error");
+            }
+            using (var stream = new FileStream(_options.ServiceAccountKeyPath!, FileMode.Open, FileAccess.Read))
             {
                 credential = GoogleCredential.FromStream(stream);
             }
@@ -78,7 +83,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
 
             try
             {
-                _ = await _client.CreateTxtRecord(_options.ProjectId, zone, recordName, token);
+                _ = await _client.CreateTxtRecord(_options.ProjectId ?? "", zone, recordName, token);
                 return true;
             }
             catch(Exception ex)
@@ -101,7 +106,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
 
             try
             {
-                _ = await _client.DeleteTxtRecord(_options.ProjectId, zone, recordName);
+                _ = await _client.DeleteTxtRecord(_options.ProjectId ?? "", zone, recordName);
                 _log.Debug("Deleted TXT record");
             }
             catch (Exception ex)
@@ -111,9 +116,9 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
             }
         }
 
-        private async Task<ManagedZone> GetManagedZone(string projectId, string recordName)
+        private async Task<ManagedZone?> GetManagedZone(string? projectId, string recordName)
         {
-            var hostedZones = await _client.GetManagedZones(projectId);
+            var hostedZones = await _client.GetManagedZones(projectId ?? "");
             _log.Debug("Found {count} hosted zones in Google DNS", hostedZones.Count);
 
             var hostedZoneSets = hostedZones.Where(x => x.Visibility == "public").GroupBy(x => x.DnsName);
