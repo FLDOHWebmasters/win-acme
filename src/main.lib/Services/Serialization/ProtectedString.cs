@@ -102,7 +102,7 @@ namespace PKISharp.WACS.Services.Serialization
                     // Sure to be encrypted
                     try
                     {
-                        Value = Unprotect(rawValue.Substring(EncryptedPrefix.Length));
+                        Value = Unprotect(rawValue[EncryptedPrefix.Length..]);
                     }
                     catch
                     {
