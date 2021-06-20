@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Clients.CitrixADC
             var pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
             if (string.IsNullOrWhiteSpace(pemFilesPath))
             {
-                pemFilesPath = PemFiles.DefaultPath(settings);
+                pemFilesPath = settings.Store.PemFiles?.DefaultPath;
             }
             _pemFilesPath = pemFilesPath ?? DefaultPemFilesPath;
             _pemFilesPassword = settings.Store.PemFiles?.DefaultPassword ?? DefaultPemFilesPassword;
@@ -43,7 +43,7 @@ namespace PKISharp.WACS.Clients.CitrixADC
         public async Task UpdateCertificate(CertificateInfo input, string? site, string? host, string? username, string? password)
         {
             const string location = "/nsconfig/ssl";
-            var pemFilesName = PemFiles.Filename(input);
+            var pemFilesName = PfxFile.Filename(input.CommonName.Value, "");
             site ??= pemFilesName;
             host ??= DefaultNitroHost;
             username ??= DefaultNitroUsername;
