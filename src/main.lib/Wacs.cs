@@ -26,7 +26,7 @@ namespace PKISharp.WACS.Host
         private readonly IMainArguments _args;
         private readonly RenewalManager _renewalManager;
         private readonly RenewalCreator _renewalCreator;
-        private readonly IAutofacBuilder _scopeBuilder;
+        //private readonly IAutofacBuilder _scopeBuilder;
         private readonly ExceptionHandler _exceptionHandler;
         private readonly IUserRoleService _userRoleService;
         private readonly TaskSchedulerService _taskScheduler;
@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Host
 
         public Wacs(
             IComponentContext container, 
-            IAutofacBuilder scopeBuilder,
+            //IAutofacBuilder scopeBuilder,
             ExceptionHandler exceptionHandler,
             ILogService logService,
             ISettingsService settingsService,
@@ -44,7 +44,7 @@ namespace PKISharp.WACS.Host
         {
             // Basic services
             _container = container;
-            _scopeBuilder = scopeBuilder;
+            //_scopeBuilder = scopeBuilder;
             _exceptionHandler = exceptionHandler;
             _log = logService;
             _settings = settingsService;

@@ -17,7 +17,7 @@ namespace PKISharp.WACS.Configuration.Arguments
                 {
                     return true;
                 }
-                if (prop.PropertyType == typeof(string) && !string.IsNullOrEmpty((string)(prop.GetValue(this) ?? string.Empty)))
+                if (prop.PropertyType == typeof(string) && !string.IsNullOrEmpty((string?)prop.GetValue(this)))
                 {
                     return true;
                 }

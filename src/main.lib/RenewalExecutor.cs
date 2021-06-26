@@ -277,7 +277,7 @@ namespace PKISharp.WACS
                             installOptions.Instance,
                             new TypedParameter(installOptions.GetType(), installOptions));
 
-                        if (!(installPlugin is INull))
+                        if (installPlugin is not INull)
                         {
                             if (steps > 1)
                             {

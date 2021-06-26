@@ -101,11 +101,11 @@ namespace PKISharp.WACS.Clients
         {
             const string location = "/nsconfig/ssl";
             var pemFilesName = PfxFile.Filename(input.CommonName.Value, "");
-            site ??= pemFilesName;
+            site ??= Path.GetFileNameWithoutExtension(pemFilesName);
             host ??= DefaultNitroHost;
             username ??= DefaultNitroUsername;
             password ??= new ProtectedString(DefaultNitroPasswordProtected, _log).Value ?? "";
-            _log.Verbose($"CitrixAdcClient UpdateCertificate site {site} host {host} creds {username}/{password}");
+            _log.Verbose($"CitrixAdcClient UpdateCertificate site {site} host {host} creds {username}/{new string('*', password?.Length ?? 1)}");
             var apiUrl = GetApiUrl(host);
 
             // initialize the HTTP client

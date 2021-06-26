@@ -1,20 +1,39 @@
 ﻿using System;
-using System.Linq;
+using PKISharp.WACS.Services;
 
 namespace PKISharp.WACS.Configuration.Arguments
 {
     public class LazyMainArguments : IMainArguments
     {
         private readonly IArgumentsParser _parser;
+        private readonly ILogService _log;
         private MainArguments? _args;
 
-        public LazyMainArguments(IArgumentsParser parser) => _parser = parser;
+        public LazyMainArguments(IArgumentsParser parser, ILogService log)
+        {
+            _parser = parser ?? throw new ArgumentNullException(nameof(parser));
+            _parser.OnInvalidated += _parser_OnInvalidated;
+            _log = log;
+            _log.Debug("new LazyMainArguments");
+        }
+
+        private void _parser_OnInvalidated()
+        {
+            lock (_parser)
+            {
+                _log.Debug("LazyMainArguments _parser_OnInvalidated");
+                _args = null;
+            }
+        }
 
         private void IfInitialized(Action<MainArguments> set)
         {
-            if (_args != null)
+            lock (_parser)
             {
-                set(_args);
+                if (_args != null)
+                {
+                    set(_args);
+                }
             }
         }
 

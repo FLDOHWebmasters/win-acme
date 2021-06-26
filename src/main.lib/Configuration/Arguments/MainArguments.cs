@@ -1,9 +1,12 @@
 ﻿using PKISharp.WACS.Plugins.TargetPlugins;
+using PKISharp.WACS.Services;
 
 namespace PKISharp.WACS.Configuration.Arguments
 {
     public class MainArguments : BaseArguments, IMainArguments
     {
+        public MainArguments() => LogService.Debugging?.Debug("new MainArguments");
+
         public override string Name => "Main";
         public override bool Active()
         {

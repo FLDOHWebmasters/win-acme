@@ -31,7 +31,7 @@ namespace PKISharp.WACS.Clients.Acme
             _client = client;
             _settings = settings;
             _certificateService = certificateService;
-            _orderPath = new DirectoryInfo(Path.Combine(settings.Client.ConfigurationPath, "Orders"));
+            _orderPath = new DirectoryInfo(Path.Combine(settings.Client.ConfigurationPath, "orders"));
         }
 
         /// <summary>

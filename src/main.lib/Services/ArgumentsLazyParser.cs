@@ -11,6 +11,9 @@ namespace PKISharp.WACS.Configuration
 
     public class ArgumentsLazyParser : IArgumentsParser, IArgumentsSetter
     {
+        public event Action? OnInvalidated;
+        public void Invalidate() => OnInvalidated?.Invoke();
+
         private readonly ILogService _log;
         private readonly IPluginService _plugins;
         private IArgumentsParser? _parser;
@@ -41,6 +44,11 @@ namespace PKISharp.WACS.Configuration
         {
             lock (this)
             {
+                Invalidate();
+                if (_parser != null)
+                {
+                    _parser.Invalidate();
+                }
                 _parser = new ArgumentsParser(_log, _plugins, args);
                 if (!_parser.Validate())
                 {

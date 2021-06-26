@@ -5,7 +5,6 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -14,13 +13,15 @@ namespace PKISharp.WACS.Services
 {
     public class LogService : ILogService
     {
+        public static ILogService Debugging;
+
         private readonly Logger? _screenLogger;
         private readonly Logger? _debugScreenLogger;
         private readonly Logger? _eventLogger;
         private Logger? _diskLogger;
         private readonly Logger? _notificationLogger;
         private readonly LoggingLevelSwitch _levelSwitch;
-        private readonly List<MemoryEntry> _lines = new List<MemoryEntry>();
+        private readonly List<MemoryEntry> _lines = new();
 
         public bool Dirty { get; set; }
         private string ConfigurationPath { get; }
@@ -96,6 +97,7 @@ namespace PKISharp.WACS.Services
                 .WriteTo.Memory(_lines)
                 .CreateLogger();
 
+            Debugging ??= this;
             Log.Debug("The global logger has been configured");
         }
 

@@ -187,7 +187,7 @@ namespace PKISharp.WACS.Services
         {
             if (string.IsNullOrWhiteSpace(Client.LogPath))
             {
-                Client.LogPath = Path.Combine(Client.ConfigurationPath, "Log");
+                Client.LogPath = Path.Combine(Client.ConfigurationPath, "log");
             }
             else
             {
@@ -216,7 +216,7 @@ namespace PKISharp.WACS.Services
         {
             if (string.IsNullOrWhiteSpace(Cache.Path))
             {
-                Cache.Path = Path.Combine(Client.ConfigurationPath, "Certificates");
+                Cache.Path = Path.Combine(Client.ConfigurationPath, "certificates");
             }
             if (!Directory.Exists(Cache.Path))
             {
@@ -232,6 +232,5 @@ namespace PKISharp.WACS.Services
             }
             _log.Debug("Cache path: {_certificatePath}", Cache.Path);
         }
-
     }
 }

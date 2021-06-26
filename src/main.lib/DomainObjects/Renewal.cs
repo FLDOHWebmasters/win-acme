@@ -86,21 +86,7 @@ namespace PKISharp.WACS.DomainObjects
         [JsonProperty(PropertyName = "PfxPasswordProtected")]
         public ProtectedString? PfxPassword { get; set; }
 
-        public DateTime? GetDueDate()
-        {
-            var lastSuccess = History.LastOrDefault(x => x.Success)?.Date;
-            if (lastSuccess.HasValue)
-            {
-                return lastSuccess.
-                    Value.
-                    AddDays(RenewalDays).
-                    ToLocalTime();
-            }
-            else
-            {
-                return null;
-            }
-        }
+        public DateTime? GetDueDate() => History.LastOrDefault(x => x.Success)?.Date.AddDays(RenewalDays).ToLocalTime();
 
         public bool IsDue() => GetDueDate() == null || GetDueDate() < DateTime.Now;
 
@@ -165,7 +151,7 @@ namespace PKISharp.WACS.DomainObjects
                 ret += due ? ", due now" : dueDate == null ? "" : $", due after {inputService.FormatDate(dueDate.Value)}";
             }
 
-            if (errors.Count() > 0)
+            if (errors.Any())
             {
                 var messages = errors.SelectMany(x => x.ErrorMessages).Where(x => !string.IsNullOrEmpty(x));
                 ret += $", {errors.Count()} error{(errors.Count() != 1 ? "s" : "")} like \"{messages.FirstOrDefault() ?? "[null]"}\"";
