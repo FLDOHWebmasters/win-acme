@@ -33,7 +33,7 @@ namespace PKISharp.WACS.Clients
         private readonly string _pemFilesPassword;
         private readonly bool _isDevelopmentEnvironment;
 
-        public CitrixAdcClient(ILogService log, IEnvironment env, ISettingsService settings, IArgumentsParser arguments)
+        public CitrixAdcClient(ILogService log, IEnvironment env, ISettingsService settings, ArgumentsParser arguments)
         {
             _log = log;
             var pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
@@ -66,19 +66,19 @@ namespace PKISharp.WACS.Clients
             return string.IsNullOrWhiteSpace(apiResponse) ? null : apiResponse;
         }
 
-        public async Task<SSLCertKey?> GetSSLCertKey(string host, string site, string username, string password)
+        public static async Task<SSLCertKey?> GetSSLCertKey(string host, string site, string username, string password, bool acceptAnyCert, ILogService log)
         {
             using var handler = new HttpClientHandler();
-            using var client = NewHttpClient(handler, username, password);
+            using var client = NewHttpClient(handler, username, password, acceptAnyCert);
             var apiUrl = GetApiUrl(host);
-            var certKey = await GetSSLCertKey(client, apiUrl, site);
+            var certKey = await GetSSLCertKey(client, apiUrl, site, log);
             return certKey;
         }
 
-        private HttpClient NewHttpClient(HttpClientHandler handler, string? username = null, string? password = null)
+        private static HttpClient NewHttpClient(HttpClientHandler handler, string? username = null, string? password = null, bool acceptAnyCert = true)
         {
             // in development, allow all certificates (self-signed, expired, etc.)
-            if (_isDevelopmentEnvironment)
+            if (acceptAnyCert)
             {
                 handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
@@ -184,34 +184,34 @@ namespace PKISharp.WACS.Clients
             // { "errorcode": 1647, "message": "Input file(s) not present or not accessible in current partition", "severity": "ERROR" }
         }
 
-        private async Task<SSLCertKey?> GetSSLCertKey(HttpClient client, string apiUrl, string site)
+        private static async Task<SSLCertKey?> GetSSLCertKey(HttpClient client, string apiUrl, string site, ILogService log)
         {
-            Debug(client, apiUrl, site);
+            Debug(client, apiUrl, site, log);
             using var response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
             var apiResponse = await response.Content.ReadAsStringAsync();
             var jsonResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
             var certKeys = jsonResponse.SSLCertKey;
             var success = response.StatusCode == HttpStatusCode.OK && certKeys != null && certKeys.Any();
-            if (!success) { _log.Error($"CitrixAdcClient VerifySSLCertKey {certKeys?.Count()} {(int)response.StatusCode} {response.ReasonPhrase}"); }
+            if (!success) { log.Error($"CitrixAdcClient VerifySSLCertKey {certKeys?.Count()} {(int)response.StatusCode} {response.ReasonPhrase}"); }
             return success ? certKeys!.First() : null;
         }
 
         private async Task<bool> VerifySSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename)
         {
-            var certKey = await GetSSLCertKey(client, apiUrl, site);
+            var certKey = await GetSSLCertKey(client, apiUrl, site, _log);
             if (certKey == null) { return false; }
             var success = certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
             if (!success) { _log.Information($"CitrixAdcClient VerifySSLCertKey {certKey.CertKey} {certKey.Cert} {certKey.Key}"); }
             return success;
         }
 
-        private void Debug(HttpClient client, string apiUrl, string site)
+        private static void Debug(HttpClient client, string apiUrl, string site, ILogService log)
         {
-            _log.Debug($"GetSSLCertKey apiUrl {apiUrl}");
-            _log.Debug($"GetSSLCertKey site {site}");
-            _log.Debug($"GetSSLCertKey content-type {client.DefaultRequestHeaders.Accept.FirstOrDefault()}");
-            _log.Debug($"GetSSLCertKey username {client.DefaultRequestHeaders.GetValues(HeaderNitroUsername).FirstOrDefault()}");
-            _log.Debug($"GetSSLCertKey password {new string('*', client.DefaultRequestHeaders.GetValues(HeaderNitroPassword).FirstOrDefault()?.Length ?? 1)}");
+            log.Debug($"GetSSLCertKey apiUrl {apiUrl}");
+            log.Debug($"GetSSLCertKey site {site}");
+            log.Debug($"GetSSLCertKey content-type {client.DefaultRequestHeaders.Accept.FirstOrDefault()}");
+            log.Debug($"GetSSLCertKey username {client.DefaultRequestHeaders.GetValues(HeaderNitroUsername).FirstOrDefault()}");
+            log.Debug($"GetSSLCertKey password {new string('*', client.DefaultRequestHeaders.GetValues(HeaderNitroPassword).FirstOrDefault()?.Length ?? 1)}");
         }
 
         public class NitroResponse

@@ -27,39 +27,37 @@ namespace PKISharp.WACS.Clients.IIS
         private List<IISSiteWrapper>? _webSites = null;
         private List<IISSiteWrapper>? _ftpSites = null;
 
-        public IISClient(ILogService log, IArgumentsParser arguments)
+        public IISClient(ILogService log, ArgumentsParser arguments)
         {
             _log = log;
             _iisHost = arguments.GetArguments<IISWebArguments>()?.IISHost ?? "";
-            Version = GetIISVersion();
+            Version = GetIISVersion(_iisHost);
         }
 
         /// <summary>
         /// Single reference to the ServerManager
         /// </summary>
-        private ServerManager? ServerManager
+        private ServerManager? ServerManager => _serverManager ??= GetServerManager(_iisHost, Version, _log, _serverManager, () => _webSites = _ftpSites = null);
+
+        private static ServerManager? GetServerManager(string iisHost, Version version, ILogService log, ServerManager? serverManager = null, Action? then = null)
         {
-            get
+            if (serverManager == null)
             {
-                if (_serverManager == null)
+                if (version.Major > 0)
                 {
-                    if (Version.Major > 0)
+                    try
                     {
-                        try
-                        {
-                            var local = string.IsNullOrWhiteSpace(_iisHost);
-                            _serverManager = local ? new ServerManager() : ServerManager.OpenRemote(_iisHost);
-                        } 
-                        catch
-                        {
-                            _log.Error($"Unable to create an IIS ServerManager");
-                        }
-                        _webSites = null;
-                        _ftpSites = null;
+                        var local = string.IsNullOrWhiteSpace(iisHost);
+                        serverManager = local ? new ServerManager() : ServerManager.OpenRemote(iisHost);
                     }
+                    catch
+                    {
+                        log.Error($"Unable to create an IIS ServerManager");
+                    }
+                    then?.Invoke();
                 }
-                return _serverManager;
             }
+            return serverManager;
         }
 
         /// <summary>
@@ -104,7 +102,6 @@ namespace PKISharp.WACS.Clients.IIS
         IEnumerable<IIISSite> IIISClient.FtpSites => FtpSites;
 
         IIISSite IIISClient.GetWebSite(long id) => GetWebSite(id);
-        IIISSite IIISClient.GetWebSite(string name) => GetWebSite(name);
 
         IIISSite IIISClient.GetFtpSite(long id) => GetFtpSite(id);
 
@@ -112,40 +109,38 @@ namespace PKISharp.WACS.Clients.IIS
 
         public bool HasFtpSites => Version >= new Version(7, 5) && FtpSites.Any();
 
-        public IEnumerable<IISSiteWrapper> WebSites
+        public IEnumerable<IISSiteWrapper> WebSites => _webSites ??= GetWebSites(ServerManager, _log, _webSites);
+        private static List<IISSiteWrapper> GetWebSites(ServerManager? serverManager, ILogService log, List<IISSiteWrapper>? webSites = null)
         {
-            get
+            if (serverManager == null)
             {
-                if (ServerManager == null)
-                {
-                    return new List<IISSiteWrapper>();
-                }
-                if (_webSites == null)
-                {
-                   _webSites = ServerManager.Sites.AsEnumerable().
-                       Where(s => s.Bindings.Any(sb => sb.Protocol is "http" or "https")).
-                       Where(s =>
-                       {
+                return new List<IISSiteWrapper>();
+            }
+            if (webSites == null)
+            {
+                webSites = serverManager.Sites.AsEnumerable().
+                    Where(s => s.Bindings.Any(sb => sb.Protocol is "http" or "https")).
+                    Where(s =>
+                    {
 
-                           try
-                           {
-                               return s.State == ObjectState.Started;
-                           }
-                           catch
-                           {
-                                // Prevent COMExceptions such as misconfigured
-                                // application pools from crashing the whole 
-                                _log.Warning("Unable to determine state for Site {id}", s.Id);
+                        try
+                        {
+                            return s.State == ObjectState.Started;
+                        }
+                        catch
+                        {
+                               // Prevent COMExceptions such as misconfigured
+                               // application pools from crashing the whole 
+                               log.Warning("Unable to determine state for Site {id}", s.Id);
                                // nonetheless treat it as started since we know no better
                                return true;
-                           }
-                       }).
-                       OrderBy(s => s.Name).
-                       Select(x => new IISSiteWrapper(x)).
-                       ToList();
-                }
-                return _webSites;
+                        }
+                    }).
+                    OrderBy(s => s.Name).
+                    Select(x => new IISSiteWrapper(x)).
+                    ToList();
             }
+            return webSites;
         }
 
         public IEnumerable<IISSiteWrapper> FtpSites
@@ -180,16 +175,20 @@ namespace PKISharp.WACS.Clients.IIS
             throw new Exception($"Unable to find IIS SiteId #{id}");
         }
 
-        public IISSiteWrapper GetWebSite(string name)
+        public static IISSiteWrapper GetWebSite(string server, string name, ILogService log)
         {
-            _log.Verbose($"Looking for IIS Site name {name}.");
-            foreach (var site in WebSites)
-            {
-                var siteName = site.Site.Name;
-                _log.Verbose($"Considering IIS Site name {siteName}.");
-                if (siteName == name)
+            log.Verbose($"Looking for IIS Site name {name}.");
+            var version = GetIISVersion(server);
+            var serverManager = GetServerManager(server, version, log);
+            if (serverManager != null) {
+                var webSites = GetWebSites(serverManager, log);
+                foreach (var site in webSites)
                 {
-                    return site;
+                    var siteName = site.Site.Name;
+                    if (siteName == name)
+                    {
+                        return site;
+                    }
                 }
             }
             throw new Exception($"Unable to find IIS Site name {name}");
@@ -372,29 +371,30 @@ namespace PKISharp.WACS.Clients.IIS
         /// Determine IIS version based on registry
         /// </summary>
         /// <returns></returns>
-        private Version GetIISVersion()
+        private static Version GetIISVersion(string iisHost)
         {
             try
             {
-                if (string.IsNullOrEmpty(_iisHost))
+                if (string.IsNullOrEmpty(iisHost))
                 {
                     return getVersion(Registry.LocalMachine);
                 }
                 else
                 {
-                    using var remoteHive = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, _iisHost);
+                    using var remoteHive = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, iisHost);
                     return getVersion(remoteHive);
                 }
-                Version getVersion(RegistryKey hive) {
+                Version getVersion(RegistryKey hive)
+                {
                     using var componentsKey = hive.OpenSubKey(@"Software\Microsoft\InetStp", false);
-                if (componentsKey != null)
+                    if (componentsKey != null)
                     {
-                    _ = int.TryParse(componentsKey.GetValue("MajorVersion", "-1")?.ToString() ?? "-1", out var majorVersion);
-                    _ = int.TryParse(componentsKey.GetValue("MinorVersion", "-1")?.ToString() ?? "-1", out var minorVersion);
-                    if (majorVersion != -1 && minorVersion != -1)
-                    {
-                        return new Version(majorVersion, minorVersion);
-                    }
+                        _ = int.TryParse(componentsKey.GetValue("MajorVersion", "-1")?.ToString() ?? "-1", out var majorVersion);
+                        _ = int.TryParse(componentsKey.GetValue("MinorVersion", "-1")?.ToString() ?? "-1", out var minorVersion);
+                        if (majorVersion != -1 && minorVersion != -1)
+                        {
+                            return new Version(majorVersion, minorVersion);
+                        }
                     }
                     return new Version(0, 0);
                 }
