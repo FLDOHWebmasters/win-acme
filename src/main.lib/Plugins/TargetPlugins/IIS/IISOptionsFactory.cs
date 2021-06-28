@@ -15,13 +15,13 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
     {
         private readonly IISHelper _iisHelper;
         private readonly ILogService _log;
-        private readonly IMainArguments _args;
+        private readonly MainArguments _args;
         private readonly ArgumentsInputService _arguments;
 
         public IISOptionsFactory(
             ILogService log,
             IISHelper iisHelper,
-            IMainArguments args,
+            MainArguments args,
             ArgumentsInputService arguments,
             IUserRoleService userRoleService)
         {

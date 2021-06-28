@@ -283,7 +283,7 @@ namespace PKISharp.WACS.Services
                     if (runLevel.HasFlag(RunLevel.IgnoreCache))
                     {
                         _log.Warning("Cached certificate available on disk but not used due to --{switch} switch.", 
-                            nameof(IMainArguments.Force).ToLower());
+                            nameof(MainArguments.Force).ToLower());
                     }
                     else
                     {
@@ -291,7 +291,7 @@ namespace PKISharp.WACS.Services
                             "certificate within {days} days, run with the --{switch} switch.",
                             friendlyNameIntermediate,
                             _settings.Cache.ReuseDays,
-                            nameof(IMainArguments.Force).ToLower());
+                            nameof(MainArguments.Force).ToLower());
                         return cache;
                     }
                 }

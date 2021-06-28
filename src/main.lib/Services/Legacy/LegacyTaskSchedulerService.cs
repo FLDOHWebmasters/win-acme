@@ -8,11 +8,11 @@ namespace PKISharp.WACS.Services.Legacy
 {
     internal class LegacyTaskSchedulerService
     {
-        private readonly IMainArguments _options;
+        private readonly MainArguments _options;
         private readonly LegacySettingsService _settings;
         private readonly ILogService _log;
 
-        public LegacyTaskSchedulerService(LegacySettingsService settings, IMainArguments main, ILogService log)
+        public LegacyTaskSchedulerService(LegacySettingsService settings, MainArguments main, ILogService log)
         {
             _options = main;
             _settings = settings;

@@ -13,9 +13,6 @@ namespace PKISharp.WACS.Configuration
         private readonly IEnumerable<IArgumentsProvider> _providers;
         private readonly IEnumerable<CommandLineAttribute> _arguments;
 
-        public event Action? OnInvalidated;
-        public void Invalidate() => OnInvalidated?.Invoke();
-
         public T? GetArguments<T>() where T : class, new()
         {
             foreach (var provider in _providers)

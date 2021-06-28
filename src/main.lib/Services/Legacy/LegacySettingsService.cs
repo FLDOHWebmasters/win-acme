@@ -31,7 +31,7 @@ namespace PKISharp.WACS.Host.Services.Legacy
         public List<string> ClientNames { get; private set; }
         public Uri BaseUri { get; private set; } 
 
-        public LegacySettingsService(ILogService log, IMainArguments main, ISettingsService settings)
+        public LegacySettingsService(ILogService log, MainArguments main, ISettingsService settings)
         {
             _log = log;
             UI = settings.UI;
@@ -84,7 +84,7 @@ namespace PKISharp.WACS.Host.Services.Legacy
             CreateConfigPath(main, userRoot);
         }
 
-        private void CreateConfigPath(IMainArguments options, string? userRoot)
+        private void CreateConfigPath(MainArguments options, string? userRoot)
         {
             var configRoot = "";
             if (!string.IsNullOrEmpty(userRoot))

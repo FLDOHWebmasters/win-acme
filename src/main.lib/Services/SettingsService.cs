@@ -10,7 +10,7 @@ namespace PKISharp.WACS.Services
     public class SettingsService : ISettingsService
     {
         private readonly ILogService _log;
-        private readonly IMainArguments _arguments;
+        private readonly MainArguments _arguments;
 
         public bool Valid { get; private set; } = false;
         public ClientSettings Client { get; private set; } = new ClientSettings();
@@ -32,7 +32,7 @@ namespace PKISharp.WACS.Services
         public InstallationSettings Installation { get; private set; } = new InstallationSettings();
         public SecretsSettings Secrets { get; private set; } = new SecretsSettings();
 
-        public SettingsService(ILogService log, IMainArguments arguments)
+        public SettingsService(ILogService log, MainArguments arguments)
         {
             _log = log;
             _arguments = arguments;

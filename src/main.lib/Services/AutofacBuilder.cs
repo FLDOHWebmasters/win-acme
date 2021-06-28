@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Microsoft.Win32;
-using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Configuration.Arguments;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;
@@ -31,12 +30,12 @@ namespace PKISharp.WACS.Services
             return main.BeginLifetimeScope(builder =>
             {
                 var realSettings = main.Resolve<ISettingsService>();
-                var realArguments = main.Resolve<IMainArguments>();
+                var realArguments = main.Resolve<MainArguments>();
 
                 builder.Register(c => new MainArguments { 
                         BaseUri = fromUri.ToString()
                     }).
-                    As<IMainArguments>().
+                    As<MainArguments>().
                     SingleInstance();
 
                 builder.RegisterType<LegacySettingsService>().
@@ -46,7 +45,7 @@ namespace PKISharp.WACS.Services
                 builder.RegisterType<LegacyTaskSchedulerService>();
 
                 builder.RegisterType<TaskSchedulerService>().
-                    WithParameter(new TypedParameter(typeof(IMainArguments), realArguments)).
+                    WithParameter(new TypedParameter(typeof(MainArguments), realArguments)).
                     WithParameter(new TypedParameter(typeof(ISettingsService), realSettings)).
                     SingleInstance();
 

@@ -110,7 +110,7 @@ namespace PKISharp.WACS.Configuration
         /// <param name="current"></param>
         /// <param name="main"></param>
         /// <returns></returns>
-        bool IArgumentsProvider<T>.Validate(T current, IMainArguments main)
+        bool IArgumentsProvider<T>.Validate(T current, MainArguments main)
         {
             if (main.Renew)
             {
@@ -122,7 +122,7 @@ namespace PKISharp.WACS.Configuration
             }
             return true;
         }
-        bool IArgumentsProvider.Validate(object current, IMainArguments main) => _typedThis.Validate((T)current, main);
+        bool IArgumentsProvider.Validate(object current, MainArguments main) => _typedThis.Validate((T)current, main);
 
         /// <summary>
         /// Get list of unmatched arguments

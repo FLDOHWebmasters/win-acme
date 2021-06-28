@@ -10,13 +10,13 @@ namespace PKISharp.WACS.Services
 {
     public class InputService : IInputService
     {
-        private readonly IMainArguments _arguments;
+        private readonly MainArguments _arguments;
         private readonly ILogService _log;
         private readonly ISettingsService _settings;
         private const string _cancelCommand = "C";
         private bool _dirty;
 
-        public InputService(IMainArguments arguments, ISettingsService settings, ILogService log)
+        public InputService(MainArguments arguments, ISettingsService settings, ILogService log)
         {
             _log = log;
             _arguments = arguments;

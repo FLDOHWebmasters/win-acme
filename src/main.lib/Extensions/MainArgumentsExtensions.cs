@@ -8,7 +8,7 @@ namespace PKISharp.WACS.Extensions
         /// Reset the options for a(nother) run through the main menu
         /// </summary>
         /// <param name="options"></param>
-        public static void Clear(this IMainArguments options)
+        public static void Clear(this MainArguments options)
         {
             options.Target = null;
             options.Source = null;

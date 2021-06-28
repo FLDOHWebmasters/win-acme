@@ -14,7 +14,7 @@ namespace PKISharp.WACS.Services.Legacy
 
         public RegistryLegacyRenewalService(
             ILogService log,
-            IMainArguments main,
+            MainArguments main,
             LegacySettingsService settings) :
             base(settings, log)
         {

@@ -20,7 +20,7 @@ namespace PKISharp.WACS
     /// </summary>
     public class RenewalExecutor
     {
-        private readonly IMainArguments _args;
+        private readonly MainArguments _args;
         private readonly IAutofacBuilder _scopeBuilder;
         private readonly ILifetimeScope _container;
         private readonly ILogService _log;
@@ -29,7 +29,7 @@ namespace PKISharp.WACS
         private readonly RenewalValidator _validator;
 
         public RenewalExecutor(
-            IMainArguments args, IAutofacBuilder scopeBuilder,
+            MainArguments args, IAutofacBuilder scopeBuilder,
             ILogService log, IInputService input,
             RenewalValidator validator,
             ExceptionHandler exceptionHandler, ILifetimeScope container)
