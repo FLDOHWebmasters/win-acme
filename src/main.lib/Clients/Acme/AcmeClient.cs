@@ -44,7 +44,7 @@ namespace PKISharp.WACS.Clients.Acme
         private readonly ILogService _log;
         private readonly IInputService _input;
         private readonly ISettingsService _settings;
-        private readonly IArgumentsParser _arguments;
+        private readonly ArgumentsParser _arguments;
         private readonly IProxyService _proxyService;
         private readonly ZeroSsl _zeroSsl;
         private readonly AccountArguments _accountArguments;
@@ -55,7 +55,7 @@ namespace PKISharp.WACS.Clients.Acme
 
         public AcmeClient(
             IInputService inputService,
-            IArgumentsParser arguments,
+            ArgumentsParser arguments,
             ILogService log,
             ISettingsService settings,
             AccountManager accountManager,
@@ -443,9 +443,7 @@ namespace PKISharp.WACS.Clients.Acme
             var client = await GetClient();
             challenge = await Retry(client, () => client.AnswerChallengeAsync(challenge.Url));
             var tries = 1;
-            while (
-                challenge.Status == AuthorizationPending ||
-                challenge.Status == AuthorizationProcessing)
+            while (challenge.Status is AuthorizationPending or AuthorizationProcessing)
             {
                 await Task.Delay(_settings.Acme.RetryInterval * 1000);
                 _log.Debug("Refreshing authorization ({tries}/{count})", tries, _settings.Acme.RetryCount);

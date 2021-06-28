@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PKISharp.WACS.Configuration
 {
-    public class ArgumentsParser : IArgumentsParser
+    public class ArgumentsParser
     {
         private readonly ILogService _log;
         private readonly string[] _args;

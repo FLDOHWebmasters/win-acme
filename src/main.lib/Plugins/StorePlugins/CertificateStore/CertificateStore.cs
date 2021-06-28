@@ -29,7 +29,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
         private readonly FindPrivateKey _keyFinder;
 
         public CertificateStore(
-            ILogService log, IIISClient iisClient, IArgumentsParser arguments,
+            ILogService log, IIISClient iisClient, ArgumentsParser arguments,
             ISettingsService settings, IUserRoleService userRoleService,
             FindPrivateKey keyFinder, CertificateStoreOptions options)
         {

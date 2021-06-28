@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Host
     {
         private readonly ILogService _log;
         private readonly IInputService _input;
-        private readonly IArgumentsParser _arguments;
+        private readonly ArgumentsParser _arguments;
         private readonly IRenewalStore _renewalStore;
         private readonly ISettingsService _settings;
         private readonly IComponentContext _container;
@@ -64,7 +64,7 @@ namespace PKISharp.WACS.Host
                 }
             }
 
-            _arguments = _container.Resolve<IArgumentsParser>();
+            _arguments = _container.Resolve<ArgumentsParser>();
             _arguments.ShowCommandLine();
             _args = _arguments.GetArguments<MainArguments>()!;
             _input = _container.Resolve<IInputService>();
@@ -226,13 +226,7 @@ namespace PKISharp.WACS.Host
         /// Useful to keep the console output visible when testing
         /// unattended commands
         /// </summary>
-        private async Task CloseDefault()
-        {
-            _args.CloseOnFinish = 
-                _args.Test &&  !_args.CloseOnFinish ? 
-                await _input.PromptYesNo("[--test] Quit?", true) : 
-                true;
-        }
+        private async Task CloseDefault() => _args.CloseOnFinish = !_args.Test || _args.CloseOnFinish || await _input.PromptYesNo("[--test] Quit?", true);
 
         /// <summary>
         /// Main user experience
