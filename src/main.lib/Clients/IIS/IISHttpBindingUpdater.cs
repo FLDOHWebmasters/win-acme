@@ -197,7 +197,7 @@ namespace PKISharp.WACS.Clients.IIS
                     foreach (var match in bestMatches)
                     {
                         _log.Verbose($"Match binding protocol is {match.binding.Protocol}");
-                        bool isHttps = match.binding.Protocol == "https";
+                        var isHttps = match.binding.Protocol == "https";
                         if (isHttps)
                         {
                             if (UpdateExistingBindingFlags(bindingOptions.Flags, match.binding, allBindings, out var updateFlags))

@@ -94,7 +94,7 @@ namespace PKISharp.WACS.Services
                 r.Updated = true;
                 _log.Information("Re-writing password information for {friendlyName}", r.LastFriendlyName);
             }
-            WriteRenewals(renewals);
+            Renewals = renewals;
         }
 
         public IEnumerable<Renewal> Renewals

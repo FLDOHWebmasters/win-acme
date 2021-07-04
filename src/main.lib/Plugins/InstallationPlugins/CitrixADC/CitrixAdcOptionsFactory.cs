@@ -22,7 +22,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         private ArgumentResult<string?> NitroHost => _arguments.GetString<CitrixAdcArguments>(x => x.NitroIpAddress)
             .WithDefault(CitrixAdcClient.DefaultNitroHost)
-            .Validate(x => Task.FromResult(IPAddress.TryParse(x!, out IPAddress? y) && _adcClient.GetSummary(x).Result != null), x => $"invalid host address {x}");
+            .Validate(x => Task.FromResult(IPAddress.TryParse(x!, out var y) && _adcClient.GetSummary(x).Result != null), x => $"invalid host address {x}");
 
         private ArgumentResult<string?> NitroUser => _arguments.GetString<CitrixAdcArguments>(x => x.NitroUsername)
             .WithDefault(CitrixAdcClient.DefaultNitroUsername)

@@ -25,7 +25,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public async Task<bool> Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo newCertificateInfo, CertificateInfo? oldCertificateInfo)
         {
-			string? clearPassword = new ProtectedString(_options.NitroPass ?? "", _log).Value;
+			var clearPassword = new ProtectedString(_options.NitroPass ?? "", _log).Value;
             _log.Information($"Installing {target.CommonName.Value} using Nitro API at {_options.NitroHost}.");
             await _client.UpdateCertificate(newCertificateInfo, target.CommonName.Value, _options.NitroHost, _options.NitroUser, clearPassword);
             return true;

@@ -36,7 +36,7 @@ namespace PKISharp.WACS.Clients
         public CitrixAdcClient(ILogService log, IEnvironment env, ISettingsService settings, ArgumentsParser arguments)
         {
             _log = log;
-			string? pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
+			var pemFilesPath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
             if (string.IsNullOrWhiteSpace(pemFilesPath))
             {
                 pemFilesPath = settings.Store.PemFiles?.DefaultPath;
@@ -54,9 +54,9 @@ namespace PKISharp.WACS.Clients
             try
             {
                 using var handler = new HttpClientHandler();
-                using HttpClient client = NewHttpClient(handler);
-				string apiUrl = GetApiUrl(host) + "/lbvserver?view=summary";
-                using HttpResponseMessage response = await client.GetAsync(apiUrl);
+                using var client = NewHttpClient(handler);
+				var apiUrl = GetApiUrl(host) + "/lbvserver?view=summary";
+                using var response = await client.GetAsync(apiUrl);
                 apiResponse = await response.Content.ReadAsStringAsync();
             }
             catch (Exception x)
@@ -69,9 +69,9 @@ namespace PKISharp.WACS.Clients
         public static async Task<SSLCertKey?> GetSSLCertKey(string host, string site, string username, string password, bool acceptAnyCert, ILogService log)
         {
             using var handler = new HttpClientHandler();
-            using HttpClient client = NewHttpClient(handler, username, password, acceptAnyCert);
-			string apiUrl = GetApiUrl(host);
-			SSLCertKey? certKey = await GetSSLCertKey(client, apiUrl, site, log);
+            using var client = NewHttpClient(handler, username, password, acceptAnyCert);
+			var apiUrl = GetApiUrl(host);
+			var certKey = await GetSSLCertKey(client, apiUrl, site, log);
             return certKey;
         }
 
@@ -100,47 +100,47 @@ namespace PKISharp.WACS.Clients
         public async Task UpdateCertificate(CertificateInfo input, string? site, string? host, string? username, string? password)
         {
             const string location = "/nsconfig/ssl";
-			string pemFilesName = PfxFile.Filename(input.CommonName.Value, "");
+			var pemFilesName = PfxFile.Filename(input.CommonName.Value, "");
             site ??= Path.GetFileNameWithoutExtension(pemFilesName);
             host ??= DefaultNitroHost;
             username ??= DefaultNitroUsername;
             password ??= new ProtectedString(DefaultNitroPasswordProtected, _log).Value ?? "";
             _log.Verbose($"CitrixAdcClient UpdateCertificate site {site} host {host} creds {username}/{new string('*', password?.Length ?? 1)}");
-			string apiUrl = GetApiUrl(host);
+			var apiUrl = GetApiUrl(host);
 
             // initialize the HTTP client
             using var handler = new HttpClientHandler();
-            using HttpClient httpClient = NewHttpClient(handler, username, password, _isDevelopmentEnvironment);
+            using var httpClient = NewHttpClient(handler, username, password, _isDevelopmentEnvironment);
 
 			// send the private key and cert chain files
-			string? keyFilename = $"{pemFilesName}{PemFiles.KeyFilenameSuffix}{PemFiles.FilenameExtension}";
+			var keyFilename = $"{pemFilesName}{PemFiles.KeyFilenameSuffix}{PemFiles.FilenameExtension}";
             keyFilename = await PostSystemFile(httpClient, apiUrl, location, site, keyFilename, key: true);
             if (keyFilename == null) { throw new Exception($"Failed to post {site} key pem."); }
-			string? chainFilename = $"{pemFilesName}{PemFiles.ChainFilenameSuffix}{PemFiles.FilenameExtension}";
+			var chainFilename = $"{pemFilesName}{PemFiles.ChainFilenameSuffix}{PemFiles.FilenameExtension}";
             chainFilename = await PostSystemFile(httpClient, apiUrl, location, site, chainFilename, key: false);
             if (chainFilename == null) { throw new Exception($"Failed to post {site} chain pem."); }
 
 			// update the cert
-			bool success = await PostSSLCertKey(httpClient, apiUrl, site, chainFilename, keyFilename, _pemFilesPassword);
+			var success = await PostSSLCertKey(httpClient, apiUrl, site, chainFilename, keyFilename, _pemFilesPassword);
             if (!success) { throw new Exception($"Failed to update {site} certificate."); }
 
 			// verify the cert was successfully updated
-			bool verified = await VerifySSLCertKey(httpClient, apiUrl, site, chainFilename, keyFilename);
+			var verified = await VerifySSLCertKey(httpClient, apiUrl, site, chainFilename, keyFilename);
             if (!verified) { throw new Exception($"Verification failed for {site} cert update."); }
 
 			// delete the private key and cert chain files
-			bool deletedKey = await DeleteSystemFile(httpClient, apiUrl, location, keyFilename);
+			var deletedKey = await DeleteSystemFile(httpClient, apiUrl, location, keyFilename);
             if (!deletedKey) { _log.Warning("Failed to delete {keyFilename}.", keyFilename); }
-			bool deletedCert = await DeleteSystemFile(httpClient, apiUrl, location, chainFilename);
+			var deletedCert = await DeleteSystemFile(httpClient, apiUrl, location, chainFilename);
             if (!deletedCert) { _log.Warning("Failed to delete {chainFilename}.", chainFilename); }
         }
 
         private static async Task<bool> DeleteSystemFile(HttpClient client, string apiUrl, string location, string filename)
         {
-			string escapedLocation = System.Web.HttpUtility.UrlEncode(location);
-            using HttpResponseMessage response = await client.DeleteAsync($"{apiUrl}/systemfile/{filename}?args=filelocation:{escapedLocation}");
-			string apiResponse = await response.Content.ReadAsStringAsync();
-			NitroResponse nitroResponse = JsonConvert.DeserializeObject<NitroResponse>(apiResponse);
+			var escapedLocation = System.Web.HttpUtility.UrlEncode(location);
+            using var response = await client.DeleteAsync($"{apiUrl}/systemfile/{filename}?args=filelocation:{escapedLocation}");
+			var apiResponse = await response.Content.ReadAsStringAsync();
+			var nitroResponse = JsonConvert.DeserializeObject<NitroResponse>(apiResponse);
             return response.StatusCode == HttpStatusCode.OK && nitroResponse.ErrorCode == 0;
         }
 
@@ -149,18 +149,18 @@ namespace PKISharp.WACS.Clients
             HttpRequestMessage request = new(HttpMethod.Post, $"{apiUrl}/systemfile");
             const string fileencoding = "BASE64";
             if (!filelocation.EndsWith("/")) { filelocation += "/"; }
-			string filePath = Path.Combine(_pemFilesPath, pemFilename);
-			byte[] pem = await File.ReadAllBytesAsync(filePath);
-			string filecontent = Convert.ToBase64String(pem);
-			string timestamp = DateTime.Now.ToString("yyMMddHHmmss");
-			string extension = key ? "key" : "cer";
-			string filename = $"{site}.{timestamp}.{extension}";
+			var filePath = Path.Combine(_pemFilesPath, pemFilename);
+			var pem = await File.ReadAllBytesAsync(filePath);
+			var filecontent = Convert.ToBase64String(pem);
+			var timestamp = DateTime.Now.ToString("yyMMddHHmmss");
+			var extension = key ? "key" : "cer";
+			var filename = $"{site}.{timestamp}.{extension}";
             // alternative to below: req.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var payload = new { systemfile = new { filename, filelocation, filecontent, fileencoding } };
-			string jsonPayload = JsonConvert.SerializeObject(payload);
+			var jsonPayload = JsonConvert.SerializeObject(payload);
             request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-            using HttpResponseMessage response = await client.SendAsync(request);
-			bool success = response.StatusCode == HttpStatusCode.Created;
+            using var response = await client.SendAsync(request);
+			var success = response.StatusCode == HttpStatusCode.Created;
             if (!success) { _log.Error($"CitrixAdcClient PostSystemFile {(int)response.StatusCode} {response.ReasonPhrase} {jsonPayload}"); }
             return success ? filename : null;
             // status code 201 Created, no JSON response
@@ -172,10 +172,10 @@ namespace PKISharp.WACS.Clients
         {
             HttpRequestMessage request = new(HttpMethod.Post, $"{apiUrl}/sslcertkey?action=update");
             var payload = new { sslcertkey = new { certkey, cert, key, passplain } };
-			string jsonPayload = JsonConvert.SerializeObject(payload);
+			var jsonPayload = JsonConvert.SerializeObject(payload);
             request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-            using HttpResponseMessage response = await client.SendAsync(request);
-			bool success = response.StatusCode == HttpStatusCode.OK;
+            using var response = await client.SendAsync(request);
+			var success = response.StatusCode == HttpStatusCode.OK;
             if (!success) { _log.Error($"CitrixAdcClient PostSSLCertKey {(int)response.StatusCode} {response.ReasonPhrase} {jsonPayload}"); }
             return success;
             // status code 200 OK, no JSON response
@@ -187,20 +187,20 @@ namespace PKISharp.WACS.Clients
         private static async Task<SSLCertKey?> GetSSLCertKey(HttpClient client, string apiUrl, string site, ILogService log)
         {
             Debug(client, apiUrl, site, log);
-            using HttpResponseMessage response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
-			string apiResponse = await response.Content.ReadAsStringAsync();
-			SSLCertKeyResponse jsonResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
-			IEnumerable<SSLCertKey>? certKeys = jsonResponse.SSLCertKey;
-			bool success = response.StatusCode == HttpStatusCode.OK && certKeys != null && certKeys.Any();
+            using var response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
+			var apiResponse = await response.Content.ReadAsStringAsync();
+			var jsonResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
+			var certKeys = jsonResponse.SSLCertKey;
+			var success = response.StatusCode == HttpStatusCode.OK && certKeys != null && certKeys.Any();
             if (!success) { log.Error($"CitrixAdcClient VerifySSLCertKey {certKeys?.Count()} {(int)response.StatusCode} {response.ReasonPhrase}"); }
             return success ? certKeys!.First() : null;
         }
 
         private async Task<bool> VerifySSLCertKey(HttpClient client, string apiUrl, string site, string certFilename, string keyFilename)
         {
-			SSLCertKey? certKey = await GetSSLCertKey(client, apiUrl, site, _log);
+			var certKey = await GetSSLCertKey(client, apiUrl, site, _log);
             if (certKey == null) { return false; }
-			bool success = certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
+			var success = certKey.CertKey == site && certKey.Cert == certFilename && certKey.Key == keyFilename;
             if (!success) { _log.Information($"CitrixAdcClient VerifySSLCertKey {certKey.CertKey} {certKey.Cert} {certKey.Key}"); }
             return success;
         }
