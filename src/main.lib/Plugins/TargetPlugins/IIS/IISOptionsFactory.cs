@@ -41,15 +41,11 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <returns></returns>
         public override bool Match(string name)
         {
-            switch (name.ToLowerInvariant())
+            return name.ToLowerInvariant() switch
             {
-                case "iisbinding":
-                case "iissite":
-                case "iissites":
-                    return true;
-                default:
-                    return base.Match(name);
-            }
+                "iisbinding" or "iissite" or "iissites" => true,
+                _ => base.Match(name),
+            };
         }
 
         /// <summary>
@@ -140,9 +136,9 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             await input.WritePagedList(
                 visibleSites.Select(x => Choice.Create(
                     item: x,
-                    description: $"{x.Name} ({x.Hosts.Count()} binding{(x.Hosts.Count() == 1 ? "" : "s")})",
+                    description: $"{x.Name} ({x.Hosts.Count} binding{(x.Hosts.Count == 1 ? "" : "s")})",
                     command: x.Id.ToString(),
-                    color: x.Https ? ConsoleColor.DarkGray : (ConsoleColor?)null)));
+                    color: x.Https ? ConsoleColor.DarkGray : null)));
             var raw = await input.RequestString("Site identifier(s) or <Enter> to choose all");
             if (!ParseSiteOptions(raw, allSites, options))
             {
@@ -264,7 +260,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <param name="get"></param>
         /// <param name="set"></param>
         /// <returns></returns>
-        async Task<bool> ProcessInputHosts(
+        Task<bool> ProcessInputHosts(
             string raw,
             List<IISHelper.IISBindingOption> allBindings,
             List<IISHelper.IISBindingOption> filtered,
@@ -280,7 +276,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 {
                     if (int.TryParse(x, out var id))
                     {
-                        if (id > 0 && id <= sorted.Count())
+                        if (id > 0 && id <= sorted.Count)
                         {
                             return sorted[id - 1].HostUnicode;
                         }
@@ -288,7 +284,8 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                     return x;
                 }));
             }
-            return ParseHostOptions(raw, allBindings, options, get, set);
+            var success = ParseHostOptions(raw, allBindings, options, get, set);
+            return Task.FromResult(success);
         }
 
         async Task InputCommonName(IInputService input, List<IISHelper.IISBindingOption> filtered, IISOptions options)

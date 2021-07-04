@@ -150,12 +150,12 @@ namespace PKISharp.WACS.Clients.IIS
         internal List<IISBindingOption> FilterBindings(List<IISBindingOption> bindings, IISOptions options)
         {
             // Check if we have any bindings
-            _log.Verbose("{0} named bindings found in IIS", bindings.Count());
+            _log.Verbose("{0} named bindings found in IIS", bindings.Count);
             if (options.IncludeSiteIds != null && options.IncludeSiteIds.Any())
             {
                 _log.Debug("Filtering by site(s) {0}", options.IncludeSiteIds);
                 bindings = bindings.Where(x => options.IncludeSiteIds.Contains(x.SiteId)).ToList();
-                _log.Verbose("{0} bindings remaining after site filter", bindings.Count());
+                _log.Verbose("{0} bindings remaining after site filter", bindings.Count);
             }
             else
             {
@@ -168,7 +168,7 @@ namespace PKISharp.WACS.Clients.IIS
             {
                 _log.Debug("Filtering by host: {regex}", regex);
                 bindings = bindings.Where(x => Matches(x, regex)).ToList();
-                _log.Verbose("{0} bindings remaining after host filter", bindings.Count());
+                _log.Verbose("{0} bindings remaining after host filter", bindings.Count);
             }
             else
             {
@@ -179,24 +179,24 @@ namespace PKISharp.WACS.Clients.IIS
             if (options.ExcludeHosts != null && options.ExcludeHosts.Any())
             {
                 bindings = bindings.Where(x => !options.ExcludeHosts.Contains(x.HostUnicode)).ToList();
-                _log.Verbose("{0} named bindings remaining after explicit exclusions", bindings.Count());
+                _log.Verbose("{0} named bindings remaining after explicit exclusions", bindings.Count);
             }
 
             // Check if we have anything left
-            _log.Verbose($"{{0}} matching binding{(bindings.Count() != 1 ? "s" : "")} found", bindings.Count());
+            _log.Verbose($"{{0}} matching binding{(bindings.Count != 1 ? "s" : "")} found", bindings.Count);
             return bindings.ToList();
         }
 
-        internal bool Matches(IISBindingOption binding, Regex regex)
+        internal static bool Matches(IISBindingOption binding, Regex regex)
         {
             return regex.IsMatch(binding.HostUnicode)
                 || regex.IsMatch(binding.HostPunycode);
         }
 
-        internal string HostsToRegex(IEnumerable<string> hosts) =>
+        internal static string HostsToRegex(IEnumerable<string> hosts) =>
             $"^({string.Join('|', hosts.Select(x => Regex.Escape(x)))})$";
 
-        private Regex? GetRegex(IISOptions options)
+        private static Regex? GetRegex(IISOptions options)
         {
             if (!string.IsNullOrEmpty(options.IncludePattern))
             {
@@ -209,7 +209,7 @@ namespace PKISharp.WACS.Clients.IIS
             return options.IncludeRegex;
         }
 
-        private List<string> GetHosts(IIISSite site)
+        private static List<string> GetHosts(IIISSite site)
         {
             return site.Bindings.Select(x => x.Host.ToLower()).
                             Where(x => !string.IsNullOrWhiteSpace(x)).

@@ -45,8 +45,8 @@ namespace PKISharp.WACS.Plugins.OrderPlugins
                             target.CommonName,
                             filteredParts);
                         var newOrder = new Order(
-                            renewal, 
-                            newTarget, 
+                            renewal,
+                            newTarget,
                             friendlyNamePart: domain,
                             cacheKeyPart: domain);
                         ret.Add(domain, newOrder);

@@ -22,7 +22,7 @@ namespace PKISharp.WACS.Services
         public NotificationSettings Notification { get; private set; } = new NotificationSettings();
         public SecuritySettings Security { get; private set; } = new SecuritySettings();
         public ScriptSettings Script { get; private set; } = new ScriptSettings();
-        [Obsolete]
+        [Obsolete("Legacy setting for reverse compatibility")]
         public SourceSettings Target { get; private set; } = new SourceSettings();
         public SourceSettings Source { get; private set; } = new SourceSettings();
         public ValidationSettings Validation { get; private set; } = new ValidationSettings();
@@ -81,14 +81,14 @@ namespace PKISharp.WACS.Services
 
                 // This code specifically deals with backwards compatibility 
                 // so it is allowed to use obsolete properties
-#pragma warning disable CS0612
+#pragma warning disable CS0612, CS0618
                 static string? Fallback(string? x, string? y) => string.IsNullOrWhiteSpace(x) ? y : x;
                 Source.DefaultSource = Fallback(Source.DefaultSource, Target.DefaultTarget);
                 Store.PemFiles.DefaultPath = Fallback(Store.PemFiles.DefaultPath, Store.DefaultPemFilesPath);
                 Store.CentralSsl.DefaultPath = Fallback(Store.CentralSsl.DefaultPath, Store.DefaultCentralSslStore);
                 Store.CentralSsl.DefaultPassword = Fallback(Store.CentralSsl.DefaultPassword, Store.DefaultCentralSslPfxPassword);
                 Store.CertificateStore.DefaultStore = Fallback(Store.CertificateStore.DefaultStore, Store.DefaultCertificateStore);
-#pragma warning restore CS0612 
+#pragma warning restore CS0612, CS0618
             }
             catch (Exception ex)
             {
@@ -111,24 +111,14 @@ namespace PKISharp.WACS.Services
         {
             get
             {
-                Uri? ret;
-                if (!string.IsNullOrEmpty(_arguments.BaseUri))
-                {
-                    ret = new Uri(_arguments.BaseUri);
-                }
-                else if (_arguments.Test)
-                {
-                    ret = Acme.DefaultBaseUriTest;
-                }
-                else
-                {
-                    ret = Acme.DefaultBaseUri;
-                }
-                if (ret == null)
+                var uri = !string.IsNullOrEmpty(_arguments.BaseUri)
+                    ? new Uri(_arguments.BaseUri)
+                    : _arguments.Test ? Acme.DefaultBaseUriTest : Acme.DefaultBaseUri;
+                if (uri == null)
                 {
                     throw new Exception("Unable to determine BaseUri");
                 }
-                return ret;
+                return uri;
             }
         }
 

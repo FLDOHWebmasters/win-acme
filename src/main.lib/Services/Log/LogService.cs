@@ -13,7 +13,7 @@ namespace PKISharp.WACS.Services
 {
     public class LogService : ILogService
     {
-        public static ILogService Debugging;
+        public static ILogService? Debugging { get; private set; }
 
         private readonly Logger? _screenLogger;
         private readonly Logger? _debugScreenLogger;
@@ -169,13 +169,13 @@ namespace PKISharp.WACS.Services
 
         public void Information(string message, params object?[] items) => Information(LogType.Screen | LogType.Disk, message, items);
 
-        public void Information(LogType logType, string message, params object?[] items) => _Information(logType, message, items);
+        public void Information(LogType logType, string message, params object?[] items) => Info(logType, message, items);
 
         public void Verbose(LogType type, string message, params object?[] items) => Write(type, LogEventLevel.Verbose, message, items);
 
         private void Debug(LogType type, string message, params object?[] items) => Write(type, LogEventLevel.Debug, message, items);
 
-        private void _Information(LogType type, string message, params object?[] items) => Write(type, LogEventLevel.Information, message, items);
+        private void Info(LogType type, string message, params object?[] items) => Write(type, LogEventLevel.Information, message, items);
 
         private void Warning(LogType type, string message, params object?[] items) => Write(type, LogEventLevel.Warning, message, items);
 
