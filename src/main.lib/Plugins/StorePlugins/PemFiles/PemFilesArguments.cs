@@ -3,7 +3,7 @@ using PKISharp.WACS.Configuration.Arguments;
 
 namespace PKISharp.WACS.Plugins.StorePlugins
 {
-    internal class PemFilesArguments : BaseArguments
+    public class PemFilesArguments : BaseArguments
     {
         public override string Name => "PEM files plugin";
         public override string Group => "Store";

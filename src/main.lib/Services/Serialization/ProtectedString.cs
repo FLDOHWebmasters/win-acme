@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -18,12 +17,12 @@ namespace PKISharp.WACS.Services.Serialization
         /// <summary>
         /// Indicates encryption
         /// </summary>
-        internal const string EncryptedPrefix = "enc-";
+        public const string EncryptedPrefix = "enc-";
 
         /// <summary>
         /// Indicates clear text
         /// </summary>
-        internal const string ClearPrefix = "clear-";
+        public const string ClearPrefix = "clear-";
 
         /// <summary>
         /// Logging service, used only by the JsonConverter

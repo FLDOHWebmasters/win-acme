@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.StorePlugins
 {
-    internal class PfxFile : IStorePlugin
+    public class PfxFile : IStorePlugin
     {
         private readonly ILogService _log;
         private readonly string _path;
@@ -53,7 +53,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
 
         internal static string Filename(string identifier) => Filename(identifier, ".pfx");
 
-        internal static string Filename(string identifier, string extension) => $"{identifier.Replace("*", "_")}{extension}";
+        public static string Filename(string identifier, string extension) => $"{identifier.Replace("*", "_")}{extension}";
 
         public async Task Save(CertificateInfo input)
         {
