@@ -28,6 +28,7 @@ namespace PKISharp.WACS.Clients
         private readonly string _senderName;
         private readonly string _senderAddress;
         private readonly string _computerName;
+        private readonly string _clientName;
         private readonly string _version;
         private readonly IEnumerable<string> _receiverAddresses;
 
@@ -48,6 +49,10 @@ namespace PKISharp.WACS.Clients
             _computerName = _settings.Notification.ComputerName;
             if (string.IsNullOrEmpty(_computerName)) {
                 _computerName = Environment.MachineName;
+            }
+            _clientName = _settings.Client.ClientName;
+            if (string.IsNullOrEmpty(_clientName)) {
+                _clientName = "win-acme";
             }
             _version = VersionService.SoftwareVersion.ToString();
 
@@ -121,10 +126,10 @@ namespace PKISharp.WACS.Clients
                         message.From.Add(sender);
                         message.To.Add(receiver);
                         var bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = content + $"<p>Sent by win-acme version {_version} from {_computerName}</p>";
+                        bodyBuilder.HtmlBody = content + $"<p>Sent by {_clientName} version {_version} from {_computerName}</p>";
                         message.Body = bodyBuilder.ToMessageBody();
                         await client.SendAsync(message);
-                    }                       
+                    }
                     await client.DisconnectAsync(true);
                 }
                 catch (Exception ex)
