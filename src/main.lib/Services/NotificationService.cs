@@ -166,7 +166,7 @@ namespace PKISharp.WACS.Services
 
         private string NotificationHosts(Renewal renewal) => string.Join(", ", NotificationHosts(renewal, _certificateService));
 
-        public static string[] NotificationHosts(Renewal renewal, ICertificateService _certificateService)
+        public static string[] NotificationHosts(Renewal renewal, ICertificateService _certificateService, bool nameOnly = false)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace PKISharp.WACS.Services
                 {
                     return new string[] { "Unknown" };
                 }
-                return infos.SelectMany(i => i.SanNames).Distinct().Select(x => x.ToString()).ToArray();
+                return infos.SelectMany(i => i.SanNames).Distinct().Select(x => nameOnly ? x.Value : x.ToString()).ToArray();
             }
             catch
             {
