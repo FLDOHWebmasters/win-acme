@@ -164,23 +164,22 @@ namespace PKISharp.WACS.Services
             }
         }
 
-        private string NotificationHosts(Renewal renewal)
+        private string NotificationHosts(Renewal renewal) => string.Join(", ", NotificationHosts(renewal, _certificateService));
+
+        public static string[] NotificationHosts(Renewal renewal, ICertificateService _certificateService)
         {
             try
             {
                 var infos = _certificateService.CachedInfos(renewal);
-                if (infos == null || infos.Count() == 0)
+                if (infos == null || !infos.Any())
                 {
-                    return "Unknown";
+                    return new string[] { "Unknown" };
                 }
-                else
-                {
-                    return string.Join(", ", infos.SelectMany(i => i.SanNames).Distinct());
-                }
+                return infos.SelectMany(i => i.SanNames).Distinct().Select(x => x.ToString()).ToArray();
             }
             catch
             {
-                return "Error";
+                return new string[] { "Error" };
             }
         }
     }
