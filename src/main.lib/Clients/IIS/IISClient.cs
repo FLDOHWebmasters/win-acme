@@ -175,23 +175,36 @@ namespace PKISharp.WACS.Clients.IIS
             throw new Exception($"Unable to find IIS SiteId #{id}");
         }
 
+        public static IISSiteWrapper GetWebSite(string server, long siteId, ILogService log)
+        {
+            log.Verbose($"Looking for IIS Site ID {siteId}");
+            var site = GetWebSite(server, x => x.Site.Id == siteId, log);
+            return site ?? throw new Exception($"Unable to find IIS Site ID {siteId}");
+        }
+
         public static IISSiteWrapper GetWebSite(string server, string name, ILogService log)
         {
-            log.Verbose($"Looking for IIS Site name {name}.");
+            log.Verbose($"Looking for IIS Site name {name}");
+            var site = GetWebSite(server, x => x.Site.Name == name, log);
+            return site ?? throw new Exception($"Unable to find IIS Site name {name}");
+        }
+
+        private static IISSiteWrapper? GetWebSite(string server, Func<IISSiteWrapper, bool> isMatch, ILogService log)
+        {
             var version = GetIISVersion(server);
             var serverManager = GetServerManager(server, version, log);
-            if (serverManager != null) {
+            if (serverManager != null)
+            {
                 var webSites = GetWebSites(serverManager, log);
                 foreach (var site in webSites)
                 {
-                    var siteName = site.Site.Name;
-                    if (siteName == name)
+                    if (isMatch(site))
                     {
                         return site;
                     }
                 }
             }
-            throw new Exception($"Unable to find IIS Site name {name}");
+            return null;
         }
 
         public IISSiteWrapper GetFtpSite(long id)
