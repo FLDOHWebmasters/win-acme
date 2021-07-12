@@ -4,6 +4,7 @@ namespace PKISharp.WACS.Clients.DNS
 {
     public interface IDnsClient
     {
-        bool AddTxtRecord(string zone, string hostName, string descriptiveText);
+        bool CreateTxtRecord(string zone, string hostName, string descriptiveText);
+        void DeleteTxtRecord(string zone, string hostName, string descriptiveText);
     }
 }
