@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Clients.DNS;
+﻿using PKISharp.WACS.Clients;
+using PKISharp.WACS.Clients.DNS;
 using PKISharp.WACS.Services;
 using System.Threading.Tasks;
 
@@ -6,12 +7,12 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
 {
     internal class Delegation : DnsValidation<Delegation>
     {
-        private readonly IDnsClient _client;
+        private readonly ISystemManagementClient _client;
         private readonly DelegationOptions _options;
 
         public Delegation(
             LookupClientProvider dnsLookup,
-            IDnsClient dnsClient,
+            ISystemManagementClient dnsClient,
             ILogService log,
             ISettingsService settings,
             DelegationOptions options) :
