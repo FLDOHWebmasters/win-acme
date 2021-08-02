@@ -57,7 +57,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         private bool Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo input)
         {
-            _log.Information($"Installing {target.CommonName.Value} for Cascade on {_options.HostName}");
+            _log.Information($"Installing {target.CommonName.Value} for Tomcat on {_options.HostName}");
 
             // 0. determine local and remote paths
             var storedCertFile = GetCertFileInfo(stores, input);
