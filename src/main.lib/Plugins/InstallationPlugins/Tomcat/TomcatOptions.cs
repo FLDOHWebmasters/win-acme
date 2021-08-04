@@ -1,7 +1,9 @@
-﻿using PKISharp.WACS.Plugins.Base.Options;
+﻿using PKISharp.WACS.Plugins.Base;
+using PKISharp.WACS.Plugins.Base.Options;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
+    [Plugin("fd417f8b-a78e-47f5-85ea-b25af0e94a44")]
     public class TomcatOptions : InstallationPluginOptions<Tomcat>
     {
         public string? HostName { get; set; }
