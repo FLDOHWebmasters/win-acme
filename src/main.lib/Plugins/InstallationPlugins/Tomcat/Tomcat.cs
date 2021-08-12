@@ -15,12 +15,14 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
     /// <summary>
     /// Requisites:<list type="bullet">
+    /// <item>There must be a "certs" share on the installation target machine at UNC path \\target-machine-name\certs
+    /// which maps to the constant HostCertPath defined in this class, currently D:\cascadecerts</item>
     /// <item>The service account sa/certinstaller must have admin privileges on the installation target machine</item>
     /// <item>CATALINA_HOME environment variable must be set to root of tomcat installation (under current Cascade root)</item>
     /// <item>In tomcat\conf\server.xml there must be an HTTPS connector already defined, with its keystoreFile attribute
-    /// set to a file path in the defined HostCertPath folder (currently D:\cascadecerts\). This plugin naively looks for
-    /// the string 'keystoreFile="D:\cascadecerts\' to find and replace the certificate file path with the new cert, and then
-    /// looks for the next occurrence of 'keystorePass="' to find and replace the certificate password.</item>
+    /// set to a file path in the defined HostCertPath folder. This plugin naively looks for the string
+    /// 'keystoreFile="D:\cascadecerts\' to find and replace the certificate file path with the new cert, and
+    /// then looks for the next occurrence of 'keystorePass="' to find and replace the certificate password.</item>
     /// </list>
     /// </summary>
     public class Tomcat : IInstallationPlugin
@@ -57,21 +59,29 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         private bool Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo input)
         {
-            _log.Information($"Installing {target.CommonName.Value} for Tomcat on {_options.HostName}");
+            var hostName = _options.HostName!;
+            _log.Information($"Installing {target.CommonName.Value} for Tomcat on {hostName}");
 
             // 0. determine local and remote paths
             var storedCertFile = GetCertFileInfo(stores, input);
-            var sharedFilePath = Path.Combine(_pfxFilePath, storedCertFile.Name);
+            var storedCertPath = Path.Combine(_pfxFilePath, storedCertFile.Name);
             var serverFileName = Path.GetFileNameWithoutExtension(storedCertFile.Name);
-            var serverFilePath = Path.Combine(HostCertPath, $"{serverFileName}_{DateTime.Now.ToFileTime()}{storedCertFile.Extension}");
+            var targetFileName = $"{serverFileName}_{DateTime.Now.ToFileTime()}{storedCertFile.Extension}";
+            var serverFilePath = Path.Combine(HostCertPath, targetFileName);
 
             // 1. send cert file to remote machine
-            var hostName = _options.HostName!;
-            var commandLine = $"copy \"{sharedFilePath}\" \"{serverFilePath}\" /y";
-            _system.ExecuteCommandLine(hostName, commandLine);
+            var serverShareDir = @$"\\{hostName}\certs";
+            var serverSharePath = Path.Combine(serverShareDir, targetFileName);
+            if (!File.Exists(storedCertPath))
+            {
+                throw new ApplicationException($"Stored cert not found at {storedCertPath}");
+            }
+            File.Copy(storedCertPath, serverSharePath);
+            //var commandLine = @$"copy ""{storedCertPath}"" ""{serverFilePath}"" /y";
+            //_system.ExecuteCommandLine(hostName, commandLine);
 
             // 2. add certificate to Java keystore
-            commandLine = @$"%CATALINA_HOME%\bin\keytool.exe -importkeystore -srckeystore {serverFilePath} -srcstoretype pkcs12 -destkeystore clientcert.jks -deststoretype JKS -storepass changeit";
+            var commandLine = @$"""%CATALINA_HOME%\..\java\jdk\bin\keytool.exe"" -importkeystore -srckeystore ""{serverFilePath}"" -srcstoretype pkcs12 -destkeystore clientcert.jks -deststoretype JKS -storepass changeit";
             _system.ExecuteCommandLine(hostName, commandLine);
 
             // 3. update tomcat/conf/server.xml keystoreFile value
@@ -79,10 +89,13 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             const string fileAttribute = "keystoreFile=\"";
             const string passAttribute = "keystorePass=\"";
             var targetXmlPath = @$"%CATALINA_HOME%\conf\{configFileName}";
-            var serverXmlPath = Path.Combine(_pfxFilePath, configFileName);
+            var serverXmlPath = Path.Combine(HostCertPath, configFileName);
             commandLine = @$"copy ""{targetXmlPath}"" ""{serverXmlPath}"" /y";
             _system.ExecuteCommandLine(hostName, commandLine);
-            var serverXml = File.ReadAllText(serverXmlPath);
+            var sourceXmlPath = Path.Combine(serverShareDir, configFileName);
+            var storedXmlPath = Path.Combine(_pfxFilePath, configFileName);
+            File.Copy(sourceXmlPath, storedXmlPath, true);
+            var serverXml = File.ReadAllText(storedXmlPath);
             var fileIndex = serverXml.IndexOf($"{fileAttribute}{HostCertPath}");
             var passIndex = serverXml.IndexOf(passAttribute, fileIndex);
             if (fileIndex < 0 || passIndex < 0)
@@ -94,15 +107,20 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             var fileEndIndex = serverXml.IndexOf('\"', fileIndex);
             var passEndIndex = serverXml.IndexOf('\"', passIndex);
             serverXml = $"{serverXml[..fileIndex]}{serverFilePath}{serverXml[fileEndIndex..passIndex]}{_pfxFilePassword}{serverXml[passEndIndex..]}";
-            File.WriteAllText(serverXmlPath, serverXml);
+            File.WriteAllText(storedXmlPath, serverXml);
+            File.Copy(storedXmlPath, sourceXmlPath, true);
             commandLine = @$"copy ""{serverXmlPath}"" ""{targetXmlPath}"" /y";
             _system.ExecuteCommandLine(hostName, commandLine);
 
             // 4. restart Cascade
-            ServiceController sc = new ServiceController("", _options.HostName!);
-            sc.Stop();
-            sc.Start();
-            return true;
+            var sc = new ServiceController("Cascade CMS", hostName);
+            var success = !string.IsNullOrEmpty(sc.MachineName);
+            if (success)
+            {
+                sc.Stop();
+                sc.Start();
+            }
+            return success;
         }
 
         private FileInfo GetCertFileInfo(IEnumerable<IStorePlugin> stores, CertificateInfo input)
