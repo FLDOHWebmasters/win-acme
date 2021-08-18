@@ -21,6 +21,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
 
         private ArgumentResult<string?> DelegationZone => _arguments.
             GetString<DelegationArguments>(x => x.DnsZone).
+            WithDefault(DelegationOptions.DefaultZone).
             Validate(x => Task.FromResult(!string.IsNullOrEmpty(_domainParseService.GetTLD(x!))), "invalid zone domain").
             Required();
 

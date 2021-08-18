@@ -19,7 +19,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         }
 
         private ArgumentResult<string?> TomcatHost => _arguments.GetString<TomcatArguments>(x => x.TomcatHost)
-            .Validate(x => Task.FromResult(IPAddress.TryParse(x!, out var y) || !string.IsNullOrEmpty(_domainParseService.GetTLD(x!))), x => $"invalid host address {x}");
+            .Validate(x => Task.FromResult(IPAddress.TryParse(x!, out var y) || !string.IsNullOrEmpty(_domainParseService.GetRegisterableDomain(x!))), x => $"invalid host address {x}");
 
         public override async Task<TomcatOptions> Acquire(Target target, IInputService input, RunLevel runLevel)
             => new TomcatOptions { HostName = await TomcatHost.Interactive(input).GetValue() };

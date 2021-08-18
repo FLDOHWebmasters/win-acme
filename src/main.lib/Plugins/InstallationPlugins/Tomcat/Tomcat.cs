@@ -15,9 +15,10 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
     /// <summary>
     /// Requisites:<list type="bullet">
-    /// <item>There must be a "certs" share on the installation target machine at UNC path \\target-machine-name\certs
+    /// <item>There must be a "cascadecerts" share on the installation target machine at UNC path \\target-machine-name\cascadecerts
     /// which maps to the constant HostCertPath defined in this class, currently D:\cascadecerts</item>
-    /// <item>The service account sa/certinstaller must have admin privileges on the installation target machine</item>
+    /// <item>The service account sa/certinstaller must have admin privileges on the installation target machine and
+    /// write privileges on the cascadecerts share</item>
     /// <item>CATALINA_HOME environment variable must be set to root of tomcat installation (under current Cascade root)</item>
     /// <item>In tomcat\conf\server.xml there must be an HTTPS connector already defined, with its keystoreFile attribute
     /// set to a file path in the defined HostCertPath folder. This plugin naively looks for the string
@@ -27,7 +28,8 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     /// </summary>
     public class Tomcat : IInstallationPlugin
     {
-        const string HostCertPath = @"D:\cascadecerts";
+        const string HostCertDir = "cascadecerts";
+        const string HostCertPath = @"D:\" + HostCertDir;
         const string DefaultPfxFilePath = @"\\oit00pdcm001.dohsd.ad.state.fl.us\store";
         const string DefaultPfxFilePassword = "fo0b@rB42";
 
@@ -70,7 +72,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             var serverFilePath = Path.Combine(HostCertPath, targetFileName);
 
             // 1. send cert file to remote machine
-            var serverShareDir = @$"\\{hostName}\certs";
+            var serverShareDir = @$"\\{hostName}\{HostCertDir}";
             var serverSharePath = Path.Combine(serverShareDir, targetFileName);
             if (!File.Exists(storedCertPath))
             {
