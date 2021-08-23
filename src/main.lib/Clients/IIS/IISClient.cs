@@ -122,7 +122,6 @@ namespace PKISharp.WACS.Clients.IIS
                     Where(s => s.Bindings.Any(sb => sb.Protocol is "http" or "https")).
                     Where(s =>
                     {
-
                         try
                         {
                             return s.State == ObjectState.Started;
@@ -179,14 +178,14 @@ namespace PKISharp.WACS.Clients.IIS
         {
             log.Verbose($"Looking for IIS Site ID {siteId}");
             var site = GetWebSite(server, x => x.Site.Id == siteId, log);
-            return site ?? throw new Exception($"Unable to find IIS Site ID {siteId}");
+            return site ?? throw new Exception($"Unable to find IIS Site ID {siteId} on server {server}");
         }
 
         public static IISSiteWrapper GetWebSite(string server, string name, ILogService log)
         {
             log.Verbose($"Looking for IIS Site name {name}");
             var site = GetWebSite(server, x => x.Site.Name == name, log);
-            return site ?? throw new Exception($"Unable to find IIS Site name {name}");
+            return site ?? throw new Exception($"Unable to find IIS Site name {name} on server {server}");
         }
 
         private static IISSiteWrapper? GetWebSite(string server, Func<IISSiteWrapper, bool> isMatch, ILogService log)

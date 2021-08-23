@@ -19,7 +19,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     /// which maps to the constant HostCertPath defined in this class, currently D:\cascadecerts</item>
     /// <item>The service account sa/certinstaller must have admin privileges on the installation target machine and
     /// write privileges on the cascadecerts share</item>
-    /// <item>CATALINA_HOME environment variable must be set to root of tomcat installation (under current Cascade root)</item>
     /// <item>In tomcat\conf\server.xml there must be an HTTPS connector already defined, with its keystoreFile attribute
     /// set to a file path in the defined HostCertPath folder. This plugin naively looks for the string
     /// 'keystoreFile="D:\cascadecerts\' to find and replace the certificate file path with the new cert, and
@@ -28,6 +27,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     /// </summary>
     public class Tomcat : IInstallationPlugin
     {
+        public const string DefaultHomeDir = @"D:\Cascade CMS 8.14\tomcat";
         const string HostCertDir = "cascadecerts";
         const string HostCertPath = @"D:\" + HostCertDir;
         const string DefaultPfxFilePath = @"\\oit00pdcm001.dohsd.ad.state.fl.us\store";
@@ -62,6 +62,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         private bool Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo input)
         {
             var hostName = _options.HostName!;
+            var homeDir = _options.HomeDir!;
             _log.Information($"Installing {target.CommonName.Value} for Tomcat on {hostName}");
 
             // 0. determine local and remote paths
@@ -83,14 +84,14 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             //_system.ExecuteCommandLine(hostName, commandLine);
 
             // 2. add certificate to Java keystore
-            var commandLine = @$"""%CATALINA_HOME%\..\java\jdk\bin\keytool.exe"" -importkeystore -srckeystore ""{serverFilePath}"" -srcstoretype pkcs12 -destkeystore clientcert.jks -deststoretype JKS -storepass changeit";
+            var commandLine = @$"""{homeDir}\..\java\jdk\bin\keytool.exe"" -importkeystore -srckeystore ""{serverFilePath}"" -srcstoretype pkcs12 -destkeystore clientcert.jks -deststoretype JKS -storepass changeit";
             _system.ExecuteCommandLine(hostName, commandLine);
 
             // 3. update tomcat/conf/server.xml keystoreFile value
             const string configFileName = "server.xml";
             const string fileAttribute = "keystoreFile=\"";
             const string passAttribute = "keystorePass=\"";
-            var targetXmlPath = @$"%CATALINA_HOME%\conf\{configFileName}";
+            var targetXmlPath = @$"{homeDir}\conf\{configFileName}";
             var serverXmlPath = Path.Combine(HostCertPath, configFileName);
             commandLine = @$"copy ""{targetXmlPath}"" ""{serverXmlPath}"" /y";
             _system.ExecuteCommandLine(hostName, commandLine);
