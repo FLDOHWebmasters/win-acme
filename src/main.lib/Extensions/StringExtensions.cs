@@ -13,6 +13,10 @@ namespace PKISharp.WACS.Extensions
 {
     public static class StringExtensions
     {
+        public static string IfBlank(this string s, string t) => IsBlank(s) ? t : s;
+
+        public static bool IsBlank(this string s) => string.IsNullOrWhiteSpace(s);
+
         public static string? CleanUri(this Uri? uri)
         {
             if (uri == null)

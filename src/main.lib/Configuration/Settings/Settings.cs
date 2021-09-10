@@ -482,5 +482,9 @@ namespace PKISharp.WACS.Configuration.Settings
         /// Default plugin(s) to select 
         /// </summary>
         public string? DefaultInstallation { get; set; }
+        /// <summary>
+        /// Encrypted certificate password to use for Tomcat Installations.
+        /// </summary>
+        public string? DefaultTomcatPassword { get; set; }
     }
 }
