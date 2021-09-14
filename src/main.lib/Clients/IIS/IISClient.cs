@@ -31,7 +31,7 @@ namespace PKISharp.WACS.Clients.IIS
         {
             _log = log;
             _iisHost = arguments.GetArguments<IISWebArguments>()?.IISHost ?? "";
-            Version = GetIISVersion(_iisHost);
+            Version = GetIISVersion(_iisHost, _log);
         }
 
         /// <summary>
@@ -183,18 +183,19 @@ namespace PKISharp.WACS.Clients.IIS
 
         public static IISSiteWrapper GetWebSite(string server, string name, ILogService log)
         {
-            log.Verbose($"Looking for IIS Site name {name}");
+            log.Verbose($"Looking for IIS Site name {name} on {server}");
             var site = GetWebSite(server, x => x.Site.Name == name, log);
-            return site ?? throw new Exception($"Unable to find IIS Site name {name} on server {server}");
+            return site ?? throw new Exception($"Unable to find IIS Site name {name} on {server}");
         }
 
         private static IISSiteWrapper? GetWebSite(string server, Func<IISSiteWrapper, bool> isMatch, ILogService log)
         {
-            var version = GetIISVersion(server);
+            var version = GetIISVersion(server, log);
             var serverManager = GetServerManager(server, version, log);
             if (serverManager != null)
             {
                 var webSites = GetWebSites(serverManager, log);
+                log.Verbose($"Found {webSites.Count} websites on {server}");
                 foreach (var site in webSites)
                 {
                     if (isMatch(site))
@@ -383,7 +384,7 @@ namespace PKISharp.WACS.Clients.IIS
         /// Determine IIS version based on registry
         /// </summary>
         /// <returns></returns>
-        private static Version GetIISVersion(string iisHost)
+        private static Version GetIISVersion(string iisHost, ILogService log)
         {
             try
             {
@@ -407,15 +408,21 @@ namespace PKISharp.WACS.Clients.IIS
                         {
                             return new Version(majorVersion, minorVersion);
                         }
+                        log.Debug($"Invalid version {majorVersion} + {minorVersion}");
+                    }
+                    else
+                    {
+                        log.Debug("InetStp registry key not found");
                     }
                     return new Version(0, 0);
                 }
             }
-            catch
+            catch (Exception x)
             {
-                // Assume nu IIS if we're not able to open the registry key
+                log.Debug(x.ToString());
+                log.Information("Failed to get IIS version, defaulting to version 8.");
+                return new Version(8, 0);
             }
-            return new Version(0, 0);
         }
 
         #region IDisposable
