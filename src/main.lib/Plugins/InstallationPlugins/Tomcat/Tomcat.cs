@@ -59,7 +59,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public (bool, string?) Disabled => (false, null);
 
         public async Task<bool> Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo newCertificateInfo, CertificateInfo? oldCertificateInfo)
-                => await Task.Run(() => Install(target, stores, newCertificateInfo));
+            => await Task.Run(() => Install(target, stores, newCertificateInfo));
 
         private bool Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo input)
         {
