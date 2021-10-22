@@ -183,7 +183,7 @@ namespace PKISharp.WACS
         }
 
         /// <summary>
-        /// Steps to take on succesful (re)authorization
+        /// Steps to take on successful (re)authorization
         /// </summary>
         /// <param name="partialTarget"></param>
         private async Task ExecuteOrder(ExecutionContext context)

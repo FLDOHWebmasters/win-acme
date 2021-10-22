@@ -8,8 +8,8 @@ namespace PKISharp.WACS.Plugins.Base.Factories
         IPluginOptionsFactory
         where TOptions : PluginOptions, new()
     {
-        private readonly string? _name;
-        private readonly string? _description;
+        private readonly string _name;
+        private readonly string _description;
 
         public PluginOptionsFactory()
         {
