@@ -269,7 +269,7 @@ namespace PKISharp.WACS
                 // Run installation plugin(s)
                 try
                 {
-                    var steps = context.Renewal.InstallationPluginOptions.Count();
+                    var steps = context.Renewal.InstallationPluginOptions.Count;
                     for (var i = 0; i < steps; i++)
                     {
                         var installOptions = context.Renewal.InstallationPluginOptions[i];

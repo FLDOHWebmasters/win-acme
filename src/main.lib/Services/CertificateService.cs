@@ -608,6 +608,6 @@ namespace PKISharp.WACS.Services
         /// </summary>
         /// <param name="friendlyName"></param>
         /// <returns></returns>
-        public static Func<X509Certificate2, bool> ThumbprintFilter(string thumbprint) => new Func<X509Certificate2, bool>(x => string.Equals(x.Thumbprint, thumbprint));
+        public static Func<X509Certificate2, bool> ThumbprintFilter(string thumbprint) => new(x => string.Equals(x.Thumbprint, thumbprint));
     }
 }

@@ -6,7 +6,6 @@ using PKISharp.WACS.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using static System.IO.FileSystemAclExtensions;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
