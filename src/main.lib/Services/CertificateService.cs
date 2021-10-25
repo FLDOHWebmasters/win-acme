@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using PKISharp.WACS.Clients.Acme;
-using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Configuration.Arguments;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;
@@ -9,7 +8,6 @@ using PKISharp.WACS.Plugins.Interfaces;
 using PKISharp.WACS.Services.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -142,11 +140,11 @@ namespace PKISharp.WACS.Services
             }
 
             var keyName = GetPath(order.Renewal, $"-{CacheKey(order)}{PfxPostFix}");
-            var fileCache = cachedInfos.Where(x => x.CacheFile?.FullName == keyName).FirstOrDefault();
+            var fileCache = cachedInfos.FirstOrDefault(x => x.CacheFile?.FullName == keyName);
             if (fileCache == null)
             {
                 var legacyFile = GetPath(order.Renewal, PfxPostFixLegacy);
-                var candidate = cachedInfos.Where(x => x.CacheFile?.FullName == legacyFile).FirstOrDefault();
+                var candidate = cachedInfos.FirstOrDefault(x => x.CacheFile?.FullName == legacyFile);
                 if (candidate != null)
                 {
                     if (Match(candidate, order.Target))

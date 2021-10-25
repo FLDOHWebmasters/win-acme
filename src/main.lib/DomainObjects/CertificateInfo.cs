@@ -48,14 +48,7 @@ namespace PKISharp.WACS.DomainObjects
         private static string? Split(string input)
         {
             var match = Regex.Match(input, "=([^,]+)");
-            if (match.Success)
-            {
-                return match.Groups[1].Value.Trim();
-            } 
-            else
-            {
-                return null;
-            }
+            return match.Success ? match.Groups[1].Value.Trim() : null;
         }
 
         public Dictionary<Type, StoreInfo> StoreInfo { get; set; } = new Dictionary<Type, StoreInfo>();
