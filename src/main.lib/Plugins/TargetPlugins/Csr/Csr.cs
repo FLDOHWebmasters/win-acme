@@ -37,7 +37,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             }
             try
             {
-                csrString = File.ReadAllText(_options.CsrFile);
+                csrString = await File.ReadAllTextAsync(_options.CsrFile);
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 string pkString;
                 try
                 {
-                    pkString = File.ReadAllText(_options.PkFile);
+                    pkString = await File.ReadAllTextAsync(_options.PkFile);
                 }
                 catch (Exception ex)
                 {
@@ -124,7 +124,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        private Identifier ParseCn(CertificationRequestInfo info)
+        private static Identifier ParseCn(CertificationRequestInfo info)
         {
             var subject = info.Subject;
             var cnValue = subject.GetValueList(new DerObjectIdentifier("2.5.4.3"));

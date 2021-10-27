@@ -41,7 +41,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             return new FileInfo(Path.Combine(dir, file));
         }
 
-        string GetKeyFileName(X509Certificate2 cert)
+        static string GetKeyFileName(X509Certificate2 cert)
         {
             var hProvider = IntPtr.Zero; // CSP handle
             var freeProvider = false; // Do we need to free the CSP ?
@@ -88,7 +88,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
             return keyFileName;
         }
 
-        string GetKeyFileDirectory(string keyFileName)
+        static string GetKeyFileDirectory(string keyFileName)
         {
             // Look up All User profile from environment variable
             var allUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);

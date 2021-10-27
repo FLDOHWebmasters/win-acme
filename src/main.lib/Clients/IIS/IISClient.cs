@@ -20,7 +20,6 @@ namespace PKISharp.WACS.Clients.IIS
         public const string DefaultBindingIp = "*";
 
         public Version Version { get; set; }
-        [SuppressMessage("Code Quality", "IDE0069:Disposable fields should be disposed", Justification = "Actually is disposed")]
         private readonly ILogService _log;
         private readonly string _iisHost;
         private ServerManager? _serverManager;
@@ -357,25 +356,17 @@ namespace PKISharp.WACS.Clients.IIS
             }
         }
 
-        private bool RequireUpdate(ConfigurationElement element, 
+        private static bool RequireUpdate(ConfigurationElement element, 
             long currentSiteId, long installSiteId, 
             string? oldThumbprint, string? newThumbprint,
             string? newStore)
         {
             var currentThumbprint = element.GetAttributeValue("serverCertHash").ToString();
             var currentStore = element.GetAttributeValue("serverCertStoreName").ToString();
-            bool update;
-            if (currentSiteId == installSiteId)
-            {
-                update =
-                    !string.Equals(currentThumbprint, newThumbprint, StringComparison.CurrentCultureIgnoreCase) ||
-                    !string.Equals(currentStore, newStore, StringComparison.CurrentCultureIgnoreCase);
-            }
-            else
-            {
-                update = string.Equals(currentThumbprint, oldThumbprint, StringComparison.CurrentCultureIgnoreCase);
-            }
-            return update;
+            return currentSiteId == installSiteId
+                ? !string.Equals(currentThumbprint, newThumbprint, StringComparison.CurrentCultureIgnoreCase) ||
+                    !string.Equals(currentStore, newStore, StringComparison.CurrentCultureIgnoreCase)
+                : string.Equals(currentThumbprint, oldThumbprint, StringComparison.CurrentCultureIgnoreCase);
         }
 
         #endregion
@@ -444,9 +435,12 @@ namespace PKISharp.WACS.Clients.IIS
             }
         }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
-
     }
 }

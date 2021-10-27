@@ -82,7 +82,7 @@ namespace PKISharp.WACS
             // Create one or more orders based on the target
             var orderPlugin = es.Resolve<IOrderPlugin>();
             var orders = orderPlugin.Split(renewal, target);
-            if (orders == null || orders.Count() == 0)
+            if (orders == null || !orders.Any())
             {
                 return new RenewResult("Order plugin failed to create order(s)");
             }
@@ -231,7 +231,7 @@ namespace PKISharp.WACS
                 var storePlugins = new List<IStorePlugin>();
                 try
                 {
-                    var steps = context.Renewal.StorePluginOptions.Count();
+                    var steps = context.Renewal.StorePluginOptions.Count;
                     for (var i = 0; i < steps; i++)
                     {
                         var storeOptions = context.Renewal.StorePluginOptions[i];
