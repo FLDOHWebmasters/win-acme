@@ -126,14 +126,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         internal static (bool, string?) Disabled(IUserRoleService userRoleService) 
         {
             var (allow, reason) = userRoleService.AllowIIS;
-            if (!allow)
-            {
-                return (true, reason);
-            } 
-            else
-            {
-                return (false, null);
-            }
+            return allow ? (false, null) : (true, reason);
         }
     }
 }
