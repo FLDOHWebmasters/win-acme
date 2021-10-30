@@ -45,19 +45,11 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         private static ManualOptions? Create(string? input)
         {
             var sanList = input.ParseCsv()?.Select(x => x.ConvertPunycode()).Select(x => Manual.ParseIdentifier(x));
-            if (sanList != null)
+            return sanList == null ? null : new ManualOptions
             {
-                var commonName = sanList.OfType<DnsIdentifier>().FirstOrDefault();
-                return new ManualOptions()
-                {
-                    CommonName = commonName?.Value,
-                    AlternativeNames = sanList.Select(x => x.Value).ToList()
-                };
-            }
-            else
-            {
-                return null;
-            }
+                CommonName = sanList.OfType<DnsIdentifier>().FirstOrDefault()?.Value,
+                AlternativeNames = sanList.Select(x => x.Value).ToList()
+            };
         }
     }
 }
