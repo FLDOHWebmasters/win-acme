@@ -320,7 +320,7 @@ namespace PKISharp.WACS.Services
             }
             var defaults = baseChoices.Where(x => x.Default);
             var cancel = Choice.Create(default(TResult), nullLabel, _cancelCommand);
-            if (defaults.Count() == 0)
+            if (!defaults.Any())
             {
                 cancel.Command = "<Enter>";
                 cancel.Default = true;

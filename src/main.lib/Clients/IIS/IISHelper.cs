@@ -187,11 +187,8 @@ namespace PKISharp.WACS.Clients.IIS
             return bindings.ToList();
         }
 
-        internal static bool Matches(IISBindingOption binding, Regex regex)
-        {
-            return regex.IsMatch(binding.HostUnicode)
-                || regex.IsMatch(binding.HostPunycode);
-        }
+        internal static bool Matches(IISBindingOption binding, Regex regex) =>
+            regex.IsMatch(binding.HostUnicode) || regex.IsMatch(binding.HostPunycode);
 
         internal static string HostsToRegex(IEnumerable<string> hosts) =>
             $"^({string.Join('|', hosts.Select(x => Regex.Escape(x)))})$";
