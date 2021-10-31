@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Microsoft.Web.Administration;
 using Microsoft.Win32;
 using PKISharp.WACS.Configuration;
@@ -9,6 +9,7 @@ using PKISharp.WACS.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceProcess;
 
 namespace PKISharp.WACS.Clients.IIS
 {
@@ -376,43 +377,47 @@ namespace PKISharp.WACS.Clients.IIS
         /// <returns></returns>
         private static Version GetIISVersion(string iisHost, ILogService log)
         {
-            try
+            bool local = string.IsNullOrEmpty(iisHost);
+            if (local)
             {
-                if (string.IsNullOrEmpty(iisHost))
+                // Get the W3SVC service
+                var iisService = ServiceController.GetServices().FirstOrDefault(s => s.ServiceName == "W3SVC");
+                if (iisService == null)
                 {
-                    return getVersion(Registry.LocalMachine);
+                    log.Verbose("W3SVC service not detected");
+                    return new Version(0, 0);
                 }
-                else
+                if (iisService.Status != ServiceControllerStatus.Running)
                 {
-                    using var remoteHive = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, iisHost);
-                    return getVersion(remoteHive);
-                }
-                Version getVersion(RegistryKey hive)
-                {
-                    using var componentsKey = hive.OpenSubKey(@"Software\Microsoft\InetStp", false);
-                    if (componentsKey != null)
-                    {
-                        _ = int.TryParse(componentsKey.GetValue("MajorVersion", "-1")?.ToString() ?? "-1", out var majorVersion);
-                        _ = int.TryParse(componentsKey.GetValue("MinorVersion", "-1")?.ToString() ?? "-1", out var minorVersion);
-                        if (majorVersion != -1 && minorVersion != -1)
-                        {
-                            return new Version(majorVersion, minorVersion);
-                        }
-                        log.Debug($"Invalid version {majorVersion} + {minorVersion}");
-                    }
-                    else
-                    {
-                        log.Debug("InetStp registry key not found");
-                    }
+                    log.Verbose("W3SVC service not running");
                     return new Version(0, 0);
                 }
             }
-            catch (Exception x)
+            try
             {
-                log.Debug(x.ToString());
-                log.Information("Failed to get IIS version, defaulting to version 8.");
-                return new Version(8, 0);
+                var hive = local ? Registry.LocalMachine : RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, iisHost);
+                using var componentsKey = hive.OpenSubKey(@"Software\Microsoft\InetStp", false);
+                if (componentsKey != null)
+                {
+                    _ = int.TryParse(componentsKey.GetValue("MajorVersion", "-1")?.ToString() ?? "-1", out var majorVersion);
+                    _ = int.TryParse(componentsKey.GetValue("MinorVersion", "-1")?.ToString() ?? "-1", out var minorVersion);
+                    if (majorVersion != -1 && minorVersion != -1)
+                    {
+                        return new Version(majorVersion, minorVersion);
+                    }
+                    log.Debug($"Invalid version {majorVersion} + {minorVersion}");
+                }
+                else
+                {
+                    log.Debug("InetStp registry key not found");
+                }
             }
+            catch (Exception ex)
+            {
+                log.Verbose("Error reading IIS version fomr registry: {message}", ex.Message);
+            }
+            log.Verbose("Unable to detect IIS version, making assumption");
+            return new Version(10, 0);
         }
 
         #region IDisposable

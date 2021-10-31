@@ -49,6 +49,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACMESharp", "..\..\ACMESharpCore\src\ACMESharp\ACMESharp.csproj", "{BE356A44-088A-4A6E-9222-ECA745B1D139}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentCommandLineParser", "..\..\fluent-command-line-parser\FluentCommandLineParser\FluentCommandLineParser.csproj", "{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wacs.validation.http.rest", "plugin.validation.http.rest\wacs.validation.http.rest.csproj", "{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +154,12 @@ Global
 		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
 		{6842CCE7-6897-4364-A34D-E50B6B0A2AF4}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
+		{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}.ReleasePluggable|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6DE6B2-F487-49F3-98FE-1E9EE0DF9615}.ReleasePluggable|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
