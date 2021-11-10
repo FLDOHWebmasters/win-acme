@@ -81,8 +81,8 @@ namespace PKISharp.WACS.Services
         /// <param name="runLevel"></param>
         /// <param name="renewal"></param>
         internal async Task NotifyFailure(
-            RunLevel runLevel, 
-            Renewal renewal, 
+            RunLevel runLevel,
+            Renewal renewal,
             List<string> errors,
             IEnumerable<MemoryEntry> log)
         {

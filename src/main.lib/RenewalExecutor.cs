@@ -232,12 +232,12 @@ namespace PKISharp.WACS
 
                 // Load the store plugins
                 var storePluginOptions = context.Renewal.StorePluginOptions.
-                    Where(x => !(x is NullStoreOptions)).
+                    Where(x => x is not NullStoreOptions).
                     ToList();
                 var storePlugins = storePluginOptions.
                     Select(x => context.Scope.Resolve(x.Instance, new TypedParameter(x.GetType(), x))).
                     OfType<IStorePlugin>().
-                    Where(x => !(x is INull)).
+                    Where(x => x is not INull).
                     ToList();
                 if (storePluginOptions.Count != storePlugins.Count)
                 {
@@ -432,7 +432,7 @@ namespace PKISharp.WACS
                         installOptions.Instance,
                         new TypedParameter(installOptions.GetType(), installOptions));
 
-                    if (!(installPlugin is INull))
+                    if (installPlugin is not INull)
                     {
                         if (steps > 1)
                         {

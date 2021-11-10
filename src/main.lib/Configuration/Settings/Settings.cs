@@ -24,7 +24,7 @@ namespace PKISharp.WACS.Configuration.Settings
         /// </summary>
         public string? DateFormat { get; set; }
         /// <summary>
-        /// How console tekst should be encoded
+        /// How console text should be encoded
         /// </summary>
         public string? TextEncoding { get; set; }
     }

@@ -32,42 +32,16 @@ namespace PKISharp.WACS.Extensions
             return str.CleanPath();
         }
 
-        public static string? CleanPath(this string? fileName)
-        {
-            if (fileName == null)
-            {
-                return null;
-            }
-            return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
-        }
+        public static string? CleanPath(this string? fileName) => fileName == null ? null
+            : Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
 
         public static string ReplaceNewLines(this string input) => Regex.Replace(input, @"\r\n?|\n", " ");
 
-        public static string ConvertPunycode(this string input)
-        {
-            if (!string.IsNullOrEmpty(input) && (input.StartsWith("xn--") || input.Contains(".xn--")))
-            {
-                return new IdnMapping().GetUnicode(input);
-            }
-            else
-            {
-                return input;
-            }
-        }
+        public static string ConvertPunycode(this string input) =>
+            !string.IsNullOrEmpty(input) && (input.StartsWith("xn--") || input.Contains(".xn--")) ? new IdnMapping().GetUnicode(input) : input;
 
-        public static List<string>? ParseCsv(this string? input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                return null;
-            }
-            return input.
-                Split(',').
-                Where(x => !string.IsNullOrWhiteSpace(x)).
-                Select(x => x.Trim().ToLower()).
-                Distinct().
-                ToList();
-        }
+        public static List<string>? ParseCsv(this string? input) => string.IsNullOrWhiteSpace(input) ? null
+            : input.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim().ToLower()).Distinct().ToList();
 
         public static bool ValidFile(this string? input, ILogService logService)
         {

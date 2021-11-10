@@ -90,32 +90,29 @@ namespace PKISharp.WACS.DomainObjects
         public DateTime? GetDueDate()
         {
             var lastSuccess = History.LastOrDefault(x => x.Success);
-            if (lastSuccess != null)
-            {
-                var firstOccurance = History.First(x => x.ThumbprintSummary == lastSuccess.ThumbprintSummary);
-                var defaultDueDate = firstOccurance.
-                    Date.
-                    AddDays(Settings.RenewalDays).
-                    ToLocalTime();
-                if (lastSuccess.ExpireDate == null)
-                {
-                    return defaultDueDate;
-                }
-                var minDays = Settings.RenewalMinimumValidDays ?? 7;
-                var expireBasedDueDate = lastSuccess.
-                    ExpireDate.
-                    Value.
-                    AddDays(minDays * -1).
-                    ToLocalTime();
-
-                return expireBasedDueDate < defaultDueDate ?
-                    expireBasedDueDate : 
-                    defaultDueDate;
-            }
-            else
+            if (lastSuccess == null)
             {
                 return null;
             }
+            var firstOccurance = History.First(x => x.ThumbprintSummary == lastSuccess.ThumbprintSummary);
+            var defaultDueDate = firstOccurance.
+                Date.
+                AddDays(Settings.RenewalDays).
+                ToLocalTime();
+            if (lastSuccess.ExpireDate == null)
+            {
+                return defaultDueDate;
+            }
+            var minDays = Settings.RenewalMinimumValidDays ?? 7;
+            var expireBasedDueDate = lastSuccess.
+                ExpireDate.
+                Value.
+                AddDays(minDays * -1).
+                ToLocalTime();
+
+            return expireBasedDueDate < defaultDueDate ?
+                expireBasedDueDate : 
+                defaultDueDate;
         }
 
         public bool IsDue() => GetDueDate() == null || GetDueDate() < DateTime.Now;
