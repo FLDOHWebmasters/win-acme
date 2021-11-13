@@ -51,7 +51,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
 
             // Generate friendly name suggestion
             var friendlyNameSuggestion = "[IIS]";
-            if (_options.IncludeSiteIds != null && _options.IncludeSiteIds.Any())
+            if (_options.IncludeSiteIds?.Any() ?? false)
             {
                 var sites = _helper.GetSites(false);
                 var site = default(IISHelper.IISSiteOption);
@@ -67,12 +67,12 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 if (site != null)
                 {
                     friendlyNameSuggestion += $" {site.Name}";
-                    count -= 1;
+                    count--;
                 }
-                if (count > 1)
+                if (count > 0)
                 {
                     friendlyNameSuggestion += $" (+{count} other{(count == 1 ? "" : "s")})";
-                } 
+                }
             }
             else
             {
@@ -83,7 +83,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             {
                 friendlyNameSuggestion += $" | {_options.IncludePattern}";
             }
-            else if (_options.IncludeHosts != null && _options.IncludeHosts.Any())
+            else if (_options.IncludeHosts?.Any() ?? false)
             {
                 var host = default(string);
                 if (cnBinding != null)
@@ -126,14 +126,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         internal static (bool, string?) Disabled(IUserRoleService userRoleService) 
         {
             var (allow, reason) = userRoleService.AllowIIS;
-            if (!allow)
-            {
-                return (true, reason);
-            } 
-            else
-            {
-                return (false, null);
-            }
+            return (!allow, allow ? null : reason);
         }
     }
 }
