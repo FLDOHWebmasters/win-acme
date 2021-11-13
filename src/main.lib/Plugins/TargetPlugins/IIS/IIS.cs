@@ -51,7 +51,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
 
             // Generate friendly name suggestion
             var friendlyNameSuggestion = "[IIS]";
-            if (_options.IncludeSiteIds != null && _options.IncludeSiteIds.Any())
+            if (_options.IncludeSiteIds?.Any() ?? false)
             {
                 var sites = _helper.GetSites(false);
                 var site = default(IISHelper.IISSiteOption);
@@ -67,12 +67,12 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 if (site != null)
                 {
                     friendlyNameSuggestion += $" {site.Name}";
-                    count -= 1;
+                    count--;
                 }
-                if (count > 1)
+                if (count > 0)
                 {
                     friendlyNameSuggestion += $" (+{count} other{(count == 1 ? "" : "s")})";
-                } 
+                }
             }
             else
             {
