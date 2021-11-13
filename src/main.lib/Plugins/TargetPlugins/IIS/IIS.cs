@@ -83,7 +83,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             {
                 friendlyNameSuggestion += $" | {_options.IncludePattern}";
             }
-            else if (_options.IncludeHosts != null && _options.IncludeHosts.Any())
+            else if (_options.IncludeHosts?.Any() ?? false)
             {
                 var host = default(string);
                 if (cnBinding != null)
@@ -126,7 +126,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         internal static (bool, string?) Disabled(IUserRoleService userRoleService) 
         {
             var (allow, reason) = userRoleService.AllowIIS;
-            return allow ? (false, null) : (true, reason);
+            return (!allow, allow ? null : reason);
         }
     }
 }
