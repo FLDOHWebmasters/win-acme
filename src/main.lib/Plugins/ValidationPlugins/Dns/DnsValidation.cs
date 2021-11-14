@@ -67,19 +67,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         /// default doesn't do parallel operation
         /// </summary>
         /// <returns></returns>
-        public override sealed async Task Commit()
-        {
-            // Wait for changes to be saved
-            await SaveChanges();
-
-            // Verify that the record was created successfully and wait for possible
-            // propagation/caching/TTL issues to resolve themselves naturally
-            if (_settings.Validation.PreValidateDns)
-            {
-                var validationTasks = _recordsCreated.Select(r => ValidateRecord(r));
-                await Task.WhenAll(validationTasks);
-            }
-        }
+        public override sealed async Task Commit() => await SaveChanges();
 
         /// <summary>
         /// Typically the changes will already be saved by 
@@ -160,40 +148,6 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         /// </summary>
         /// <returns></returns>
         public virtual Task Finalize() => Task.CompletedTask;
-
-        /// <summary>
-        /// Validate a record as being correctly created an sychronised, runs during/after the commit state
-        /// </summary>
-        /// <param name="record"></param>
-        /// <returns></returns>
-        private async Task ValidateRecord(DnsValidationRecord record)
-        {
-            var retry = 0;
-            var maxRetries = _settings.Validation.PreValidateDnsRetryCount;
-            var retrySeconds = _settings.Validation.PreValidateDnsRetryInterval;
-            while (true)
-            {
-                if (await PreValidate(record))
-                {
-                    break;
-                }
-                else
-                {
-                    retry += 1;
-                    if (retry > maxRetries)
-                    {
-                        _log.Information("It looks like validation is going to fail, but we will try now anyway...");
-                        break;
-                    }
-                    else
-                    {
-                        _log.Information("Will retry in {s} seconds (retry {i}/{j})...", retrySeconds, retry, maxRetries);
-                        await Task.Delay(retrySeconds * 1000);
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Delete validation record
         /// </summary>

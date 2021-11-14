@@ -175,7 +175,6 @@ namespace PKISharp.WACS.Services
         {
             return execution.BeginLifetimeScope(builder =>
             {
-                builder.RegisterType<DelegatedValidationParameters>();
                 builder.RegisterType(options.Instance).
                     As<IValidationPlugin>().
                     SingleInstance();

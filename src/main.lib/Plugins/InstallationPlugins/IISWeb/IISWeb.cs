@@ -30,23 +30,8 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             var bindingOptions = new BindingOptions().
                 WithThumbprint(newCertificate.Certificate.GetCertHash());
 
-            var centralSsl = stores.FirstOrDefault(x => x is CentralSsl);
             var certificateStore = stores.FirstOrDefault(x => x is CertificateStore);
-
-            if (centralSsl != null)
-            {
-                if (_iisClient.Version.Major < 8)
-                {
-                    var errorMessage = "Centralized SSL is only supported on IIS8+";
-                    _log.Error(errorMessage);
-                    throw new InvalidOperationException(errorMessage);
-                }
-                else
-                {
-                    bindingOptions = bindingOptions.WithFlags(SSLFlags.CentralSsl);
-                }
-            }
-            else if (certificateStore != null)
+            if (certificateStore != null)
             {
                 bindingOptions = bindingOptions.WithStore(newCertificate.StoreInfo[typeof(CertificateStore)].Path);
             }

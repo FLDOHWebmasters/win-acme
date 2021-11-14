@@ -8,7 +8,6 @@ namespace PKISharp.WACS.Configuration.Settings
         public string ClientName { get; set; } = "win-acme";
         public string ConfigurationPath { get; set; } = "";
         public string? LogPath { get; set; }
-        public bool VersionCheck { get; set; }
     }
 
     public class UiSettings
@@ -290,11 +289,6 @@ namespace PKISharp.WACS.Configuration.Settings
         /// <summary>
         /// Default plugin to select in the Advanced menu
         /// in the menu.
-        [Obsolete]
-        public string? DefaultTarget { get; set; }
-        /// <summary>
-        /// Default plugin to select in the Advanced menu
-        /// in the menu.
         public string? DefaultSource { get; set; }
     }
 
@@ -322,22 +316,6 @@ namespace PKISharp.WACS.Configuration.Settings
         /// and files it creates under the site for authorization.
         /// </summary>
         public bool CleanupFolders { get; set; }
-        /// <summary>
-        /// If set to `true`, it will wait until it can verify that the 
-        /// validation record has been created and is available before 
-        /// beginning DNS validation.
-        /// </summary>
-        public bool PreValidateDns { get; set; } = true;
-        /// <summary>
-        /// Maximum numbers of times to retry DNS pre-validation, while
-        /// waiting for the name servers to start providing the expected
-        /// answer.
-        /// </summary>
-        public int PreValidateDnsRetryCount { get; set; } = 5;
-        /// <summary>
-        /// Amount of time in seconds to wait between each retry.
-        /// </summary>
-        public int PreValidateDnsRetryInterval { get; set; } = 30;
         /// <summary>
         /// If set to `true`, the program will attempt to recurively 
         /// follow CNAME records present on _acme-challenge subdomains to 
@@ -385,24 +363,10 @@ namespace PKISharp.WACS.Configuration.Settings
         /// </summary>
         public string? DefaultStore { get; set; }
 
-        [Obsolete]
-        public string? DefaultCertificateStore { get; set; }
-        [Obsolete]
-        public string? DefaultCentralSslStore { get; set; }
-        [Obsolete]
-        public string? DefaultCentralSslPfxPassword { get; set; }
-        [Obsolete]
-        public string? DefaultPemFilesPath { get; set; }
-
         /// <summary>
-        /// Settings for the CentralSsl plugin
+        /// Settings for the CertificateStore plugin
         /// </summary>
         public CertificateStoreSettings CertificateStore { get; set; } = new CertificateStoreSettings();
-
-        /// <summary>
-        /// Settings for the CentralSsl plugin
-        /// </summary>
-        public CentralSslSettings CentralSsl { get; set; } = new CentralSslSettings();
 
         /// <summary>
         /// Settings for the PemFiles plugin

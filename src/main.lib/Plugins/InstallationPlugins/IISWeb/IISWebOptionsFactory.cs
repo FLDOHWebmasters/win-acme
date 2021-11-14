@@ -26,9 +26,8 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             Disabled = IISWeb.Disabled(userRoleService, iisClient);
         }
 
-        public override bool CanInstall(IEnumerable<Type> storeTypes) => 
-            storeTypes.Contains(typeof(CertificateStore)) || 
-            storeTypes.Contains(typeof(CentralSsl));
+        public override bool CanInstall(IEnumerable<Type> storeTypes) =>
+            storeTypes.Contains(typeof(CertificateStore));
 
         private ArgumentResult<string?> Host => _arguments.
             GetString<IISWebArguments>(x => x.IISHost).

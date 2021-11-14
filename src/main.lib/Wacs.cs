@@ -187,11 +187,6 @@ namespace PKISharp.WACS.Host
             _log.Information(LogType.Screen, "A simple Windows ACMEv2 client (WACS)");
             _log.Information(LogType.Screen, "Software version {version} ({build}, {bitness})", VersionService.SoftwareVersion, VersionService.BuildType, VersionService.Bitness);
             _log.Information(LogType.Disk | LogType.Event, "Software version {version} ({build}, {bitness}) started", VersionService.SoftwareVersion, VersionService.BuildType, VersionService.Bitness);
-            if (_settings.Client.VersionCheck)
-            {
-                var client = _container.Resolve<UpdateClient>();
-                await client.CheckNewVersion(RunLevel.Unattended);
-            }
             if (_args != null)
             {
                 _log.Information("Connecting to {ACME}...", _settings.BaseUri);
@@ -289,9 +284,6 @@ namespace PKISharp.WACS.Host
                 Choice.Create<Func<Task>>(
                     () => Encrypt(RunLevel.Interactive), 
                     "Encrypt/decrypt configuration", "M"),
-                Choice.Create<Func<Task>>(
-                    () => _container.Resolve<UpdateClient>().CheckNewVersion(RunLevel.Interactive),
-                    "Check for updates", "U"),
                 Choice.Create<Func<Task>>(
                     () => Task.CompletedTask, 
                     "Back", "Q",
