@@ -6,7 +6,6 @@ using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Configuration.Arguments;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Services;
-using PKISharp.WACS.Services.Legacy;
 using System;
 using System.Collections.Generic;
 using System.IO;

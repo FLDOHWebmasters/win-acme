@@ -3,14 +3,11 @@ using Microsoft.Win32;
 using PKISharp.WACS.Configuration.Arguments;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;
-using PKISharp.WACS.Host.Services.Legacy;
 using PKISharp.WACS.Plugins.Base.Factories.Null;
 using PKISharp.WACS.Plugins.Base.Options;
 using PKISharp.WACS.Plugins.Interfaces;
 using PKISharp.WACS.Plugins.Resolvers;
 using PKISharp.WACS.Plugins.StorePlugins;
-using PKISharp.WACS.Plugins.ValidationPlugins;
-using PKISharp.WACS.Services.Legacy;
 using System;
 using System.Linq;
 
@@ -38,12 +35,6 @@ namespace PKISharp.WACS.Services
                     As<MainArguments>().
                     SingleInstance();
 
-                builder.RegisterType<LegacySettingsService>().
-                    WithParameter(new TypedParameter(typeof(ISettingsService), realSettings)).
-                    SingleInstance();
-
-                builder.RegisterType<LegacyTaskSchedulerService>();
-
                 builder.RegisterType<TaskSchedulerService>().
                     WithParameter(new TypedParameter(typeof(MainArguments), realArguments)).
                     WithParameter(new TypedParameter(typeof(ISettingsService), realSettings)).
@@ -61,25 +52,6 @@ namespace PKISharp.WACS.Services
                     hive = Registry.LocalMachine;
                     key = hive.OpenSubKey($"Software\\letsencrypt-win-simple");
                 }
-                var log = main.Resolve<ILogService>();
-                if (key != null)
-                {
-                    log.Debug("Loading legacy renewals from registry hive {name}", hive.Name);
-                    builder.RegisterType<RegistryLegacyRenewalService>().
-                            As<ILegacyRenewalService>().
-                            WithParameter(new NamedParameter("hive", hive.Name)).
-                            SingleInstance();
-                }
-                else
-                {
-                    log.Debug("Loading legacy renewals from file");
-                    builder.RegisterType<FileLegacyRenewalService>().
-                        As<ILegacyRenewalService>().
-                        SingleInstance();
-                }
-
-                builder.RegisterType<Importer>().
-                    SingleInstance();
             });
         }
 
@@ -91,9 +63,7 @@ namespace PKISharp.WACS.Services
         /// <returns></returns>
         public ILifetimeScope Configuration(ILifetimeScope main, Renewal renewal, RunLevel runLevel)
         {
-            var resolver = runLevel.HasFlag(RunLevel.Interactive)
-                ? main.Resolve<InteractiveResolver>(new TypedParameter(typeof(RunLevel), runLevel))
-                : (IResolver)main.Resolve<UnattendedResolver>();
+            var resolver = (IResolver)main.Resolve<UnattendedResolver>();
             return main.BeginLifetimeScope(builder =>
             {
                 builder.Register(c => runLevel).As<RunLevel>();
@@ -112,9 +82,7 @@ namespace PKISharp.WACS.Services
         /// <returns></returns>
         public ILifetimeScope Target(ILifetimeScope main, Renewal renewal, RunLevel runLevel)
         {
-            var resolver = runLevel.HasFlag(RunLevel.Interactive)
-                ? main.Resolve<InteractiveResolver>(new TypedParameter(typeof(RunLevel), runLevel))
-                : (IResolver)main.Resolve<UnattendedResolver>();
+            var resolver = (IResolver)main.Resolve<UnattendedResolver>();
             return main.BeginLifetimeScope(builder =>
             {
                 builder.RegisterInstance(renewal.TargetPluginOptions).As(renewal.TargetPluginOptions.GetType());
@@ -207,7 +175,7 @@ namespace PKISharp.WACS.Services
         {
             return execution.BeginLifetimeScope(builder =>
             {
-                builder.RegisterType<HttpValidationParameters>();
+                builder.RegisterType<DelegatedValidationParameters>();
                 builder.RegisterType(options.Instance).
                     As<IValidationPlugin>().
                     SingleInstance();

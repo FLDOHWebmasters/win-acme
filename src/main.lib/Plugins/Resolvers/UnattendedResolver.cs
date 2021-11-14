@@ -8,7 +8,7 @@ using PKISharp.WACS.Plugins.Interfaces;
 using PKISharp.WACS.Plugins.OrderPlugins;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Plugins.TargetPlugins;
-using PKISharp.WACS.Plugins.ValidationPlugins.Http;
+using PKISharp.WACS.Plugins.ValidationPlugins.Dns;
 using PKISharp.WACS.Services;
 using System;
 using System.Collections.Generic;
@@ -97,7 +97,7 @@ namespace PKISharp.WACS.Plugins.Resolvers
             if (defaultTypeDisabled.Item1)
             {
                 _log.Error("{n} plugin {x} not available: {m}. " + changeInstructions, 
-                    char.ToUpper(className[0]) + className.Substring(1), 
+                    char.ToUpper(className[0]) + className[1..], 
                     defaultOption.plugin?.Name ?? "Unknown",
                     defaultTypeDisabled.Item2?.TrimEnd('.'));
                 return nullResult;
@@ -139,7 +139,7 @@ namespace PKISharp.WACS.Plugins.Resolvers
                 defaultParam2: _arguments.ValidationMode ?? 
                     _settings.Validation.DefaultValidationMode ?? 
                     Constants.Http01ChallengeType,
-                defaultType: typeof(SelfHostingOptionsFactory),
+                defaultType: typeof(DelegationOptionsFactory),
                 nullResult: new NullValidationFactory(),
                 unusable: (c) => (!c.CanValidate(target), "Unsuppored target. Most likely this is because you have included a wildcard identifier (*.example.com), which requires DNS validation."),
                 className: "validation");
