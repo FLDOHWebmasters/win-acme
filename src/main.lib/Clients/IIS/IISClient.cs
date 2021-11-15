@@ -377,7 +377,7 @@ namespace PKISharp.WACS.Clients.IIS
         /// <returns></returns>
         private static Version GetIISVersion(string iisHost, ILogService log)
         {
-            bool local = string.IsNullOrEmpty(iisHost);
+            var local = string.IsNullOrEmpty(iisHost);
             if (local)
             {
                 // Get the W3SVC service

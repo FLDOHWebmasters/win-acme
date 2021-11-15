@@ -1,10 +1,13 @@
 ﻿using Autofac;
 using PKISharp.WACS.Clients;
 using PKISharp.WACS.Clients.Acme;
+using PKISharp.WACS.Clients.DNS;
 using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Configuration.Arguments;
+using PKISharp.WACS.Context;
 using PKISharp.WACS.Extensions;
+using PKISharp.WACS.Plugins.Resolvers;
 using PKISharp.WACS.Services;
 using System;
 using System.Collections.Generic;
@@ -378,6 +381,96 @@ namespace PKISharp.WACS.Host
                     _exceptionHandler.HandleException(ex);
                 }
             }
+        }
+
+        class Env : IEnvironment
+        {
+            public bool IsDevelopment { get; }
+            public Env(bool isDev) => IsDevelopment = isDev;
+        }
+
+        /// <summary>
+        /// Configure dependency injection 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static void GlobalScope(ContainerBuilder builder, string[] args)
+        {
+            var isVerbose = args.Contains("--verbose");
+            var isDev = args.Contains("--dev");
+            var env = new Env(isDev);
+            if (isDev)
+            {
+                args = args.Where(x => x != "--dev").ToArray();
+            }
+            var logger = new LogService();
+            if (isVerbose)
+            {
+                logger.SetVerbose();
+            }
+            _ = new VersionService(logger);
+            var pluginService = new PluginService(logger);
+            var argumentsParser = new ArgumentsParser(logger, pluginService, args);
+            if (!argumentsParser.Validate())
+            {
+                throw new Exception("Invalid arguments");
+            }
+            var mainArguments = argumentsParser.GetArguments<MainArguments>();
+            if (mainArguments == null)
+            {
+                throw new Exception("Invalid main arguments");
+            }
+            var settingsService = new SettingsService(logger, mainArguments);
+            if (!settingsService.Valid)
+            {
+                throw new Exception("Invalid settings");
+            }
+            logger.SetDiskLoggingPath(settingsService.Client.LogPath!);
+
+            _ = builder.RegisterInstance(argumentsParser);
+            _ = builder.RegisterInstance(mainArguments);
+            _ = builder.RegisterInstance(logger).As<ILogService>();
+            _ = builder.RegisterInstance(env).As<IEnvironment>();
+            _ = builder.RegisterInstance(settingsService).As<ISettingsService>();
+            _ = builder.RegisterInstance(pluginService).As<IPluginService>();
+            _ = builder.RegisterType<UserRoleService>().As<IUserRoleService>().SingleInstance();
+            _ = builder.RegisterType<NoInputService>().As<IInputService>().SingleInstance();
+            _ = builder.RegisterType<ProxyService>().As<IProxyService>().SingleInstance();
+            //_ = builder.RegisterType<UpdateClient>().SingleInstance();
+            _ = builder.RegisterType<PasswordGenerator>().SingleInstance();
+            _ = builder.RegisterType<RenewalStoreDisk>().As<RenewalStore>().SingleInstance();
+            _ = builder.RegisterType<RenewalStoreDatabase>().As<RenewalStoreSecondary>().SingleInstance();
+            _ = builder.RegisterType<RenewalStoreDual>().As<IRenewalStore>().SingleInstance();
+
+            pluginService.Configure(builder);
+
+            _ = builder.RegisterType<DomainParseService>().SingleInstance();
+            _ = builder.RegisterType<WindowsManagementClient>().SingleInstance();
+            _ = builder.RegisterType<CitrixAdcClient>().SingleInstance();
+            _ = builder.RegisterType<IISClient>().As<IIISClient>().InstancePerLifetimeScope();
+            _ = builder.RegisterType<IISHelper>().SingleInstance();
+            _ = builder.RegisterType<ExceptionHandler>().SingleInstance();
+            _ = builder.RegisterType<UnattendedResolver>();
+            _ = builder.RegisterType<AutofacBuilder>().As<IAutofacBuilder>().SingleInstance();
+            _ = builder.RegisterType<AccountManager>().SingleInstance();
+            _ = builder.RegisterType<AcmeClient>().SingleInstance();
+            _ = builder.RegisterType<ZeroSsl>().SingleInstance();
+            _ = builder.RegisterType<OrderManager>().SingleInstance();
+            _ = builder.RegisterType<PemService>().SingleInstance();
+            _ = builder.RegisterType<EmailClient>().SingleInstance();
+            _ = builder.RegisterType<LookupClientProvider>().SingleInstance();
+            _ = builder.RegisterType<CertificateService>().As<ICertificateService>().SingleInstance();
+            _ = builder.RegisterType<SecretServiceManager>().SingleInstance();
+            _ = builder.RegisterType<JsonSecretService>().As<ISecretService>().SingleInstance();
+            _ = builder.RegisterType<TaskSchedulerService>().SingleInstance();
+            _ = builder.RegisterType<NotificationService>().SingleInstance();
+            _ = builder.RegisterType<RenewalExecutor>().SingleInstance();
+            _ = builder.RegisterType<RenewalValidator>().SingleInstance();
+            _ = builder.RegisterType<RenewalManager>().SingleInstance();
+            _ = builder.RegisterType<RenewalCreator>().SingleInstance();
+            _ = builder.RegisterType<ArgumentsInputService>().SingleInstance();
+
+            _ = builder.RegisterType<Wacs>();
         }
     }
 }
