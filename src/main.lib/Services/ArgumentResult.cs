@@ -302,9 +302,11 @@ namespace PKISharp.WACS.Services
                     }
                 }
                 var (valid, validationError) = await IsValid(returnValue);
-                if (!valid)
+                if (valid)
                 {
-                    if (_inputService == null)
+                    break;
+                }
+                else if (_inputService == null)
                     {
                         throw new Exception(validationError);
                     } 
@@ -312,11 +314,6 @@ namespace PKISharp.WACS.Services
                     {
                         _log.Error(validationError ?? "Error");
                     }
-                }
-                else
-                {
-                    break;
-                }
             }
 
             // Sometime we don't want to store the default result
