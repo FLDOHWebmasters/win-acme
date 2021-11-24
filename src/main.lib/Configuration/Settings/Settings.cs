@@ -273,6 +273,11 @@ namespace PKISharp.WACS.Configuration.Settings
         /// the configuration across a cluster of machines.
         /// </summary>
         public bool EncryptConfig { get; set; }
+        /// <summary>
+        /// Connection string for updating renewal information
+        /// in FDOH WebMasters certificate database on MongoDB
+        /// </summary>
+        public string? MongoDbConnectionString { get; set; }
     }
 
     /// <summary>

@@ -10,20 +10,20 @@ namespace PKISharp.WACS.Services
 {
     public class RenewalStoreDatabase : RenewalStoreSecondary
     {
-        const string MongoDbConnectionString = "mongodb+srv://webmasters:###REDACTED###?retryWrites=true&w=majority";
-
-        private readonly ILogService _log;
+        private readonly string _mongoDbConnectionString;
         private readonly ICertificateService _certificateService;
+        private readonly ILogService _log;
 
-        public RenewalStoreDatabase(ILogService log, ICertificateService certificateService)
+        public RenewalStoreDatabase(ISettingsService settings, ICertificateService certificateService, ILogService log)
         {
-            _log = log;
+            _mongoDbConnectionString = settings.Security?.MongoDbConnectionString ?? string.Empty;
             _certificateService = certificateService;
+            _log = log;
         }
 
         public override void Cancel(Renewal renewal)
         {
-            var settings = MongoClientSettings.FromConnectionString(MongoDbConnectionString);
+            var settings = MongoClientSettings.FromConnectionString(_mongoDbConnectionString);
             var client = new MongoClient(settings);
             var database = client.GetDatabase("FDOH");
             var collection = database.GetCollection<BsonDocument>("Cert Database");
@@ -42,7 +42,7 @@ namespace PKISharp.WACS.Services
 
         public override void Clear()
         {
-            var settings = MongoClientSettings.FromConnectionString(MongoDbConnectionString);
+            var settings = MongoClientSettings.FromConnectionString(_mongoDbConnectionString);
             var client = new MongoClient(settings);
             var database = client.GetDatabase("FDOH");
             var collection = database.GetCollection<BsonDocument>("Cert Database");
@@ -97,7 +97,7 @@ namespace PKISharp.WACS.Services
                 }
             }
 
-            var settings = MongoClientSettings.FromConnectionString(MongoDbConnectionString);
+            var settings = MongoClientSettings.FromConnectionString(_mongoDbConnectionString);
             var client = new MongoClient(settings);
             var database = client.GetDatabase("WebTeam");
             var collection = database.GetCollection<BsonDocument>("Cert Database");
