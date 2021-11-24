@@ -10,7 +10,7 @@ namespace PKISharp.WACS.Services
 {
     public class RenewalStoreDatabase : RenewalStoreSecondary
     {
-        const string MongoDbConnectionString = "***REMOVED***";
+        const string MongoDbConnectionString = "mongodb+srv://webmasters:###REDACTED###?retryWrites=true&w=majority";
 
         private readonly ILogService _log;
         private readonly ICertificateService _certificateService;
