@@ -7,12 +7,12 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins.Dns
 {
     internal class Delegation : DnsValidation<Delegation>
     {
-        private readonly ISystemManagementClient _client;
+        private readonly WindowsManagementClient _client;
         private readonly DelegationOptions _options;
 
         public Delegation(
             LookupClientProvider dnsLookup,
-            ISystemManagementClient dnsClient,
+            WindowsManagementClient dnsClient,
             ILogService log,
             ISettingsService settings,
             DelegationOptions options) :

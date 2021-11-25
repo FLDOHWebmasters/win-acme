@@ -29,23 +29,20 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     public class Tomcat : IInstallationPlugin
     {
         public static string PfxFilePassword(ISettingsService settings) =>
-            settings.Installation.DefaultTomcatPassword.IfBlank(settings.Store.PemFiles?.DefaultPassword).IfBlank(CitrixAdcClient.DefaultPemFilesPassword)!;
+            (settings.Installation?.DefaultTomcatPassword).IfBlank(settings.Store?.PemFiles?.DefaultPassword).IfBlank(CitrixAdcClient.DefaultPemFilesPassword)!;
 
         public const string DefaultHomeDir = @"D:\Cascade CMS 8.14\tomcat";
         const string DefaultPfxFilePath = @"\\oit00pdcm001.dohsd.ad.state.fl.us\store";
         const string HostConfDir = "conf";
 
         private readonly ILogService _log;
-        private readonly ISystemManagementClient _system;
         private readonly TomcatOptions _options;
         private readonly string _pfxFilePath;
         private readonly string _pfxFilePassword;
 
-        public Tomcat(TomcatOptions options, ISystemManagementClient system,
-            ILogService log, ISettingsService settings, ArgumentsParser arguments)
+        public Tomcat(TomcatOptions options, ILogService log, ISettingsService settings, ArgumentsParser arguments)
         {
             _log = log;
-            _system = system;
             _options = options;
             var pfxFilePath = arguments.GetArguments<PemFilesArguments>()?.PemFilesPath;
             if (string.IsNullOrWhiteSpace(pfxFilePath))
