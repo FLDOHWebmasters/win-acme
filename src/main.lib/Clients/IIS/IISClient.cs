@@ -1,145 +1,32 @@
 using Autofac;
 using Microsoft.Web.Administration;
-using Microsoft.Win32;
-using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
-using PKISharp.WACS.Plugins.InstallationPlugins;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceProcess;
 
 namespace PKISharp.WACS.Clients.IIS
 {
-    public class IISClient : IIISClient<IISSiteWrapper, IISBindingWrapper>, IDisposable
+    public class IISClient : IISWebClient, IIISClient<IISSiteWrapper, IISBindingWrapper>
     {
-        public const string DefaultBindingPortFormat = "443"; 
-        public const int DefaultBindingPort = 443;
-        public const string DefaultBindingIp = "*";
-
-        public Version Version { get; set; }
-        private readonly ILogService _log;
-        private readonly string _iisHost;
-        private ServerManager? _serverManager;
-        private List<IISSiteWrapper>? _webSites = null;
         private List<IISSiteWrapper>? _ftpSites = null;
 
-        public IISClient(ILogService log, ArgumentsParser arguments)
-        {
-            _log = log;
-            _iisHost = arguments.GetArguments<IISWebArguments>()?.IISHost ?? "";
-            Version = GetIISVersion(_iisHost, _log);
-        }
+        public IISClient(ILogService log) : base(log) { }
 
-        /// <summary>
-        /// Single reference to the ServerManager
-        /// </summary>
-        private ServerManager? ServerManager => _serverManager ??= GetServerManager(_iisHost, Version, _log, _serverManager, () => _webSites = _ftpSites = null);
-
-        private static ServerManager? GetServerManager(string iisHost, Version version, ILogService log, ServerManager? serverManager = null, Action? then = null)
-        {
-            if (serverManager == null)
-            {
-                if (version.Major > 0)
-                {
-                    try
-                    {
-                        var local = string.IsNullOrWhiteSpace(iisHost);
-                        serverManager = local ? new ServerManager() : ServerManager.OpenRemote(iisHost);
-                    }
-                    catch
-                    {
-                        log.Error($"Unable to create an IIS ServerManager");
-                    }
-                    then?.Invoke();
-                }
-            }
-            return serverManager;
-        }
-
-        /// <summary>
-        /// Commit changes to server manager and remove the 
-        /// reference to the cached version because it might
-        /// be the cause of some bug to keep using the same
-        /// ServerManager to commit multiple changes
-        /// </summary>
-        private void Commit()
-        {
-            if (_serverManager != null)
-            {
-                try
-                {
-                    _serverManager.CommitChanges();
-                }
-                finally
-                {
-                    // We will still set ServerManager to null
-                    // so that at least a new one will be created
-                    // for the next time
-                    Refresh();
-                }
-            }
-        }
-
-        public void Refresh()
-        {
-            _webSites = null;
+        protected override void Reset() {
+            base.Reset();
             _ftpSites = null;
-            if (_serverManager != null)
-            {
-                _serverManager.Dispose();
-                _serverManager = null;
-            }
         }
 
         #region _ Basic retrieval _
 
-        IEnumerable<IIISSite> IIISClient.WebSites => WebSites;
-
         IEnumerable<IIISSite> IIISClient.FtpSites => FtpSites;
-
-        IIISSite IIISClient.GetWebSite(long id) => GetWebSite(id);
 
         IIISSite IIISClient.GetFtpSite(long id) => GetFtpSite(id);
 
-        public bool HasWebSites => Version.Major > 0 && WebSites.Any();
-
         public bool HasFtpSites => Version >= new Version(7, 5) && FtpSites.Any();
-
-        public IEnumerable<IISSiteWrapper> WebSites => _webSites ??= GetWebSites(ServerManager, _log, _webSites);
-        private static List<IISSiteWrapper> GetWebSites(ServerManager? serverManager, ILogService log, List<IISSiteWrapper>? webSites = null)
-        {
-            if (serverManager == null)
-            {
-                return new List<IISSiteWrapper>();
-            }
-            if (webSites == null)
-            {
-                webSites = serverManager.Sites.AsEnumerable().
-                    Where(s => s.Bindings.Any(sb => sb.Protocol is "http" or "https")).
-                    Where(s =>
-                    {
-                        try
-                        {
-                            return s.State == ObjectState.Started;
-                        }
-                        catch
-                        {
-                               // Prevent COMExceptions such as misconfigured
-                               // application pools from crashing the whole 
-                               log.Warning("Unable to determine state for Site {id}", s.Id);
-                               // nonetheless treat it as started since we know no better
-                               return true;
-                        }
-                    }).
-                    OrderBy(s => s.Name).
-                    Select(x => new IISSiteWrapper(x)).
-                    ToList();
-            }
-            return webSites;
-        }
 
         public IEnumerable<IISSiteWrapper> FtpSites
         {
@@ -161,51 +48,6 @@ namespace PKISharp.WACS.Clients.IIS
             }
         }
 
-        public IISSiteWrapper GetWebSite(long id)
-        {
-            foreach (var site in WebSites)
-            {
-                if (site.Site.Id == id)
-                {
-                    return site;
-                }
-            }
-            throw new Exception($"Unable to find IIS SiteId #{id}");
-        }
-
-        public static IISSiteWrapper GetWebSite(string server, long siteId, ILogService log)
-        {
-            log.Verbose($"Looking for IIS Site ID {siteId}");
-            var site = GetWebSite(server, x => x.Site.Id == siteId, log);
-            return site ?? throw new Exception($"Unable to find IIS Site ID {siteId} on server {server}");
-        }
-
-        public static IISSiteWrapper GetWebSite(string server, string name, ILogService log)
-        {
-            log.Verbose($"Looking for IIS Site name {name} on {server}");
-            var site = GetWebSite(server, x => x.Site.Name == name, log);
-            return site ?? throw new Exception($"Unable to find IIS Site name {name} on {server}");
-        }
-
-        private static IISSiteWrapper? GetWebSite(string server, Func<IISSiteWrapper, bool> isMatch, ILogService log)
-        {
-            var version = GetIISVersion(server, log);
-            var serverManager = GetServerManager(server, version, log);
-            if (serverManager != null)
-            {
-                var webSites = GetWebSites(serverManager, log);
-                log.Verbose($"Found {webSites.Count} websites on {server}");
-                foreach (var site in webSites)
-                {
-                    if (isMatch(site))
-                    {
-                        return site;
-                    }
-                }
-            }
-            return null;
-        }
-
         public IISSiteWrapper GetFtpSite(long id)
         {
             foreach (var site in FtpSites)
@@ -216,78 +58,6 @@ namespace PKISharp.WACS.Clients.IIS
                 }
             }
             throw new Exception($"Unable to find IIS SiteId #{id}");
-        }
-
-        #endregion
-
-        #region _ Https Install _
-
-        public void AddOrUpdateBindings(IEnumerable<Identifier> identifiers, BindingOptions bindingOptions, byte[]? oldThumbprint)
-        {
-            var updater = new IISHttpBindingUpdater<IISSiteWrapper, IISBindingWrapper>(this, _log);
-            var updated = updater.AddOrUpdateBindings(identifiers, bindingOptions, oldThumbprint);
-            if (updated > 0)
-            {
-                _log.Information("Committing {count} {type} binding changes to IIS", updated, "https");
-                Commit();
-            }
-            else
-            {
-                _log.Warning("No bindings have been changed");
-            }
-        }
-
-        public IIISBinding AddBinding(IISSiteWrapper site, BindingOptions options)
-        {
-            var newBinding = site.Site.Bindings.CreateElement("binding");
-            newBinding.BindingInformation = options.Binding;
-            newBinding.CertificateStoreName = options.Store;
-            newBinding.CertificateHash = options.Thumbprint;
-            newBinding.Protocol = "https";
-            if (options.Flags > 0)
-            {
-                newBinding.SetAttributeValue("sslFlags", options.Flags);
-            }
-            site.Site.Bindings.Add(newBinding);
-            return new IISBindingWrapper(newBinding);
-        }
-
-        public void UpdateBinding(IISSiteWrapper site, IISBindingWrapper existingBinding, BindingOptions options)
-        {
-            // Replace instead of change binding because of #371
-            var handled = new[] {
-                "protocol",
-                "bindingInformation",
-                "sslFlags",
-                "certificateStoreName",
-                "certificateHash"
-            };
-            var replacement = site.Site.Bindings.CreateElement("binding");
-            replacement.BindingInformation = existingBinding.BindingInformation;
-            replacement.CertificateStoreName = options.Store;
-            replacement.CertificateHash = options.Thumbprint;
-            replacement.Protocol = existingBinding.Protocol;
-            foreach (var attr in existingBinding.Binding.Attributes)
-            {
-                try
-                {
-                    if (!handled.Contains(attr.Name) && attr.Value != null)
-                    {
-                        replacement.SetAttributeValue(attr.Name, attr.Value);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _log.Warning("Unable to set attribute {name} on new binding: {ex}", attr.Name, ex.Message);
-                }
-            }
-
-            if (options.Flags > 0)
-            {
-                replacement.SetAttributeValue("sslFlags", options.Flags);
-            }
-            site.Site.Bindings.Remove(existingBinding.Binding);
-            site.Site.Bindings.Add(replacement);
         }
 
         #endregion
@@ -367,82 +137,6 @@ namespace PKISharp.WACS.Clients.IIS
                 ? !string.Equals(currentThumbprint, newThumbprint, StringComparison.CurrentCultureIgnoreCase) ||
                     !string.Equals(currentStore, newStore, StringComparison.CurrentCultureIgnoreCase)
                 : string.Equals(currentThumbprint, oldThumbprint, StringComparison.CurrentCultureIgnoreCase);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Determine IIS version based on registry
-        /// </summary>
-        /// <returns></returns>
-        private static Version GetIISVersion(string iisHost, ILogService log)
-        {
-            var local = string.IsNullOrEmpty(iisHost);
-            if (local)
-            {
-                // Get the W3SVC service
-                var iisService = ServiceController.GetServices().FirstOrDefault(s => s.ServiceName == "W3SVC");
-                if (iisService == null)
-                {
-                    log.Verbose("W3SVC service not detected");
-                    return new Version(0, 0);
-                }
-                if (iisService.Status != ServiceControllerStatus.Running)
-                {
-                    log.Verbose("W3SVC service not running");
-                    return new Version(0, 0);
-                }
-            }
-            try
-            {
-                var hive = local ? Registry.LocalMachine : RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, iisHost);
-                using var componentsKey = hive.OpenSubKey(@"Software\Microsoft\InetStp", false);
-                if (componentsKey != null)
-                {
-                    _ = int.TryParse(componentsKey.GetValue("MajorVersion", "-1")?.ToString() ?? "-1", out var majorVersion);
-                    _ = int.TryParse(componentsKey.GetValue("MinorVersion", "-1")?.ToString() ?? "-1", out var minorVersion);
-                    if (majorVersion != -1 && minorVersion != -1)
-                    {
-                        return new Version(majorVersion, minorVersion);
-                    }
-                    log.Debug($"Invalid version {majorVersion} + {minorVersion}");
-                }
-                else
-                {
-                    log.Debug("InetStp registry key not found");
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Verbose("Error reading IIS version fomr registry: {message}", ex.Message);
-            }
-            log.Verbose("Unable to detect IIS version, making assumption");
-            return new Version(10, 0);
-        }
-
-        #region IDisposable
-
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    if (_serverManager != null)
-                    {
-                        _serverManager.Dispose();
-                    }
-                }
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion

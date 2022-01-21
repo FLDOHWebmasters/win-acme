@@ -1,4 +1,5 @@
 ﻿using PKISharp.WACS.DomainObjects;
+using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Services;
 using System;
 using System.Collections;
@@ -14,7 +15,7 @@ namespace PKISharp.WACS.Clients.IIS
         where TSite : IIISSite<TBinding>
         where TBinding : IIISBinding
     {
-        private readonly IIISClient<TSite, TBinding> _client;
+        private readonly IIISWebClient<TSite, TBinding> _client;
         private readonly ILogService _log;
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace PKISharp.WACS.Clients.IIS
         /// </summary>
         /// <param name="client"></param>
         public IISHttpBindingUpdater(
-            IIISClient<TSite, TBinding> client,
+            IIISWebClient<TSite, TBinding> client,
             ILogService log)
         {
             _client = client;
@@ -147,6 +148,7 @@ namespace PKISharp.WACS.Clients.IIS
                 throw;
             }
         }
+
         /// <summary>
         /// Create or update a single binding in a single site
         /// </summary>
@@ -441,7 +443,7 @@ namespace PKISharp.WACS.Clients.IIS
                 _log.Information(LogType.All, "Updating existing https binding {host}:{port}{ip} (flags: {flags})",
                     existingBinding.Host,
                     existingBinding.Port,
-                    string.IsNullOrEmpty(existingBinding.IP) ? "" : $":{existingBinding.IP}",
+                    existingBinding.IP.IsBlank() ? "" : $":{existingBinding.IP}",
                     (int)options.Flags);
                 _client.UpdateBinding(site, existingBinding, options);
                 return true;

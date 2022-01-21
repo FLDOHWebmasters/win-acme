@@ -5,7 +5,7 @@ using System.Net.Sockets;
 namespace PKISharp.WACS.Clients.IIS
 {
     /// <summary>
-    /// Class to communicate desired binding state to the IISclient
+    /// Class to communicate desired binding state to the IISClient
     /// Follows the fluent/immutable pattern
     /// </summary>
     [DebuggerDisplay("Binding {Binding}")]

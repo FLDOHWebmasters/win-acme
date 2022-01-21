@@ -23,7 +23,6 @@ namespace PKISharp.WACS.Clients.IIS
         public IISSiteWrapper(Site site)
         {
             Site = site;
-
             Bindings = site.Bindings.Select(x => new IISBindingWrapper(x)).ToList();
         }
     }
@@ -44,10 +43,7 @@ namespace PKISharp.WACS.Clients.IIS
                 {
                     return null;
                 } 
-                else
-                {
-                    return address.ToString();
-                }
+                return address.ToString();
             }
         }
 

@@ -1,35 +1,22 @@
 ﻿using PKISharp.WACS.DomainObjects;
-using System;
 using System.Collections.Generic;
 
 namespace PKISharp.WACS.Clients.IIS
 {
-    public interface IIISClient
+    public interface IIISClient : IIISWebClient
     {
-        void Refresh();
         IEnumerable<IIISSite> FtpSites { get; }
         bool HasFtpSites { get; }
-        bool HasWebSites { get; }
-        Version Version { get; }
-        IEnumerable<IIISSite> WebSites { get; }
-
-        void AddOrUpdateBindings(IEnumerable<Identifier> identifiers, BindingOptions bindingOptions, byte[]? oldThumbprint);
-
         IIISSite GetFtpSite(long id);
-        IIISSite GetWebSite(long id);
         void UpdateFtpSite(long siteId, CertificateInfo newCertificate, CertificateInfo? oldCertificate);
     }
 
-    public interface IIISClient<TSite, TBinding> : IIISClient
+    public interface IIISClient<TSite, TBinding> : IIISClient, IIISWebClient<TSite, TBinding>
         where TSite : IIISSite<TBinding>
         where TBinding : IIISBinding
     {
-        IIISBinding AddBinding(TSite site, BindingOptions bindingOptions);
-        void UpdateBinding(TSite site, TBinding binding, BindingOptions bindingOptions);
         new IEnumerable<TSite> FtpSites { get; }
-        new IEnumerable<TSite> WebSites { get; }
         new TSite GetFtpSite(long id);
-        new TSite GetWebSite(long id);
     }
 
     public interface IIISSite
