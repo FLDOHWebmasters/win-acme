@@ -4,14 +4,18 @@ using PKISharp.WACS.Configuration.Arguments;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    public class IISWebArguments : BaseArguments
+    public class RemoteIISHelperArguments : BaseArguments
     {
+        public const string IISHostParameterName = "iishost";
         public const string SslPortParameterName = "sslport";
         public const string SslIpParameterName = "sslipaddress";
 
-        public override string Name => "IIS Web plugin";
+        public override string Name => "IIS Web Helper App plugin";
         public override string Group => "Installation";
-        public override string Condition => "--installation iis";
+        public override string Condition => "--installation iishelper";
+
+        [CommandLine(Name = IISHostParameterName, Description = "Host name or IP address of server where IIS and Helper App are running.")]
+        public string? IISHost { get; set; }
 
         [CommandLine(Description = "Specify site to install new bindings to. Defaults to the source if that is an IIS site.")]
         public long? InstallationSiteId { get; set; }

@@ -47,10 +47,6 @@ namespace PKISharp.WACS.Plugins.StorePlugins
                 _storeName = nameof(StoreName.My);
             }
             var iisWebArgs = arguments.GetArguments<InstallationPlugins.IISWebArguments>();
-            if (!string.IsNullOrEmpty(iisWebArgs?.IISHost))
-            {
-                _storeName = $"\\\\{iisWebArgs.IISHost}\\{_storeName}";
-            }
             _log.Debug("Certificate store: {_certificateStore}", _storeName);
             _store = new X509Store(_storeName!, StoreLocation.LocalMachine);
         }

@@ -447,6 +447,7 @@ namespace PKISharp.WACS.Host
             _ = builder.RegisterType<DomainParseService>().SingleInstance();
             _ = builder.RegisterType<WindowsManagementClient>().SingleInstance();
             _ = builder.RegisterType<CitrixAdcClient>().SingleInstance();
+            _ = builder.RegisterType<IISRemoteHelperClient>().SingleInstance();
             _ = builder.RegisterType<IISClient>().As<IIISClient>().InstancePerLifetimeScope();
             _ = builder.RegisterType<IISHelper>().SingleInstance();
             _ = builder.RegisterType<ExceptionHandler>().SingleInstance();

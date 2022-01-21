@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
@@ -17,8 +16,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public override int Order => 5;
         private readonly IIISClient _iisClient;
         private readonly ArgumentsInputService _arguments;
-        private readonly Regex _hostRegex = new(@"^[a-z][a-z0-9\.-]+$");
-        
+
         public IISWebOptionsFactory(IIISClient iisClient, ArgumentsInputService arguments, IUserRoleService userRoleService)
         {
             _iisClient = iisClient;
@@ -28,11 +26,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override bool CanInstall(IEnumerable<Type> storeTypes) =>
             storeTypes.Contains(typeof(CertificateStore));
-
-        private ArgumentResult<string?> Host => _arguments.
-            GetString<IISWebArguments>(x => x.IISHost).
-            DefaultAsNull().
-            Validate(x => Task.FromResult(IPAddress.TryParse(x!, out var y) || _hostRegex.IsMatch(x!)), x => $"invalid host address {x}");
 
         private ArgumentResult<int?> NewBindingPort => _arguments.
             GetInt<IISWebArguments>(x => x.SSLPort).
@@ -55,14 +48,13 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         {
             var ret = new IISWebOptions()
             {
-                Host = await Host.GetValue(),
                 NewBindingPort = await NewBindingPort.GetValue(),
                 NewBindingIp = await NewBindingIp.GetValue()
             };
             var ask = true;
             if (target.IIS)
             {
-                ask = runLevel.HasFlag(RunLevel.Advanced) && 
+                ask = runLevel.HasFlag(RunLevel.Advanced) &&
                     await inputService.PromptYesNo("Use different site for installation?", false);
             }
             if (ask)
@@ -79,7 +71,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         {
             var ret = new IISWebOptions()
             {
-                Host = await Host.GetValue(),
                 NewBindingPort = await NewBindingPort.GetValue(),
                 NewBindingIp = await NewBindingIp.GetValue(),
                 SiteId = await InstallationSite.Required(!target.IIS).GetValue()

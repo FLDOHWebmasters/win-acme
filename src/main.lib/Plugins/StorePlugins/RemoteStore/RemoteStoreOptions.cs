@@ -2,18 +2,19 @@
 using PKISharp.WACS.Plugins.Base.Options;
 using PKISharp.WACS.Services;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PKISharp.WACS.Plugins.StorePlugins
 {
-    [Plugin("e30adc8e-d756-4e16-a6f2-450f784b1a97")]
-    internal class CertificateStoreOptions : StorePluginOptions<CertificateStore>
+    [Plugin("f51c2197-29c8-4102-a341-751ebd352c29")]
+    public class RemoteStoreOptions : StorePluginOptions<RemoteStore>
     {
-        internal const string PluginName = "CertificateStore";
-        public override string Name => PluginName;
-        public override string Description => "Windows Certificate Store";
+        public override string Name => "Remote Certificate Store";
+
+        public override string Description => "Windows Certificate Store on another machine";
 
         /// <summary>
-        /// Name of the certificate store to use
+        /// Name of the certificate store to use (defaults to WebHosting)
         /// </summary>
         public string? StoreName { get; set; }
 

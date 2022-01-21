@@ -6,7 +6,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     [Plugin("ea6a5be3-f8de-4d27-a6bd-750b619b2ee2")]
     public class IISWebOptions : InstallationPluginOptions<IISWeb>
     {
-        public string? Host { get; set; }
         public long? SiteId { get; set; }
         public string? NewBindingIp { get; set; }
         public int? NewBindingPort { get; set; }

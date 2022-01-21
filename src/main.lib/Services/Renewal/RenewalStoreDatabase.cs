@@ -2,6 +2,7 @@
 using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using PKISharp.WACS.Clients;
 using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.InstallationPlugins;
@@ -66,7 +67,7 @@ namespace PKISharp.WACS.Services
         private void Write(Renewal renewal, RenewResult? result = null)
         {
             var friendlyName = renewal.LastFriendlyName
-                ?? throw new ArgumentNullException(nameof(renewal.LastFriendlyName));
+                ?? throw new ArgumentNullException(nameof(renewal), nameof(renewal.LastFriendlyName));
             _log.Debug($"RenewalStoreDatabase.Write() renewal.FriendlyName {friendlyName}");
             var store = renewal.StorePluginOptions.First().Name;
             var isCentralSSL = string.Equals(store, "centralssl", StringComparison.OrdinalIgnoreCase);
@@ -84,12 +85,12 @@ namespace PKISharp.WACS.Services
                 host = options.NitroHost;
                 siteName = commonName;
             }
-            else if (installPlugin is IISWebOptions woptions && woptions.Host is not null)
+            else if (installPlugin is RemoteIISHelperOptions woptions && woptions.Host is not null)
             {
                 host = woptions.Host;
                 if (woptions.SiteId > 0)
                 {
-                    var site = IISClient.GetWebSite(host, woptions.SiteId ?? 0, _log);
+                    var site = IISRemoteHelperClient.GetWebSite(host, woptions.SiteId ?? 0, _log);
                     if (site != null)
                     {
                         siteName = site.Name;

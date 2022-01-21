@@ -11,12 +11,12 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
     {
         private readonly ILogService _log;
         private readonly IISOptions _options;
-        private readonly IISHelper _helper;
+        private readonly Clients.IIS.IISHelper _helper;
         private readonly IUserRoleService _userRoleService;
 
         public IIS(
             ILogService logService, IUserRoleService roleService,
-            IISHelper helper, IISOptions options)
+            Clients.IIS.IISHelper helper, IISOptions options)
         {
             _log = logService;
             _options = options;
@@ -38,7 +38,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             // Handle common name
             var cn = _options.CommonName ?? "";
             var cnDefined = !string.IsNullOrWhiteSpace(cn);
-            var cnBinding = default(IISHelper.IISBindingOption); 
+            var cnBinding = default(Clients.IIS.IISHelper.IISBindingOption); 
             if (cnDefined)
             {
                 cnBinding = filteredBindings.FirstOrDefault(x => x.HostUnicode == cn);
@@ -54,7 +54,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             if (_options.IncludeSiteIds?.Any() ?? false)
             {
                 var sites = _helper.GetSites(false);
-                var site = default(IISHelper.IISSiteOption);
+                var site = default(Clients.IIS.IISHelper.IISSiteOption);
                 if (cnBinding != null)
                 {
                     site = sites.FirstOrDefault(s => s.Id == cnBinding.SiteId);

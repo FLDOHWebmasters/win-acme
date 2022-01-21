@@ -13,14 +13,14 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
 {
     internal class IISOptionsFactory : TargetPluginOptionsFactory<IIS, IISOptions>
     {
-        private readonly IISHelper _iisHelper;
+        private readonly Clients.IIS.IISHelper _iisHelper;
         private readonly ILogService _log;
         private readonly MainArguments _args;
         private readonly ArgumentsInputService _arguments;
 
         public IISOptionsFactory(
             ILogService log,
-            IISHelper iisHelper,
+            Clients.IIS.IISHelper iisHelper,
             MainArguments args,
             ArgumentsInputService arguments,
             IUserRoleService userRoleService)
@@ -121,10 +121,10 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <returns></returns>
         private async Task<IISOptions?> TryAcquireSettings(
             IInputService input, 
-            List<IISHelper.IISBindingOption> allBindings,
-            List<IISHelper.IISBindingOption> visibleBindings,
-            List<IISHelper.IISSiteOption> allSites,
-            List<IISHelper.IISSiteOption> visibleSites,
+            List<Clients.IIS.IISHelper.IISBindingOption> allBindings,
+            List<Clients.IIS.IISHelper.IISBindingOption> visibleBindings,
+            List<Clients.IIS.IISHelper.IISSiteOption> allSites,
+            List<Clients.IIS.IISHelper.IISSiteOption> visibleSites,
             RunLevel runLevel)
         {
             input.CreateSpace();
@@ -234,8 +234,8 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         async Task InputHosts(
             string label,
             IInputService input,
-            List<IISHelper.IISBindingOption> allBindings,
-            List<IISHelper.IISBindingOption> filtered, 
+            List<Clients.IIS.IISHelper.IISBindingOption> allBindings,
+            List<Clients.IIS.IISHelper.IISBindingOption> filtered, 
             IISOptions options,
             Func<List<string>?> get,
             Action<List<string>> set)
@@ -262,8 +262,8 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <returns></returns>
         Task<bool> ProcessInputHosts(
             string raw,
-            List<IISHelper.IISBindingOption> allBindings,
-            List<IISHelper.IISBindingOption> filtered,
+            List<Clients.IIS.IISHelper.IISBindingOption> allBindings,
+            List<Clients.IIS.IISHelper.IISBindingOption> filtered,
             IISOptions options,
             Func<List<string>?> get,
             Action<List<string>> set)
@@ -288,7 +288,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             return Task.FromResult(success);
         }
 
-        async Task InputCommonName(IInputService input, List<IISHelper.IISBindingOption> filtered, IISOptions options)
+        async Task InputCommonName(IInputService input, List<Clients.IIS.IISHelper.IISBindingOption> filtered, IISOptions options)
         {
             var sorted = SortBindings(filtered).ToList();
             var common = await input.ChooseRequired(
@@ -376,7 +376,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// </summary>
         /// <param name="bindings"></param>
         /// <returns></returns>
-        private IEnumerable<IISHelper.IISBindingOption> SortBindings(IEnumerable<IISHelper.IISBindingOption> bindings)
+        private IEnumerable<Clients.IIS.IISHelper.IISBindingOption> SortBindings(IEnumerable<Clients.IIS.IISHelper.IISBindingOption> bindings)
         {
             return bindings.
                 OrderBy(x => x.HostUnicode, new HostnameSorter(_iisHelper.DomainParser)).
@@ -390,7 +390,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <param name="bindings"></param>
         /// <param name="highlight"></param>
         /// <returns></returns>
-        private async Task ListBindings(IInputService input, List<IISHelper.IISBindingOption> bindings, string? highlight = null)
+        private async Task ListBindings(IInputService input, List<Clients.IIS.IISHelper.IISBindingOption> bindings, string? highlight = null)
         {
             var sortedBindings = SortBindings(bindings);
             await input.WritePagedList(
@@ -399,7 +399,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                    color: BindingColor(x, highlight))));
         }
 
-        private static ConsoleColor? BindingColor(IISHelper.IISBindingOption binding, string? highlight = null)
+        private static ConsoleColor? BindingColor(Clients.IIS.IISHelper.IISBindingOption binding, string? highlight = null)
         {
             if (binding.HostUnicode == highlight) 
             {
@@ -516,7 +516,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <param name="options"></param>
         private bool ParseHostOptions(
             string? input,
-            List<IISHelper.IISBindingOption> allBindings, 
+            List<Clients.IIS.IISHelper.IISBindingOption> allBindings, 
             IISOptions options,
             Func<List<string>?> get,
             Action<List<string>> set)
@@ -527,26 +527,19 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 var filteredBindings = _iisHelper.FilterBindings(allBindings, options);
                 foreach (var specifiedHost in specifiedHosts)
                 {
-                    var filteredBinding = filteredBindings.FirstOrDefault(x => x.HostUnicode == specifiedHost || x.HostPunycode == specifiedHost);
-                    var binding = allBindings.FirstOrDefault(x => x.HostUnicode == specifiedHost || x.HostPunycode == specifiedHost);
+                    bool isMatch(Clients.IIS.IISHelper.IISBindingOption x) => x.HostUnicode == specifiedHost || x.HostPunycode == specifiedHost;
+                    var filteredBinding = filteredBindings.FirstOrDefault(x => isMatch(x));
                     if (filteredBinding != null)
                     {
                         var list = get();
-                        if (list == null)
-                        {
-                            list = new List<string>();
-                            set(list);
-                        }
+                        if (list == null) { set(list = new List<string>()); }
                         list.Add(filteredBinding.HostUnicode);
-                    }
-                    else if (binding != null)
-                    {
-                        _log.Error("Binding {specifiedHost} is excluded by another filter", specifiedHost);
-                        return false;
                     }
                     else
                     {
-                        _log.Error("Binding {specifiedHost} not found", specifiedHost);
+                        var message = "Binding {specifiedHost} " + (allBindings.Any(x => isMatch(x))
+                            ? "is excluded by another filter" : "not found");
+                        _log.Error(message, specifiedHost);
                         return false;
                     }
                 }
@@ -586,7 +579,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <param name="args"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private bool ParseSiteOptions(string? input, List<IISHelper.IISSiteOption> sites, IISOptions options)
+        private bool ParseSiteOptions(string? input, List<Clients.IIS.IISHelper.IISSiteOption> sites, IISOptions options)
         {
             if (string.IsNullOrEmpty(input))
             {
