@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PKISharp.WACS.Configuration;
+using PKISharp.WACS.Context;
+using PKISharp.WACS.DomainObjects;
+using PKISharp.WACS.Plugins.StorePlugins;
+using PKISharp.WACS.Services;
+using PKISharp.WACS.Services.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,21 +14,14 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using PKISharp.WACS.Configuration;
-using PKISharp.WACS.Context;
-using PKISharp.WACS.DomainObjects;
-using PKISharp.WACS.Plugins.StorePlugins;
-using PKISharp.WACS.Services;
-using PKISharp.WACS.Services.Serialization;
 
 namespace PKISharp.WACS.Clients
 {
-	public class CitrixAdcClient
+    public class CitrixAdcClient
     {
         public const string DefaultNitroHost = "172.21.22.240";
         public const string DefaultNitroUsername = "cert_tester";
-        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAOstSmXydG0ymQXhTxf75vwQAAAACAAAAAAADZgAAwAAAABAAAACTqBoejv5xq9kb6z6Jq6jnAAAAAASAAACgAAAAEAAAANxtrybhVhhnhsDqUh8KkrUYAAAAJz/kwzNQ14BrgrECO94jb/DXEX7x2yCKFAAAAP/elU7n1e3MLUtO71bCajVCjw+6";
+        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAhluCZGFHg0eUVuE14YhDCQQAAAACAAAAAAADZgAAwAAAABAAAADMtwvdADCQdGC8M0RC2XhGAAAAAASAAACgAAAAEAAAAILOUUqSq7HNiIE2SCk+TYkQAAAAgyegpuvsKzW2ZLDAAz74cBQAAAAeZoKrkpwRnp5QyxDatMpihcYKEA==";
         public const string DefaultPemFilesPath = @"D:\CertificateManagement\store";
         public const string DefaultPemFilesPassword = "fo0b@rB42";
 
