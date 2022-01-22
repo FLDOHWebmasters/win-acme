@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    internal class RemoteHelperOptionsFactory : InstallationPluginFactory<HelperApp, HelperAppOptions>
+    internal class RemoteHelperOptionsFactory : InstallationPluginFactory<RemoteHelper, RemoteHelperOptions>
     {
         private readonly ILogService _log;
         private readonly ArgumentsInputService _arguments;
@@ -20,15 +20,15 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             _arguments = arguments;
         }
 
-        private bool ValidateHost(string? x) => (_hostRegex.IsMatch(x!) || IPAddress.TryParse(x!, out var _)) && IISRemoteHelperClient.Exists(x!, _log);
+        private bool ValidateHost(string? x) => (_hostRegex.IsMatch(x!) || IPAddress.TryParse(x!, out var _)) && RemoteHelperClient.Exists(x!, _log);
 
-        private ArgumentResult<string?> HelperHost => _arguments.GetString<HelperAppArguments>(x => x.Host)
+        private ArgumentResult<string?> HelperHost => _arguments.GetString<RemoteHelperArguments>(x => x.Host)
             .Required().Validate(x => Task.FromResult(ValidateHost(x)), x => $"invalid host address {x}");
 
-        public override async Task<HelperAppOptions> Acquire(Target target, IInputService input, RunLevel runLevel) =>
-            new HelperAppOptions { HelperHost = await HelperHost.Interactive(input).GetValue() };
+        public override async Task<RemoteHelperOptions> Acquire(Target target, IInputService input, RunLevel runLevel) =>
+            new RemoteHelperOptions { HelperHost = await HelperHost.Interactive(input).GetValue() };
 
-        public override async Task<HelperAppOptions> Default(Target target) =>
-            new HelperAppOptions { HelperHost = await HelperHost.GetValue() };
+        public override async Task<RemoteHelperOptions> Default(Target target) =>
+            new RemoteHelperOptions { HelperHost = await HelperHost.GetValue() };
     }
 }

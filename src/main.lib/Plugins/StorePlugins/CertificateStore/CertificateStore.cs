@@ -28,7 +28,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
         private readonly FindPrivateKey _keyFinder;
 
         public CertificateStore(
-            ILogService log, IIISClient iisClient, ArgumentsParser arguments,
+            ILogService log, IIISClient iisClient,// ArgumentsParser arguments,
             ISettingsService settings, IUserRoleService userRoleService,
             FindPrivateKey keyFinder, CertificateStoreOptions options)
         {
@@ -46,7 +46,7 @@ namespace PKISharp.WACS.Plugins.StorePlugins
                 // config files, because that's what the store is called in mmc
                 _storeName = nameof(StoreName.My);
             }
-            var iisWebArgs = arguments.GetArguments<InstallationPlugins.IISWebArguments>();
+            //var iisWebArgs = arguments.GetArguments<InstallationPlugins.IISWebArguments>();
             _log.Debug("Certificate store: {_certificateStore}", _storeName);
             _store = new X509Store(_storeName!, StoreLocation.LocalMachine);
         }

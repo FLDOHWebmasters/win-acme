@@ -23,6 +23,6 @@ namespace PKISharp.WACS.Clients.IIS
         void UpdateBinding(TSite site, TBinding binding, BindingOptions bindingOptions);
         new IEnumerable<TSite> WebSites { get; }
         new TSite GetWebSite(long id);
-        TSite GetWebSite(string name);
+        long? GetWebSite(string name);
     }
 }

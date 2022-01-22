@@ -4,7 +4,7 @@ using PKISharp.WACS.Plugins.Base.Options;
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
     [Plugin("64b99181-ffdd-447b-b3bd-07030ecf8944")]
-    public class HelperAppOptions : InstallationPluginOptions<HelperApp>
+    public class RemoteHelperOptions : InstallationPluginOptions<RemoteHelper>
     {
         public string? HelperHost { get; set; }
 

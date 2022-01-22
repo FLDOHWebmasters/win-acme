@@ -134,7 +134,7 @@ namespace PKISharp.WACS.Clients.IIS
         }
 
         public virtual IISSiteWrapper GetWebSite(long id) => WebSites.FirstOrDefault(x => x.Id == id) ?? throw new Exception($"Unable to find IIS SiteId #{id}");
-        public virtual IISSiteWrapper GetWebSite(string name) => WebSites.FirstOrDefault(x => x.Name == name) ?? throw new Exception($"Unable to find IIS site '{name}'");
+        public virtual long? GetWebSite(string name) => WebSites.FirstOrDefault(x => x.Name == name)?.Id ?? throw new Exception($"Unable to find IIS site '{name}'");
 
         public static IISSiteWrapper GetWebSite(long siteId, ILogService log)
         {

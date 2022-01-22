@@ -3,7 +3,7 @@ using PKISharp.WACS.Configuration.Arguments;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
-    public class HelperAppArguments : BaseArguments
+    public class RemoteHelperArguments : BaseArguments
     {
         public const string HostParameterName = "helperhost";
 

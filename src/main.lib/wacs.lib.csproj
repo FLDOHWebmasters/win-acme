@@ -58,6 +58,7 @@
 
   <ItemGroup>
 	  <ProjectReference Include="..\..\..\ACMESharpCore\src\ACMESharp\ACMESharp.csproj" />
+	  <ProjectReference Include="..\..\..\CertificateManager\CertificateManager.Core\CertificateManager.Core.csproj" />
 	  <ProjectReference Include="..\..\..\fluent-command-line-parser\FluentCommandLineParser\FluentCommandLineParser.csproj" />
   </ItemGroup>
 
