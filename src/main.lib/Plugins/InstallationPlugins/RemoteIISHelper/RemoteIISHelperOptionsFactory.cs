@@ -36,14 +36,14 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         private ArgumentResult<int?> NewBindingPort => _arguments.
             GetInt<RemoteIISHelperArguments>(x => x.SSLPort).
-            WithDefault(IISClient.DefaultBindingPort).
+            WithDefault(IISWebClient.DefaultBindingPort).
             DefaultAsNull().
             Validate(x => Task.FromResult(x >= 1), "invalid port").
             Validate(x => Task.FromResult(x <= 65535), "invalid port");
 
         private ArgumentResult<string?> NewBindingIp => _arguments.
             GetString<RemoteIISHelperArguments>(x => x.SSLIPAddress).
-            WithDefault(IISClient.DefaultBindingIp).
+            WithDefault(IISWebClient.DefaultBindingIp).
             DefaultAsNull().
             Validate(x => Task.FromResult(x == "*" || IPAddress.Parse(x!) != null), "invalid address");
 
@@ -75,16 +75,12 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             return ret;
         }
 
-        public override async Task<RemoteIISHelperOptions> Default(Target target)
+        public override async Task<RemoteIISHelperOptions> Default(Target target) => new RemoteIISHelperOptions
         {
-            var ret = new RemoteIISHelperOptions()
-            {
-                Host = await Host.GetValue(),
-                NewBindingPort = await NewBindingPort.GetValue(),
-                NewBindingIp = await NewBindingIp.GetValue(),
-                SiteId = await InstallationSite.Required(!target.IIS).GetValue()
-            };
-            return ret;
-        }
+            Host = await Host.GetValue(),
+            NewBindingPort = await NewBindingPort.GetValue(),
+            NewBindingIp = await NewBindingIp.GetValue(),
+            SiteId = await InstallationSite.Required(!target.IIS).GetValue()
+        };
     }
 }

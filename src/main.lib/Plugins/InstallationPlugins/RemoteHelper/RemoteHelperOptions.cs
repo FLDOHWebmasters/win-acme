@@ -7,9 +7,11 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     public class RemoteHelperOptions : InstallationPluginOptions<RemoteHelper>
     {
         public string? HelperHost { get; set; }
+        public string? InstallationSite { get; set; }
+        public string? NewBindingIp { get; set; }
+        public int? NewBindingPort { get; set; }
 
         public override string Name => "Helper";
-
-        public override string Description => "Update a certificate using a Certificate Manager helper app running on the target machine";
+        public override string Description => "Update a certificate using a Certificate Manager helper app running on the target server machine";
     }
 }

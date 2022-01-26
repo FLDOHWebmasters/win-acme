@@ -16,11 +16,13 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
     {
         private readonly ILogService _log;
         private readonly RemoteHelperClient _client;
+        private readonly RemoteHelperOptions _options;
 
-        public RemoteHelper(ILogService log, RemoteHelperClient client)
+        public RemoteHelper(ILogService log, RemoteHelperClient client, RemoteHelperOptions options)
         {
             _log = log;
             _client = client;
+            _options = options;
         }
 
         public (bool, string?) Disabled => (false, null);
@@ -28,18 +30,17 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public async Task<bool> Install(Target target, IEnumerable<IStorePlugin> stores,
             CertificateInfo newCertificateInfo, CertificateInfo? oldCertificateInfo)
         {
-            var ids = target.GetIdentifiers(true);
             var installInfo = new InstallInfo
             {
-                BindingIP = ids.FirstOrDefault(x => x.Type == IdentifierType.IpAddress)?.Value,
-                BindingPort = IISWebClient.DefaultBindingPort,
                 Name = target.CommonName.Value,
                 Password = newCertificateInfo.CacheFilePassword,
                 PfxBytes = File.ReadAllBytes(newCertificateInfo.CacheFile!.FullName),
-                Sans = string.Join(",", ids.Select(x => x.Value)),
-                SiteID = target.Parts.FirstOrDefault(x => x.IIS)?.SiteId,
+                Sans = string.Join(",", target.GetIdentifiers(true).Select(x => x.Value)),
+                Site = _options.InstallationSite,
+                BindingIP = _options.NewBindingIp,
+                BindingPort = _options.NewBindingPort,
             };
-            installInfo = await _client.Install(installInfo);
+            installInfo = await _client.Install(_options.HelperHost!, installInfo);
             return installInfo != null;
         }
     }
