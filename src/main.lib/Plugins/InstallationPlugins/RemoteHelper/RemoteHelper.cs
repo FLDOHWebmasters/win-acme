@@ -36,12 +36,19 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
                 Password = newCertificateInfo.CacheFilePassword,
                 PfxBytes = File.ReadAllBytes(newCertificateInfo.CacheFile!.FullName),
                 Sans = string.Join(",", target.GetIdentifiers(true).Select(x => x.Value)),
-                Site = _options.InstallationSite,
                 BindingIP = _options.NewBindingIp,
                 BindingPort = _options.NewBindingPort,
             };
-            installInfo = await _client.Install(_options.HelperHost!, installInfo);
-            return installInfo != null;
+            InstallInfo? result = null;
+            foreach (var host in _options.HelperHost!.Split(',').Select(s => s.Trim()))
+            {
+                foreach (var site in _options.InstallationSite!.Split(',').Select(s => s.Trim()))
+                {
+                    installInfo.Site = site;
+                    result ??= await _client.Install(host, installInfo);
+                }
+            }
+            return result != null;
         }
     }
 }

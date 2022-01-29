@@ -4,6 +4,7 @@ using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Base.Factories;
 using PKISharp.WACS.Services;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -25,11 +26,11 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         private bool ValidateHost(string? x) => (_hostRegex.IsMatch(x!) || IPAddress.TryParse(x!, out var _)) && RemoteHelperClient.Exists(x!, _log);
 
         private ArgumentResult<string?> HelperHost => _arguments.GetString<RemoteHelperArguments>(x => x.Host)
-            .Required().Validate(x => Task.FromResult(ValidateHost(x)), x => $"invalid host address {x}");
+            .Required().Validate(x => Task.FromResult(x != null
+                && x.Split(',').Select(s => s.Trim()).All(s => ValidateHost(s))), x => $"invalid host address {x}");
 
-        private ArgumentResult<string> Site => _arguments
-            .GetString<RemoteHelperArguments>(x => x.InstallationSite)
-            .Validate(x => Task.FromResult(x.NotBlank()), "invalid site")!;
+        private ArgumentResult<string> Site => _arguments.GetString<RemoteHelperArguments>(x => x.InstallationSite)
+            .Required().Validate(x => Task.FromResult(x.NotBlank()), "invalid site")!;
 
         private ArgumentResult<int?> NewBindingPort => _arguments.
             GetInt<RemoteIISHelperArguments>(x => x.SSLPort).
