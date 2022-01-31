@@ -9,10 +9,10 @@ namespace PKISharp.WACS.Plugins.StorePlugins
         public override string Group => "Store";
         public override string Condition => "--store pfxfile";
 
-        [CommandLine(Description = "Path to write the .pfx file to.")]
+        [CommandLine(Name = PfxFile.PathParameterName, Description = "Path to write the .pfx file to.")]
         public string? PfxFilePath { get; set; }
 
-        [CommandLine(Description = "Password to set for .pfx files exported to the folder.", Secret = true)]
+        [CommandLine(Name = PfxFile.PasswordParameterName, Description = "Password to set for .pfx files exported to the folder.", Secret = true)]
         public string? PfxPassword { get; set; }
     }
 }

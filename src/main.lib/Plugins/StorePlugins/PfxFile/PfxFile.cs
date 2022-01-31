@@ -11,6 +11,9 @@ namespace PKISharp.WACS.Plugins.StorePlugins
 {
     public class PfxFile : IStorePlugin
     {
+        public const string PathParameterName = "pfxfilepath";
+        public const string PasswordParameterName = "pfxpassword";
+
         private readonly ILogService _log;
         private readonly string _path;
         private readonly string? _password;
