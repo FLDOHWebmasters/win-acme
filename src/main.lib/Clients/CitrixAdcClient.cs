@@ -21,7 +21,7 @@ namespace PKISharp.WACS.Clients
     {
         public const string DefaultNitroHost = "172.21.22.240";
         public const string DefaultNitroUsername = "cert_tester";
-        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAhluCZGFHg0eUVuE14YhDCQQAAAACAAAAAAADZgAAwAAAABAAAADMtwvdADCQdGC8M0RC2XhGAAAAAASAAACgAAAAEAAAAILOUUqSq7HNiIE2SCk+TYkQAAAAgyegpuvsKzW2ZLDAAz74cBQAAAAeZoKrkpwRnp5QyxDatMpihcYKEA==";
+        public const string DefaultNitroPasswordProtected = "enc-AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA2y0//401+EKCtaBEZVREBgQAAAACAAAAAAADZgAAwAAAABAAAADkaNSwGRSHgdYxOtfoC6hJAAAAAASAAACgAAAAEAAAABEyujfkcnsiNwzjKrEI2wEQAAAA7xQ3S/2ZMihPO9jwvNsDzxQAAAD38LYj0iFx3QKYhEhfnXnKdn/cJQ==";
         public const string DefaultPemFilesPath = @"D:\CertificateManagement\store";
         public const string DefaultPemFilesPassword = "fo0b@rB42";
 
