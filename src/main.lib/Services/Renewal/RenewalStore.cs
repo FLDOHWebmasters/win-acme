@@ -13,25 +13,19 @@ namespace PKISharp.WACS.Services
     /// </summary>
     public abstract class RenewalStore : IRenewalStore
     {
-        internal ISettingsService _settings;
-        internal ILogService _log;
-        internal IPluginService _plugin;
-        internal ICertificateService _certificateService;
-        internal IInputService _inputService;
-        internal PasswordGenerator _passwordGenerator;
+        protected ISettingsService _settings;
+        protected ILogService _log;
+        protected IPluginService _plugin;
+        protected ICertificateService _certificateService;
 
         public RenewalStore(
             ISettingsService settings,
             ILogService log,
-            IInputService input,
-            PasswordGenerator password,
             IPluginService plugin,
             ICertificateService certificateService)
         {
             _log = log;
             _plugin = plugin;
-            _inputService = input;
-            _passwordGenerator = password;
             _settings = settings;
             _certificateService = certificateService;
             _log.Debug("Renewal period: {RenewalDays} days", _settings.ScheduledTask.RenewalDays);
@@ -70,7 +64,7 @@ namespace PKISharp.WACS.Services
                 var date = renewal.GetDueDate();
                 if (date != null)
                 {
-                    _log.Information(LogType.All, "Next renewal scheduled at {date}", _inputService.FormatDate(date.Value));
+                    _log.Information(LogType.All, "Next renewal scheduled at {date}", date.Value.ToShortDateString());
                 }
             }
             renewal.Updated = true;

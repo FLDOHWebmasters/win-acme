@@ -15,9 +15,8 @@ namespace PKISharp.WACS.Services
     {
         public RenewalStoreDisk(
             ISettingsService settings, ILogService log,
-            IInputService input, PasswordGenerator password,
             IPluginService plugin, ICertificateService certificateService) :
-            base(settings, log, input, password, plugin, certificateService) { }
+            base(settings, log, plugin, certificateService) { }
 
         /// <summary>
         /// Local cache to prevent superfluous reading and
