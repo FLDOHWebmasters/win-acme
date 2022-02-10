@@ -5,6 +5,7 @@ using PKISharp.WACS.Services;
 using PKISharp.WACS.Services.Serialization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 
@@ -74,6 +75,10 @@ namespace PKISharp.WACS.DomainObjects
         /// </summary>
         public string? FriendlyName { get; set; }
 
+        [JsonIgnore]
+        [Display(Name = "Friendly Name")]
+        public string FriendlyNameDisplay => FriendlyName ?? LastFriendlyName ?? string.Empty;
+
         /// <summary>
         /// Display name, as the program shows this certificate
         /// in the interface. This is set to the most recently 
@@ -87,34 +92,24 @@ namespace PKISharp.WACS.DomainObjects
         [JsonProperty(PropertyName = "PfxPasswordProtected")]
         public ProtectedString? PfxPassword { get; set; }
 
+        [JsonIgnore]
+        [Display(Name = "Due Date")]
+        public DateTime DueDate => GetDueDate() ?? DateTime.Today;
         public DateTime? GetDueDate()
         {
             var lastSuccess = History.LastOrDefault(x => x.Success);
-            if (lastSuccess == null)
-            {
-                return null;
-            }
+            if (lastSuccess == null) { return null; }
             var firstOccurance = History.First(x => x.ThumbprintSummary == lastSuccess.ThumbprintSummary);
-            var defaultDueDate = firstOccurance.
-                Date.
-                AddDays(Settings.RenewalDays).
-                ToLocalTime();
-            if (lastSuccess.ExpireDate == null)
-            {
-                return defaultDueDate;
-            }
+            var defaultDueDate = firstOccurance.Date.AddDays(Settings.RenewalDays).ToLocalTime();
+            if (lastSuccess.ExpireDate == null) { return defaultDueDate; }
             var minDays = Settings.RenewalMinimumValidDays ?? 7;
-            var expireBasedDueDate = lastSuccess.
-                ExpireDate.
-                Value.
-                AddDays(minDays * -1).
-                ToLocalTime();
-
-            return expireBasedDueDate < defaultDueDate ?
-                expireBasedDueDate : 
-                defaultDueDate;
+            var expireBasedDueDate = lastSuccess.ExpireDate.Value.AddDays(minDays * -1).ToLocalTime();
+            return expireBasedDueDate < defaultDueDate ? expireBasedDueDate : defaultDueDate;
         }
 
+        [JsonIgnore]
+        [Display(Name = "Is Due")]
+        public bool Due => IsDue();
         public bool IsDue() => GetDueDate() == null || GetDueDate() < DateTime.Now;
 
         /// <summary>
@@ -141,6 +136,13 @@ namespace PKISharp.WACS.DomainObjects
         /// Store information about StorePlugin
         /// </summary>
         public List<StorePluginOptions> StorePluginOptions { get; set; } = new List<StorePluginOptions>();
+
+        [JsonIgnore]
+        [Display(Name = "Storage")]
+        public string StorePluginNames => string.Join(", ", StorePluginOptions.Select(x => x.Name));
+        [JsonIgnore]
+        [Display(Name = "Installation")]
+        public string InstallPluginNames => string.Join(", ", InstallationPluginOptions.Select(x => x.Name));
 
         /// <summary>
         /// Store information about InstallationPlugins

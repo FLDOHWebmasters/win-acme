@@ -56,18 +56,13 @@ namespace PKISharp.WACS
 
             // Maybe validation is not needed at all
             var orderValid = false;
-            if (context.Order.Details.Payload.Status == AcmeClient.OrderReady ||
-                context.Order.Details.Payload.Status == AcmeClient.OrderValid)
+            if (context.Order.Details.Payload.Status is AcmeClient.OrderReady or AcmeClient.OrderValid)
             {
-                if (!runLevel.HasFlag(RunLevel.Test) &&
-                    !runLevel.HasFlag(RunLevel.IgnoreCache))
+                if (!runLevel.HasFlag(RunLevel.Test) && !runLevel.HasFlag(RunLevel.IgnoreCache))
                 {
                     return;
                 }
-                else
-                {
-                    orderValid = true;
-                }
+                orderValid = true;
             }
 
             // Get validation plugin
