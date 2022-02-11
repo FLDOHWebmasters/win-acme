@@ -29,7 +29,7 @@ namespace PKISharp.WACS.Services
         }
 
         public void Encrypt() => _primaryStore.Encrypt();
-        public IEnumerable<Renewal> FindByArguments(string? id, string? friendlyName) => _primaryStore.FindByArguments(id, friendlyName);
+        public IEnumerable<Renewal> FindByArguments(string? id, string? friendlyName = null) => _primaryStore.FindByArguments(id, friendlyName);
 
         public void Import(Renewal renewal)
         {

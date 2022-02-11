@@ -31,7 +31,7 @@ namespace PKISharp.WACS.Services
             _log.Debug("Renewal period: {RenewalDays} days", _settings.ScheduledTask.RenewalDays);
         }
 
-        public IEnumerable<Renewal> FindByArguments(string? id, string? friendlyName)
+        public IEnumerable<Renewal> FindByArguments(string? id, string? friendlyName = null)
         {
             // AND filtering by input parameters
             var ret = Renewals;
@@ -56,18 +56,20 @@ namespace PKISharp.WACS.Services
                 renewals.Add(renewal);
                 _log.Information(LogType.All, "Adding renewal for {friendlyName}", renewal.LastFriendlyName);
             }
-
-            // Set next date
-            renewal.History.Add(result);
-            if (result.Success)
+            if (!renewal.Deleted)
             {
-                var date = renewal.GetDueDate();
-                if (date != null)
+                // Set next date
+                renewal.History.Add(result);
+                if (result.Success)
                 {
-                    _log.Information(LogType.All, "Next renewal scheduled at {date}", date.Value.ToShortDateString());
+                    var date = renewal.GetDueDate();
+                    if (date != null)
+                    {
+                        _log.Information(LogType.All, "Next renewal scheduled at {date}", date.Value.ToShortDateString());
+                    }
                 }
+                renewal.Updated = true;
             }
-            renewal.Updated = true;
             Renewals = renewals;
         }
 

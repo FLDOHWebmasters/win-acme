@@ -5,7 +5,7 @@ namespace PKISharp.WACS.Services
 {
     public interface IRenewalStore
     {
-        IEnumerable<Renewal> FindByArguments(string? id, string? friendlyName);
+        IEnumerable<Renewal> FindByArguments(string? id, string? friendlyName = null);
         void Save(Renewal renewal, RenewResult result);
         void Cancel(Renewal renewal);
         void Clear();

@@ -42,13 +42,13 @@ namespace PKISharp.WACS.DomainObjects
         /// Has this renewal been changed?
         /// </summary>
         [JsonIgnore]
-        internal bool Updated { get; set; }
+        public bool Updated { get; set; }
 
         /// <summary>
         /// Has this renewal been deleted?
         /// </summary>
         [JsonIgnore]
-        internal bool Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         /// <summary>
         /// Current renewal days setting, stored 

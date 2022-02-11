@@ -127,7 +127,7 @@ namespace PKISharp.WACS.Services
             document.Set("Certificate_Type", certificateType);
             document.Set("Challenge_Type", challengeType);
             document.Set("Installation_Type", installationType);
-            document.Set("Renewal_Canceled", false);
+            document.Set("Renewal_Canceled", renewal.Deleted);
             document.Set("SANs", string.Join(", ", subjectAlternateNames));
             document.Set("Server", host);
             document.Set("Site_Name", siteName);
