@@ -29,7 +29,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         private readonly ILogService _log;
         private readonly FileWatcherOptions _options;
         private readonly string _pfxFilePath;
-        private readonly string _pfxFilePassword;
+        //private readonly string _pfxFilePassword;
 
         public FileWatcher(FileWatcherOptions options, ILogService log, ISettingsService settings, ArgumentsParser arguments)
         {
@@ -41,7 +41,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
                 pfxFilePath = settings.Store.PemFiles?.DefaultPath;
             }
             _pfxFilePath = pfxFilePath ?? DefaultPfxFilePath;
-            _pfxFilePassword = PfxFilePassword(settings);
+            //_pfxFilePassword = PfxFilePassword(settings);
         }
 
         public (bool, string?) Disabled => (false, null);
@@ -50,6 +50,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         {
             var storedCertInfo = GetCertFileInfo(stores, newCertificateInfo);
             var destinationPath = Path.Combine(_options.Path!, storedCertInfo.Name);
+            _log.Information($"File watcher install copying {storedCertInfo.Name} to {_options.Path}");
             storedCertInfo.CopyTo(destinationPath, true);
             Thread.Sleep(100);
             var success = new FileInfo(destinationPath).Exists;

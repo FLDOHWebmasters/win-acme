@@ -1,5 +1,9 @@
-﻿using PKISharp.WACS.Plugins.Base;
+﻿using Org.BouncyCastle.Pkcs;
+using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
+using PKISharp.WACS.Services;
+using System;
+using System.IO;
 
 namespace PKISharp.WACS.Plugins.TargetPlugins
 {
@@ -9,6 +13,24 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         public static string NameLabel => "CSR";
         public override string Name => NameLabel;
         public override string Description => "CSR created by another program";
+        public override string? CommonName {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(CsrFile))
+                {
+                    return NameLabel;
+                }
+                var csrString = File.ReadAllText(CsrFile);
+                var pem = new PemService().ParsePem<Pkcs10CertificationRequest>(csrString);
+                if (pem == null)
+                {
+                    return NameLabel;
+                }
+                var info = pem.GetCertificationRequestInfo();
+                return Csr.ParseCn(info).Value;
+            }
+            set => throw new NotImplementedException();
+        }
         public string? CsrFile { get; set; }
         public string? PkFile { get; set; }
     }

@@ -13,5 +13,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "IIS Helper";
         public override string Description => "Create or update https bindings in a remote IIS via helper app";
+        public override string Details => $"{Name} on {Host} site id {SiteId}";
     }
 }

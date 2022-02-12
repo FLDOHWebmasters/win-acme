@@ -12,5 +12,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "ADC";
         public override string Description => "Update a certificate via the Citrix ADC Nitro v1 API";
+        public override string Details => $"{Name} on {NitroHost}";
     }
 }

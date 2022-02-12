@@ -10,12 +10,14 @@ namespace PKISharp.WACS.Plugins.Base.Options
         public override string Name => throw new NotImplementedException();
         public override string Description => throw new NotImplementedException();
         public override Type Instance => throw new NotImplementedException();
+        public virtual string Details => throw new NotImplementedException();
     }
 
     public abstract class InstallationPluginOptions<T> : InstallationPluginOptions where T : IInstallationPlugin
     {
         public abstract override string Name { get; }
         public abstract override string Description { get; }
+        public abstract override string Details { get; }
 
         public override void Show(IInputService input)
         {

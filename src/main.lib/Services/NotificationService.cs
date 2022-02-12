@@ -153,7 +153,7 @@ namespace PKISharp.WACS.Services
                     extraMessage += @$"<tr><td>Csr: </td><td> {renewal.CsrPluginOptions.Name}</td></tr>";
                 }
                 extraMessage += @$"<tr><td>Store: </td><td> {renewal.StorePluginNames}</td></tr>";
-                extraMessage += $"<tr><td>Installation: </td><td> {renewal.InstallPluginNames}</td></tr>";
+                extraMessage += $"<tr><td>Installation: </td><td> {renewal.InstallPluginDetails}</td></tr>";
                 extraMessage += "</table></p>";
                 return extraMessage;
             }

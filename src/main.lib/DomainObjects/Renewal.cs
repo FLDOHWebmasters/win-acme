@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
 using PKISharp.WACS.Configuration.Settings;
 using PKISharp.WACS.Plugins.Base.Options;
+using PKISharp.WACS.Plugins.InstallationPlugins;
+using PKISharp.WACS.Plugins.TargetPlugins;
 using PKISharp.WACS.Services;
 using PKISharp.WACS.Services.Serialization;
 using System;
@@ -69,6 +71,14 @@ namespace PKISharp.WACS.DomainObjects
         /// </summary>
         public string Id { get; set; } = "";
 
+        [JsonIgnore]
+        [Display(Name = "Common Name")]
+        public string? CommonName => TargetPluginOptions.CommonName;
+
+        [JsonIgnore]
+        [Display(Name = "Alternate Names")]
+        public string? AlternateNamesDisplay => string.Join("<br/>", (TargetPluginOptions as ManualOptions)?.AlternativeNames.Where(x => x != CommonName) ?? new List<string>());
+
         /// <summary>
         /// Friendly name for the certificate. If left
         /// blank or empty, the CommonName will be used.
@@ -77,7 +87,7 @@ namespace PKISharp.WACS.DomainObjects
 
         [JsonIgnore]
         [Display(Name = "Friendly Name")]
-        public string FriendlyNameDisplay => FriendlyName ?? LastFriendlyName ?? string.Empty;
+        public string FriendlyNameDisplay => FriendlyName ?? LastFriendlyName ?? CommonName ?? string.Empty;
 
         /// <summary>
         /// Display name, as the program shows this certificate
@@ -142,7 +152,7 @@ namespace PKISharp.WACS.DomainObjects
         public string StorePluginNames => string.Join(", ", StorePluginOptions.Select(x => x.Name));
         [JsonIgnore]
         [Display(Name = "Installation")]
-        public string InstallPluginNames => string.Join(", ", InstallationPluginOptions.Select(x => x.Name));
+        public string InstallPluginDetails => string.Join(", ", InstallationPluginOptions.Select(x => x.Details));
 
         /// <summary>
         /// Store information about InstallationPlugins

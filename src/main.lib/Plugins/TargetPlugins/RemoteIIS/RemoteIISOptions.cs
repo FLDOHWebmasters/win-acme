@@ -9,5 +9,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         public override string Name => throw new System.NotImplementedException();
 
         public override string Description => throw new System.NotImplementedException();
+
+        public override string? CommonName { get; set; }
     }
 }

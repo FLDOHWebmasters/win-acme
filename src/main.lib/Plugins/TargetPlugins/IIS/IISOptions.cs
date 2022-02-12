@@ -16,7 +16,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// <summary>
         /// Common name for the certificate
         /// </summary>
-        public string? CommonName { get; set; }
+        public override string? CommonName { get; set; }
 
         /// <summary>
         /// Search string to select hosts

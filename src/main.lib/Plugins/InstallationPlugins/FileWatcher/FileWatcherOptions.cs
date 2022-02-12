@@ -10,5 +10,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "Watcher";
         public override string Description => "Update a certificate via a file watcher on the host machine";
+        public override string Details => $"{Name} on {Path}";
     }
 }
