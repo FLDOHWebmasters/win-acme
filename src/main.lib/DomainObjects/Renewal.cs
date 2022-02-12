@@ -77,7 +77,7 @@ namespace PKISharp.WACS.DomainObjects
 
         [JsonIgnore]
         [Display(Name = "Alternate Names")]
-        public string? AlternateNamesDisplay => string.Join("<br/>", (TargetPluginOptions as ManualOptions)?.AlternativeNames.Where(x => x != CommonName) ?? new List<string>());
+        public string? AlternateNamesDisplay => string.Join(" ", (TargetPluginOptions as ManualOptions)?.AlternativeNames.Where(x => x != CommonName) ?? new List<string>());
 
         /// <summary>
         /// Friendly name for the certificate. If left
