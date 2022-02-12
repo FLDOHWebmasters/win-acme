@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
 using PKISharp.WACS.Clients;
 using PKISharp.WACS.Configuration;
@@ -15,8 +16,8 @@ using PKISharp.WACS.Services;
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
     /// <summary>
-    /// Doesn't actually do anything, just a placeholder for an installation where the
-    /// store plugin saves the certificate to a network share where it is watched and reloaded.
+    /// Doesn't actually do the watching, just copies the cert from where the
+    /// store plugin saves it to a network share where it is watched and reloaded.
     /// </summary>
     public class FileWatcher : IInstallationPlugin
     {
@@ -46,7 +47,14 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public (bool, string?) Disabled => (false, null);
 
         public async Task<bool> Install(Target target, IEnumerable<IStorePlugin> stores, CertificateInfo newCertificateInfo, CertificateInfo? oldCertificateInfo)
-            => await Task.Run(() => true);
+        {
+            var storedCertInfo = GetCertFileInfo(stores, newCertificateInfo);
+            var destinationPath = Path.Combine(_options.Path!, storedCertInfo.Name);
+            storedCertInfo.CopyTo(destinationPath, true);
+            Thread.Sleep(100);
+            var success = new FileInfo(destinationPath).Exists;
+            return await Task.Run(() => success);
+        }
 
         private FileInfo GetCertFileInfo(IEnumerable<IStorePlugin> stores, CertificateInfo input)
         {

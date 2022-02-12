@@ -13,6 +13,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 {
     internal class RemoteHelperOptionsFactory : InstallationPluginFactory<RemoteHelper, RemoteHelperOptions>
     {
+        public override int Order => 6;
         private readonly ILogService _log;
         private readonly ArgumentsInputService _arguments;
         private readonly Regex _hostRegex = new(@"^[a-z][a-z0-9\.-]+$");
