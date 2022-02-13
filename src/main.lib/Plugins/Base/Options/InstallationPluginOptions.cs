@@ -11,6 +11,7 @@ namespace PKISharp.WACS.Plugins.Base.Options
         public override string Description => throw new NotImplementedException();
         public override Type Instance => throw new NotImplementedException();
         public virtual string Details => throw new NotImplementedException();
+        public virtual string? HostName => throw new NotImplementedException();
     }
 
     public abstract class InstallationPluginOptions<T> : InstallationPluginOptions where T : IInstallationPlugin
@@ -18,6 +19,7 @@ namespace PKISharp.WACS.Plugins.Base.Options
         public abstract override string Name { get; }
         public abstract override string Description { get; }
         public abstract override string Details { get; }
+        public abstract override string? HostName { get; }
 
         public override void Show(IInputService input)
         {

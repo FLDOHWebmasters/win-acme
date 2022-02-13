@@ -13,5 +13,6 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
         public override string Name => "IIS";
         public override string Description => "Create or update https bindings in IIS";
         public override string Details => $"{Name} site id {SiteId}";
+        public override string? HostName => "localhost";
     }
 }

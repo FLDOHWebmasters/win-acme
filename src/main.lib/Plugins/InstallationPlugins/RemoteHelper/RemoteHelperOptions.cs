@@ -13,6 +13,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "Helper";
         public override string Description => "Update a certificate using a Certificate Manager helper app running on the target server machine";
-        public override string Details => $"{Name} on {HelperHost} site {InstallationSite}";
+        public override string Details => $"{Name} on {string.Join(" and ", (HelperHost ?? "").Split(','))} site {InstallationSite}";
+        public override string? HostName => HelperHost;
     }
 }

@@ -173,8 +173,7 @@ namespace PKISharp.WACS.Services
                             {
                                 File.WriteAllText(file.FullName, renewalContent);
                             }
-
-                        } 
+                        }
                         catch (Exception ex)
                         {
                             _log.Error(ex, "Unable to write {renewal} to disk", renewal.LastFriendlyName);

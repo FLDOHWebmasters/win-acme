@@ -10,7 +10,7 @@ namespace PKISharp.WACS.Plugins.Base.Options
         public override string Name => throw new NotImplementedException();
         public override string Description => throw new NotImplementedException();
         public override Type Instance => throw new NotImplementedException();
-        public virtual string? CommonName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public virtual string? CommonName { get => null; set => _ = value; }
     }
 
     public abstract class TargetPluginOptions<T> : TargetPluginOptions where T : ITargetPlugin

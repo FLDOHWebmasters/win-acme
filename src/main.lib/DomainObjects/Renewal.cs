@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using PKISharp.WACS.Configuration.Settings;
+using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Base.Options;
-using PKISharp.WACS.Plugins.InstallationPlugins;
 using PKISharp.WACS.Plugins.TargetPlugins;
 using PKISharp.WACS.Services;
 using PKISharp.WACS.Services.Serialization;
@@ -70,6 +70,9 @@ namespace PKISharp.WACS.DomainObjects
         /// Unique identifer for the renewal
         /// </summary>
         public string Id { get; set; } = "";
+
+        [JsonIgnore]
+        public List<string> HostNames => InstallationPluginOptions.Select(x => x.HostName!).Where(x => x.NotBlank()).ToList();
 
         [JsonIgnore]
         [Display(Name = "Common Name")]
