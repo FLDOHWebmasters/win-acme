@@ -47,7 +47,7 @@ namespace PKISharp.WACS.Services
             return ret;
         }
 
-        public void Save(Renewal renewal, RenewResult result)
+        public void Save(Renewal renewal, RenewResult? result)
         {
             var renewals = Renewals.ToList();
             if (renewal.New)
@@ -58,6 +58,7 @@ namespace PKISharp.WACS.Services
             }
             if (!renewal.Deleted)
             {
+                if (result != null) {
                 // Set next date
                 renewal.History.Add(result);
                 if (result.Success)
@@ -67,6 +68,7 @@ namespace PKISharp.WACS.Services
                     {
                         _log.Information(LogType.All, "Next renewal scheduled at {date}", date.Value.ToShortDateString());
                     }
+                }
                 }
                 renewal.Updated = true;
             }
