@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
+using CertificateManager.Core.Extensions;
 using PKISharp.WACS.Clients;
 using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
-using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Interfaces;
 using PKISharp.WACS.Plugins.StorePlugins;
 using PKISharp.WACS.Services;

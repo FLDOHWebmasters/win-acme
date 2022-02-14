@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Services;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.Services;
 using PKISharp.WACS.Services.Serialization;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,6 @@ namespace PKISharp.WACS.Extensions
 {
     public static class StringExtensions
     {
-        public static bool EqualsIgnoreCase(this string s, string t) => string.Equals(s, t, StringComparison.OrdinalIgnoreCase);
-
-        public static string? IfBlank(this string? s, string? ifBlank) => IsBlank(s) ? ifBlank : s;
-
-        public static bool IsBlank(this string? s) => string.IsNullOrWhiteSpace(s);
-
-        public static bool NotBlank(this string? s) => !IsBlank(s);
-
         public static string? CleanUri(this Uri? uri)
         {
             if (uri == null)

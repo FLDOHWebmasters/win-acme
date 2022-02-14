@@ -1,6 +1,6 @@
+using CertificateManager.Core.Extensions;
 using Newtonsoft.Json;
 using PKISharp.WACS.Configuration.Settings;
-using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Base.Options;
 using PKISharp.WACS.Plugins.TargetPlugins;
 using PKISharp.WACS.Services;

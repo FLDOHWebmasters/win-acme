@@ -1,6 +1,5 @@
 ﻿using CertificateManager.Core;
 using PKISharp.WACS.Clients;
-using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Interfaces;

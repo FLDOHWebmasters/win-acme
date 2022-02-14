@@ -1,5 +1,5 @@
-﻿using PKISharp.WACS.DomainObjects;
-using PKISharp.WACS.Extensions;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Services;
 using System;
 using System.Collections;

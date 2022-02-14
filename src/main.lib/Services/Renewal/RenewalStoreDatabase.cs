@@ -3,7 +3,6 @@ using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PKISharp.WACS.Clients;
-using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.InstallationPlugins;
 

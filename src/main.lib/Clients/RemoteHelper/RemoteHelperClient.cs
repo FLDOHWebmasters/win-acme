@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using PKISharp.WACS.Services;
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;

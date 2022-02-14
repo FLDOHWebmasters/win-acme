@@ -1,4 +1,4 @@
-﻿using PKISharp.WACS.Extensions;
+﻿using CertificateManager.Core.Extensions;
 using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 using System;

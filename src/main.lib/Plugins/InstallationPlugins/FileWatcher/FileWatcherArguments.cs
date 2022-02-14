@@ -1,6 +1,5 @@
 ﻿using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Configuration.Arguments;
-using System.Xml.Linq;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
 {

@@ -1,20 +1,10 @@
-﻿using CertificateManager.Core;
-using Microsoft.Web.Administration;
-using Newtonsoft.Json;
-using PKISharp.WACS.Clients.IIS;
+﻿using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.Configuration;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Plugins.InstallationPlugins;
-using PKISharp.WACS.Plugins.OrderPlugins;
 using PKISharp.WACS.Services;
-using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Mime;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Clients

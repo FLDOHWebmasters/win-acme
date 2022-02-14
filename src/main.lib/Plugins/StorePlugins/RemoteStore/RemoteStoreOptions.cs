@@ -2,7 +2,6 @@
 using PKISharp.WACS.Plugins.Base.Options;
 using PKISharp.WACS.Services;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PKISharp.WACS.Plugins.StorePlugins
 {
