@@ -17,6 +17,7 @@ using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using PKISharp.WACS.DomainObjects;
+using CertificateManager.Core.Extensions;
 
 namespace PKISharp.WACS.Clients.Acme
 {
@@ -404,7 +405,7 @@ namespace PKISharp.WACS.Clients.Acme
                 newEmails = email.ParseCsv();
                 if (newEmails == null)
                 {
-                    return new string[] { };
+                    return Array.Empty<string>();
                 }
             } 
             else

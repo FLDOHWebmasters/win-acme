@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PKISharp.WACS.Plugins.TargetPlugins
 {
-    internal class Manual : ITargetPlugin
+    public class Manual : ITargetPlugin
     {
         private readonly ManualOptions _options;
 

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using CertificateManager.Core.Extensions;
 using PKISharp.WACS.Configuration.Arguments;
 using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;

@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Configuration.Arguments;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.Configuration.Arguments;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Base.Factories;
 using PKISharp.WACS.Services;

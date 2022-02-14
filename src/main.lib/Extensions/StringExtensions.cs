@@ -37,9 +37,6 @@ namespace PKISharp.WACS.Extensions
         public static string ConvertPunycode(this string input) =>
             !string.IsNullOrEmpty(input) && (input.StartsWith("xn--") || input.Contains(".xn--")) ? new IdnMapping().GetUnicode(input) : input;
 
-        public static List<string>? ParseCsv(this string? input) => string.IsNullOrWhiteSpace(input) ? null
-            : input.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim().ToLower()).Distinct().ToList();
-
         public static bool ValidFile(this string? input, ILogService logService)
         {
             if (string.IsNullOrWhiteSpace(input))

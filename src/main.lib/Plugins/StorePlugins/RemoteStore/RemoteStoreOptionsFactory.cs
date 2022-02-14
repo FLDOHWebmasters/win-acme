@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Clients.IIS;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.Clients.IIS;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Base.Factories;
 using PKISharp.WACS.Services;

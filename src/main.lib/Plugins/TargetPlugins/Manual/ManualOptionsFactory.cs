@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.DomainObjects;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.DomainObjects;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Plugins.Base.Factories;
 using PKISharp.WACS.Services;
