@@ -137,7 +137,7 @@ namespace PKISharp.WACS.Services
             // Load from the current app domain
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (!string.IsNullOrEmpty(assembly.FullName) && assembly.FullName.Contains("wacs"))
+                if (!string.IsNullOrEmpty(assembly.FullName) && (assembly.FullName.Contains("wacs") || assembly.FullName.Contains("CertificateManager.Core")))
                 {
                     IEnumerable<Type> types = new List<Type>();
                     try
