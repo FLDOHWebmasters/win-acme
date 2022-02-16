@@ -25,22 +25,22 @@ namespace PKISharp.WACS.Clients
 
         public override long? GetWebSite(string name) => Get<long?>($"Target/{name}").Result;
 
-        public async Task<Target> Generate() => await Post<Target>("Target");
+        public async Task<Target?> Generate() => await Post<Target>("Target");
 
         public override IIISBinding AddBinding(IISSiteWrapper site, BindingOptions bindingOptions)
-            => Post<IISRemoteHelperBinding>($"Install/Binding/{bindingOptions.SiteId}").Result;
+            => Post<IISRemoteHelperBinding>($"Install/Binding/{bindingOptions.SiteId}").Result!;
 
         public override void UpdateBinding(IISSiteWrapper site, IISBindingWrapper binding, BindingOptions bindingOptions)
             => _ = Call<IISRemoteHelperBinding>($"Install/Binding/{bindingOptions.SiteId}", HttpMethod.Put).Result;
 
-        public async Task<Version> GetIISVersion() => new(await Get<string>("Target/Version"));
+        public async Task<Version> GetIISVersion() => new(await Get<string>("Target/Version") ?? "0.0");
 
-        private async Task<T> Get<T>(string route, string? jsonContent = null) => await Call<T>(route, HttpMethod.Get, jsonContent);
+        private async Task<T?> Get<T>(string route, string? jsonContent = null) => await Call<T>(route, HttpMethod.Get, jsonContent);
 
-        private async Task<T> Post<T>(string route, string? jsonContent = null) => await Call<T>(route, HttpMethod.Post, jsonContent);
+        private async Task<T?> Post<T>(string route, string? jsonContent = null) => await Call<T>(route, HttpMethod.Post, jsonContent);
 
-        private async Task<T> Call<T>(string route, HttpMethod method, string? jsonContent = null)
-            => await RemoteHelperClient.Call<T>(_helperHost, route, method, jsonContent);
+        private async Task<T?> Call<T>(string route, HttpMethod method, string? jsonContent = null)
+            => await RemoteHelperClient.Call<T>(_helperHost, route, method, _log, jsonContent);
 
         public class IISRemoteHelperBinding : IIISBinding
         {

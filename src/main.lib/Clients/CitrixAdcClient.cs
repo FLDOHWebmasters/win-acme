@@ -141,7 +141,7 @@ namespace PKISharp.WACS.Clients
             using var response = await client.DeleteAsync($"{apiUrl}/systemfile/{filename}?args=filelocation:{escapedLocation}");
 			var apiResponse = await response.Content.ReadAsStringAsync();
 			var nitroResponse = JsonConvert.DeserializeObject<NitroResponse>(apiResponse);
-            return response.StatusCode == HttpStatusCode.OK && nitroResponse.ErrorCode == 0;
+            return response.StatusCode == HttpStatusCode.OK && nitroResponse?.ErrorCode == 0;
         }
 
         private async Task<string?> PostSystemFile(HttpClient client, string apiUrl, string filelocation, string site, string pemFilename, bool key)
@@ -190,7 +190,7 @@ namespace PKISharp.WACS.Clients
             using var response = await client.GetAsync($"{apiUrl}/sslcertkey?filter=certkey:{site}");
 			var apiResponse = await response.Content.ReadAsStringAsync();
 			var jsonResponse = JsonConvert.DeserializeObject<SSLCertKeyResponse>(apiResponse);
-			var certKeys = jsonResponse.SSLCertKey;
+			var certKeys = jsonResponse?.SSLCertKey;
 			var success = response.StatusCode == HttpStatusCode.OK && certKeys != null && certKeys.Any();
             if (!success) { log.Error($"CitrixAdcClient VerifySSLCertKey {certKeys?.Count()} {(int)response.StatusCode} {response.ReasonPhrase}"); }
             return success ? certKeys!.First() : null;

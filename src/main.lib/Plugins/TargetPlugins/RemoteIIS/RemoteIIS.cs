@@ -22,7 +22,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         public Task<Target> Generate()
         {
             _log.Verbose($"{nameof(RemoteIIS)}.Generate()");
-            return _client.Generate();
+            return _client.Generate()!;
         }
     }
 }

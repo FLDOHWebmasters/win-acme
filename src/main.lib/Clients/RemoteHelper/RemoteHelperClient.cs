@@ -18,25 +18,26 @@ namespace PKISharp.WACS.Clients
 
         public static bool Exists(string host, ILogService log) => new RemoteHelperClient(log).Exists(host);
 
-        public bool Exists(string host) => Get<string>(host, "Ping/").Result == "Pong";
+        public bool Exists(string host) => Get<string>(host, "Ping/", _log).Result == "Pong";
 
         public static long? GetWebSite(string host, string name, ILogService log) => new RemoteHelperClient(log).GetWebSite(host, name);
 
-        public long? GetWebSite(string host, string name) => Get<long?>(host, $"Target/{name}/").Result;
+        public long? GetWebSite(string host, string name) => Get<long>(host, $"Target/{name}/", _log).Result;
 
-        public async Task<InstallInfo> Install(string host, InstallInfo info) => await Post<InstallInfo>(host, "Install/", JsonConvert.SerializeObject(info));
+        public async Task<InstallInfo?> Install(string host, InstallInfo info) =>
+            await Post<InstallInfo>(host, "Install/", _log, JsonConvert.SerializeObject(info));
 
-        private static async Task<T> Get<T>(string host, string route, string? jsonContent = null)
-            => await Call<T>(host, route, HttpMethod.Get, jsonContent);
+        private static async Task<T?> Get<T>(string host, string route, ILogService log, string? jsonContent = null)
+            => await Call<T>(host, route, HttpMethod.Get, log, jsonContent);
 
-        private static async Task<T> Post<T>(string host, string route, string? jsonContent = null)
-            => await Call<T>(host, route, HttpMethod.Post, jsonContent);
+        private static async Task<T?> Post<T>(string host, string route, ILogService log, string? jsonContent = null)
+            => await Call<T>(host, route, HttpMethod.Post, log, jsonContent);
 
-        public static async Task<T> Call<T>(string host, string route, HttpMethod method, string? jsonContent = null)
+        public static async Task<T?> Call<T>(string host, string route, HttpMethod method, ILogService log, string? jsonContent = null)
         {
             const string contentType = MediaTypeNames.Application.Json;
             var uri = $"https://{host}/{route}";
-            //_log.Verbose($"Calling {method} {uri} with payload {jsonContent}");
+            log.Verbose($"Calling {method} {uri} with payload {jsonContent}");
             using var httpClient = new HttpClient();
             var request = new HttpRequestMessage
             {
