@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Core.Extensions;
+using Newtonsoft.Json;
 using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 using System;
@@ -12,7 +13,9 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "Watcher";
         public override string Description => "Update a certificate via a file watcher on the host machine";
+        [JsonIgnore]
         public override string Details => $"{Name} on {Path}";
+        [JsonIgnore]
         public override string? HostName => Path != null && Path.StartsWith(@"\\")
             ? Path.Substring(2, Math.Max(0, Path.IndexOf(@"\", 2) - 2)).IfBlank(Path[2..])
             : Path;

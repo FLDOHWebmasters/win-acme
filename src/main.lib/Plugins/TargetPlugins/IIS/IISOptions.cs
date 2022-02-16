@@ -1,6 +1,8 @@
-﻿using PKISharp.WACS.Plugins.Base;
+﻿using PKISharp.WACS.Clients.IIS;
+using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 using PKISharp.WACS.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,6 +19,8 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// Common name for the certificate
         /// </summary>
         public override string? CommonName { get; set; }
+
+        public override List<string>? AlternativeNames { get => IncludeHosts; set => IncludeHosts = value; }
 
         /// <summary>
         /// Search string to select hosts

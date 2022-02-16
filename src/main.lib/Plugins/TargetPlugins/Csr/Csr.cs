@@ -145,7 +145,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        private IEnumerable<Identifier> ParseSan(CertificationRequestInfo info)
+        public static IEnumerable<Identifier> ParseSan(CertificationRequestInfo info)
         {
             var ret = new List<Identifier>();
             var extensionSequence = info.Attributes.OfType<DerSequence>()
@@ -180,7 +180,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
             });
         }
 
-        private T? GetAsn1ObjectRecursive<T>(DerSequence sequence, string id) where T : Asn1Object
+        private static T? GetAsn1ObjectRecursive<T>(DerSequence sequence, string id) where T : Asn1Object
         {
             if (sequence.OfType<DerObjectIdentifier>().Any(o => o.Id == id))
             {

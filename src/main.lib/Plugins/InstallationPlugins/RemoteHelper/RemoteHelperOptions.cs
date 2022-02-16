@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Plugins.Base;
+﻿using Newtonsoft.Json;
+using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
@@ -13,7 +14,9 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "Helper";
         public override string Description => "Update a certificate using a Certificate Manager helper app running on the target server machine";
+        [JsonIgnore]
         public override string Details => $"{Name} on {string.Join(" and ", (HelperHost ?? "").Split(','))} site {InstallationSite}";
+        [JsonIgnore]
         public override string? HostName => HelperHost;
     }
 }

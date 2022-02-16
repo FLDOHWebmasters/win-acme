@@ -34,7 +34,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 {
                     commonName = commonName.ToLower().Trim().ConvertPunycode();
                     ret.CommonName = commonName;
-                    if (!ret.AlternativeNames.Contains(commonName))
+                    if (ret.AlternativeNames != null && !ret.AlternativeNames.Contains(commonName))
                     {
                         ret.AlternativeNames.Insert(0, commonName);
                     }

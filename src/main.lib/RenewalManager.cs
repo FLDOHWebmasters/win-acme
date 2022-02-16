@@ -405,7 +405,7 @@ namespace PKISharp.WACS
         private async Task<IEnumerable<Renewal>> FilterRenewalsByFriendlyName(IEnumerable<Renewal> current)
         {
             _input.CreateSpace();
-            _input.Show(null, "Please input friendly name to filter renewals by. " + IISArguments.PatternExamples);
+            _input.Show(null, "Please input friendly name to filter renewals by. " + MainArguments.IISPatternExamples);
             var rawInput = await _input.RequestString("Friendly name");
             var ret = new List<Renewal>();
             var regex = new Regex(rawInput.PatternToRegex(), RegexOptions.IgnoreCase);

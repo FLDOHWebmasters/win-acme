@@ -3,7 +3,9 @@ using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 using PKISharp.WACS.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace PKISharp.WACS.Plugins.TargetPlugins
 {
@@ -28,6 +30,24 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
                 }
                 var info = pem.GetCertificationRequestInfo();
                 return Csr.ParseCn(info).Value;
+            }
+            set => throw new NotImplementedException();
+        }
+        public override List<string>? AlternativeNames {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(CsrFile))
+                {
+                    return new List<string>();
+                }
+                var csrString = File.ReadAllText(CsrFile);
+                var pem = new PemService().ParsePem<Pkcs10CertificationRequest>(csrString);
+                if (pem == null)
+                {
+                    return new List<string>();
+                }
+                var info = pem.GetCertificationRequestInfo();
+                return Csr.ParseSan(info).Select(x => x.Value).ToList();
             }
             set => throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Plugins.Base;
+﻿using Newtonsoft.Json;
+using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
@@ -13,7 +14,9 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "IIS Helper";
         public override string Description => "Create or update https bindings in a remote IIS via helper app";
+        [JsonIgnore]
         public override string Details => $"{Name} on {Host} site id {SiteId}";
+        [JsonIgnore]
         public override string? HostName => Host;
     }
 }

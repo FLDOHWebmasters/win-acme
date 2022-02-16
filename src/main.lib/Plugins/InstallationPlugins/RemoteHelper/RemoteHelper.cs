@@ -43,6 +43,7 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
             {
                 foreach (var site in _options.InstallationSite!.Split(',').Select(s => s.Trim()))
                 {
+                    _log.Debug($"Installing to site {site} on {host}");
                     installInfo.Site = site;
                     result ??= await _client.Install(host, installInfo);
                 }

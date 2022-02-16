@@ -1,5 +1,6 @@
 ﻿using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
+using System.Collections.Generic;
 
 namespace PKISharp.WACS.Plugins.TargetPlugins
 {
@@ -11,5 +12,6 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         public override string Description => throw new System.NotImplementedException();
 
         public override string? CommonName { get; set; }
+        public override List<string>? AlternativeNames { get; set; }
     }
 }

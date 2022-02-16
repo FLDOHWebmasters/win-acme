@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Plugins.Base;
+﻿using Newtonsoft.Json;
+using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
@@ -12,7 +13,9 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "IIS";
         public override string Description => "Create or update https bindings in IIS";
+        [JsonIgnore]
         public override string Details => $"{Name} site id {SiteId}";
+        [JsonIgnore]
         public override string? HostName => "localhost";
     }
 }

@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Configuration;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.Configuration;
 using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Services.Serialization;
 using System;

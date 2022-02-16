@@ -93,7 +93,7 @@ namespace PKISharp.WACS.Clients.IIS
                         string.Equals(sb.binding.Host, other.Host, StringComparison.InvariantCultureIgnoreCase)))
                 .ToDictionary(sb => lookupKey(sb.site, sb.binding));
 
-            var targets = siteBindings.
+            var targets = ObjectExtensions.DistinctBy(siteBindings.
                 Select(sb => new
                 {
                     host = sb.binding.Host.ToLower(),
@@ -107,8 +107,7 @@ namespace PKISharp.WACS.Clients.IIS
                     Port = sbi.binding.Port,
                     Protocol = sbi.binding.Protocol,
                     Https = sbi.https
-                }).
-                DistinctBy(t => t.HostUnicode + "@" + t.SiteId).
+                }), t => t.HostUnicode + "@" + t.SiteId).
                 ToList();
 
             return targets;

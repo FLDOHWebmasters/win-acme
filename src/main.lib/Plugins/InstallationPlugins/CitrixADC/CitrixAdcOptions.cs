@@ -1,4 +1,5 @@
-﻿using PKISharp.WACS.Plugins.Base;
+﻿using Newtonsoft.Json;
+using PKISharp.WACS.Plugins.Base;
 using PKISharp.WACS.Plugins.Base.Options;
 
 namespace PKISharp.WACS.Plugins.InstallationPlugins
@@ -12,7 +13,9 @@ namespace PKISharp.WACS.Plugins.InstallationPlugins
 
         public override string Name => "ADC";
         public override string Description => "Update a certificate via the Citrix ADC Nitro v1 API";
+        [JsonIgnore]
         public override string Details => $"{Name} on {NitroHost}";
+        [JsonIgnore]
         public override string? HostName => NitroHost;
     }
 }

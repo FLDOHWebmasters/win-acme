@@ -1,6 +1,6 @@
-﻿using Fclp;
+﻿using CertificateManager.Core.Extensions;
+using Fclp;
 using PKISharp.WACS.Configuration.Arguments;
-using PKISharp.WACS.Extensions;
 using PKISharp.WACS.Services;
 using System;
 using System.Collections.Generic;

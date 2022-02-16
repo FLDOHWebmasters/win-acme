@@ -55,8 +55,7 @@ namespace PKISharp.WACS.Clients.Acme
                     else
                     {
                         existingOrder = await RefreshOrder(existingOrder);
-                        if (existingOrder.Payload.Status == AcmeClient.OrderValid ||
-                            existingOrder.Payload.Status == AcmeClient.OrderReady)
+                        if (existingOrder.Payload.Status is AcmeClient.OrderValid or AcmeClient.OrderReady)
                         { 
                             _log.Warning("Using cached order. To force issue of a new certificate within {days} days, " +
                                 "run with the --{switch} switch. Be ware that you might run into rate limits doing so.",

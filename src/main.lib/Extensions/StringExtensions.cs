@@ -2,7 +2,6 @@
 using PKISharp.WACS.Services;
 using PKISharp.WACS.Services.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -31,11 +30,6 @@ namespace PKISharp.WACS.Extensions
 
         public static string? CleanPath(this string? fileName) => fileName == null ? null
             : Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
-
-        public static string ReplaceNewLines(this string input) => Regex.Replace(input, @"\r\n?|\n", " ");
-
-        public static string ConvertPunycode(this string input) =>
-            !string.IsNullOrEmpty(input) && (input.StartsWith("xn--") || input.Contains(".xn--")) ? new IdnMapping().GetUnicode(input) : input;
 
         public static bool ValidFile(this string? input, ILogService logService)
         {
@@ -127,7 +121,7 @@ namespace PKISharp.WACS.Extensions
 
         public static string SHA1(this string original)
         {
-            using var sha1 = new SHA1Managed();
+            using var sha1 = System.Security.Cryptography.SHA1.Create();
             var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(original));
             return string.Concat(hash.Select(b => b.ToString("x2")));
         }
