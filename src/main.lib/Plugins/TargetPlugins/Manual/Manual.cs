@@ -15,7 +15,7 @@ namespace PKISharp.WACS.Plugins.TargetPlugins
         public Manual(ManualOptions options) => _options = options;
 
         public async Task<Target> Generate() => await Task.Run(() => new Target(
-                $"[{nameof(Manual)}] {_options.CommonName}",
+                $"[WebTeam] {_options.CommonName}",
                 _options.CommonName ?? "",
                 new List<TargetPart> {
                     new TargetPart((_options.AlternativeNames ?? new List<string>()).Select(x => ParseIdentifier(x)))
