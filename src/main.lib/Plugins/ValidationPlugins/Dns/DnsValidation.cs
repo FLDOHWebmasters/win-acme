@@ -148,6 +148,7 @@ namespace PKISharp.WACS.Plugins.ValidationPlugins
         /// </summary>
         /// <returns></returns>
         public virtual Task Finalize() => Task.CompletedTask;
+
         /// <summary>
         /// Delete validation record
         /// </summary>

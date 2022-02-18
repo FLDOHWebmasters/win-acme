@@ -1,7 +1,9 @@
-﻿using PKISharp.WACS.Services;
+﻿using CertificateManager.Core.Extensions;
+using PKISharp.WACS.Services;
 using System;
 using System.Linq;
 using System.Management;
+using System.Net;
 
 namespace PKISharp.WACS.Clients
 {
@@ -10,13 +12,9 @@ namespace PKISharp.WACS.Clients
         private readonly string _computerName;
         private readonly ILogService _log;
 
-        public WindowsManagementClient(ISettingsService settings, ILogService log)
+        public WindowsManagementClient(ILogService log)
         {
-            _computerName = settings.Notification.ComputerName ?? string.Empty;
-            if (string.IsNullOrEmpty(_computerName))
-            {
-                _computerName = Environment.MachineName;
-            }
+            _computerName = Dns.GetHostEntry(Environment.MachineName).HostName; //fully qualified hostname
             _log = log;
         }
 
@@ -69,9 +67,18 @@ namespace PKISharp.WACS.Clients
         public static bool DeleteTxtRecord(string server, string zone, string hostName, string? descriptiveText = null, ILogService? log = null)
         {
             // TODO filter by descriptiveText may be necessary in future
-            log?.Information($"WindowsManagementClient.DeleteTxtRecord({zone}, {hostName}, {descriptiveText})");
-            var query = new ObjectQuery(@$"SELECT * FROM MicrosoftDNS_TXTType
-				WHERE DnsServerName = '{server}' AND ContainerName = '{zone}' AND OwnerName = '{hostName}.{zone}'");
+            log?.Information($"WindowsManagementClient.DeleteTxtRecord(DnsServerName={server}, ContainerName={zone}, OwnerName={hostName}.{zone}, DescriptiveText={descriptiveText})");
+            string mql = @$"
+SELECT * FROM MicrosoftDNS_TXTType
+WHERE DnsServerName = '{server}'
+    AND ContainerName = '{zone}'
+    AND OwnerName = '{hostName}.{zone}'
+";
+            if (descriptiveText.NotBlank())
+            {
+                mql += $"    AND DescriptiveText = '{descriptiveText}'";
+            }
+            var query = new ObjectQuery(mql);
             ManagementScope scope = new(@"\\.\root\MicrosoftDNS");
             var searcher = new ManagementObjectSearcher(scope, query);
             scope.Connect();
